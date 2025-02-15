@@ -17,5 +17,5 @@ if(MATH_LIBRARY)
   target_link_libraries(tests PUBLIC ${MATH_LIBRARY})
 endif()
 
-target_include_directories(tests PRIVATE include libs/flecs libs/munit)
+target_include_directories(tests PRIVATE include libs/munit)
 target_compile_definitions(tests PRIVATE MUNIT_NO_FORK)
