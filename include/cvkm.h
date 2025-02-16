@@ -23,7 +23,7 @@ VKM_DEFINE_VEC3(d, double);
   const vkm_##type* b,\
   vkm_##type* result\
 ) {\
-  *result = (vkm_##type){ a->x operator b->x, a->y operator b->y, a->z operator b->z };\
+  *result = (vkm_##type){ { a->x operator b->x, a->y operator b->y, a->z operator b->z } };\
 }
 
 #define VKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
@@ -32,7 +32,7 @@ static void vkm_##vec_type##_##operation##_scalar(\
   const scalar_type scalar,\
   vkm_##vec_type* result\
 ) {\
-  *result = (vkm_##vec_type){ vec->x operator scalar, vec->y operator scalar, vec->z operator scalar };\
+  *result = (vkm_##vec_type){ { vec->x operator scalar, vec->y operator scalar, vec->z operator scalar } };\
 }
 
 VKM_VEC3_OPERATION(vec3, add, +)
@@ -98,11 +98,11 @@ VKM_VEC3_SCALAR_OPERATION(dvec3, double, div, /)
 }\
 \
 static void vkm_##vec_type##_cross(const vkm_##vec_type* a, const vkm_##vec_type* b, vkm_##vec_type* result){\
-  *result = (vkm_##vec_type){\
+  *result = (vkm_##vec_type){ {\
     a->y * b->z - a->z * b->y,\
     a->z * b->x - a->x * b->z,\
     a->x * b->y - a->y * b->x,\
-  };\
+  } };\
 }\
 \
 static scalar_type vkm_##vec_type##_sqr_magnitude(\
@@ -123,11 +123,11 @@ static void vkm_##vec_type##_normalize(const vkm_##vec_type* vec, vkm_##vec_type
 }\
 \
 static void vkm_##vec_type##_clear(vkm_##vec_type* vec) {\
-  *vec = (vkm_##vec_type){ (scalar_type)0, (scalar_type)0, (scalar_type)0 };\
+  *vec = (vkm_##vec_type){ { (scalar_type)0, (scalar_type)0, (scalar_type)0 } };\
 }\
 \
-static void vkm_##vec_type##_invert(vkm_##vec_type* vec) {\
-  *vec = (vkm_##vec_type){ -vec->x, -vec->y, -vec->z };\
+static void vkm_##vec_type##_invert(const vkm_##vec_type* vec, vkm_##vec_type* result) {\
+  *result = (vkm_##vec_type){ { -vec->x, -vec->y, -vec->z } };\
 }
 
 VKM_VEC3_MISC_OPERATIONS(vec3, float)
@@ -142,6 +142,31 @@ VKM_VEC3_MISC_OPERATIONS(dvec3, double)
   vkm_vec3*: vkm_vec3_cross,\
   vkm_dvec3*: vkm_dvec3_cross\
 )(a, b, result)
+
+#define vkm_sqr_magnitude(vec) _Generic((vec),\
+  vkm_vec3*: vkm_vec3_sqr_magnitude,\
+  vkm_dvec3*: vkm_dvec3_sqr_magnitude\
+)(vec)
+
+#define vkm_magnitude(vec) _Generic((vec),\
+  vkm_vec3*: vkm_vec3_magnitude,\
+  vkm_dvec3*: vkm_dvec3_magnitude\
+)(vec)
+
+#define vkm_normalize(vec, result) _Generic((vec, result),\
+  vkm_vec3*: vkm_vec3_normalize,\
+  vkm_dvec3*: vkm_dvec3_normalize\
+)(vec, result)
+
+#define vkm_clear(vec) _Generic((vec),\
+  vkm_vec3*: vkm_vec3_clear,\
+  vkm_dvec3*: vkm_dvec3_clear\
+)(vec)
+
+#define vkm_invert(vec, result) _Generic((vec, result),\
+  vkm_vec3*: vkm_vec3_invert,\
+  vkm_dvec3*: vkm_dvec3_invert\
+)(vec, result)
 
 #define VKM_VEC3_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
   const vkm_##type* a,\
@@ -161,4 +186,29 @@ VKM_VEC3_LOGICAL_OPERATION(dvec3, lt, <)
 VKM_VEC3_LOGICAL_OPERATION(dvec3, gt, >)
 VKM_VEC3_LOGICAL_OPERATION(dvec3, le, <=)
 VKM_VEC3_LOGICAL_OPERATION(dvec3, ge, >=)
+
+#define vkm_eq(a, b) _Generic((a),\
+  vkm_vec3*: vkm_vec3_eq,\
+  vkm_dvec3*: vkm_dvec3_eq\
+)(a, b)
+
+#define vkm_lt(a, b) _Generic((a),\
+  vkm_vec3*: vkm_vec3_lt,\
+  vkm_dvec3*: vkm_dvec3_lt\
+)(a, b)
+
+#define vkm_gt(a, b) _Generic((a),\
+  vkm_vec3*: vkm_vec3_gt,\
+  vkm_dvec3*: vkm_dvec3_gt\
+)(a, b)
+
+#define vkm_le(a, b) _Generic((a),\
+  vkm_vec3*: vkm_vec3_le,\
+  vkm_dvec3*: vkm_dvec3_le\
+)(a, b)
+
+#define vkm_ge(a, b) _Generic((a),\
+  vkm_vec3*: vkm_vec3_ge,\
+  vkm_dvec3*: vkm_dvec3_ge\
+)(a, b)
 #endif

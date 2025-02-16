@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 
 project(tests C)
+enable_testing()
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -11,10 +12,18 @@ add_executable(tests
   libs/munit/munit.c
   libs/munit/munit.h
 )
+add_test(NAME tests COMMAND tests)
 
 find_library(MATH_LIBRARY m)
 if(MATH_LIBRARY)
   target_link_libraries(tests PUBLIC ${MATH_LIBRARY})
+endif()
+
+if(MSVC)
+  target_compile_options(tests PRIVATE /W4 /WX)
+else()
+  target_compile_options(tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
+  target_compile_definitions(tests PRIVATE MUNIT_NO_FORK)
 endif()
 
 target_include_directories(tests PRIVATE include libs/munit)
