@@ -5,29 +5,18 @@
 #include <math.h>
 #include <stdbool.h>
 
-typedef union vkm_vec3 {
-  struct {
-    float x, y, z;
-  };
+#define VKM_DEFINE_VEC3(prefix, type) typedef union vkm_##prefix##vec3 {\
+  struct {\
+    type x, y, z;\
+  };\
+  struct {\
+    type r, g, b;\
+  };\
+  type raw[3];\
+} vkm_##prefix##vec3
 
-  struct {
-    float r, g, b;
-  };
-
-  float raw[3];
-} vkm_vec3;
-
-typedef union vkm_dvec3 {
-  struct {
-    double x, y, z;
-  };
-
-  struct {
-    double r, g, b;
-  };
-
-  double raw[3];
-} vkm_dvec3;
+VKM_DEFINE_VEC3(, float);
+VKM_DEFINE_VEC3(d, double);
 
 #define VKM_VEC3_OPERATION(type, operation, operator) static void vkm_##type##_##operation(\
   const vkm_##type* a,\
