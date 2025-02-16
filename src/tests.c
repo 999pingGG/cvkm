@@ -64,7 +64,36 @@ VKM_VEC3_TEST(dvec3, double, div, /)
 VKM_VEC3_SCALAR_TEST(dvec3, double, mul, *)
 VKM_VEC3_SCALAR_TEST(dvec3, double, div, /)
 
-#define VKM_VEC3_MISC_OPERATIONS_TEST(vec_type, scalar_type) static MunitResult vec_type##_sqr_magnitude(\
+#define VKM_VEC3_MISC_OPERATIONS_TEST(vec_type, scalar_type) static MunitResult vec_type##_dot(\
+  const MunitParameter* params,\
+  void* userdata\
+) {\
+  RANDOM_VEC3(vkm_##vec_type, scalar_type, 1);\
+  RANDOM_VEC3(vkm_##vec_type, scalar_type, 2);\
+  \
+  munit_assert_##scalar_type(vkm_dot(&vec1, &vec2), ==, vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z);\
+  \
+  return MUNIT_OK;\
+}\
+\
+static MunitResult vec_type##_cross(\
+  const MunitParameter* params,\
+  void* userdata\
+) {\
+  RANDOM_VEC3(vkm_##vec_type, scalar_type, 1);\
+  RANDOM_VEC3(vkm_##vec_type, scalar_type, 2);\
+\
+  vkm_##vec_type result;\
+  vkm_cross(&vec1, &vec2, &result);\
+  \
+  munit_assert_##scalar_type(result.x, ==, vec1.y * vec2.z - vec1.z * vec2.y);\
+  munit_assert_##scalar_type(result.y, ==, vec1.z * vec2.x - vec1.x * vec2.z);\
+  munit_assert_##scalar_type(result.z, ==, vec1.x * vec2.y - vec1.y * vec2.x);\
+\
+  return MUNIT_OK;\
+}\
+\
+static MunitResult vec_type##_sqr_magnitude(\
   const MunitParameter* params,\
   void* userdata\
 ) {\
@@ -115,6 +144,8 @@ int main(const int argc, char* const* argv) {
   DEFINE_TEST("/mul", type##_mul),\
   DEFINE_TEST("/div", type##_div),\
   DEFINE_TEST("/mul_scalar", type##_mul_scalar),\
+  DEFINE_TEST("/dot", type##_dot),\
+  DEFINE_TEST("/cross", type##_cross),\
   DEFINE_TEST("/sqr_magnitude", type##_sqr_magnitude),\
   DEFINE_TEST("/magnitude", type##_magnitude),\
   DEFINE_TEST("/normalize", type##_normalize),\

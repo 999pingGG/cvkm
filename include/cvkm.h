@@ -39,11 +39,15 @@ VKM_VEC3_OPERATION(vec3, add, +)
 VKM_VEC3_OPERATION(vec3, sub, -)
 VKM_VEC3_OPERATION(vec3, mul, *)
 VKM_VEC3_OPERATION(vec3, div, /)
+VKM_VEC3_SCALAR_OPERATION(vec3, float, mul, *)
+VKM_VEC3_SCALAR_OPERATION(vec3, float, div, /)
 
 VKM_VEC3_OPERATION(dvec3, add, +)
 VKM_VEC3_OPERATION(dvec3, sub, -)
 VKM_VEC3_OPERATION(dvec3, mul, *)
 VKM_VEC3_OPERATION(dvec3, div, /)
+VKM_VEC3_SCALAR_OPERATION(dvec3, double, mul, *)
+VKM_VEC3_SCALAR_OPERATION(dvec3, double, div, /)
 
 #define vkm_add(a, b, result) _Generic((a),\
   vkm_vec3*: vkm_vec3_add,\
@@ -81,18 +85,27 @@ VKM_VEC3_OPERATION(dvec3, div, /)
   )\
 )(a, b, result)
 
-VKM_VEC3_SCALAR_OPERATION(vec3, float, mul, *)
-VKM_VEC3_SCALAR_OPERATION(vec3, float, div, /)
-
-VKM_VEC3_SCALAR_OPERATION(dvec3, double, mul, *)
-VKM_VEC3_SCALAR_OPERATION(dvec3, double, div, /)
-
 #define vkm_sqrt(x) _Generic((x),\
   float: sqrtf,\
   double: sqrt\
 )(x)
 
-#define VKM_VEC3_MISC_OPERATIONS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_sqr_magnitude(\
+#define VKM_VEC3_MISC_OPERATIONS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
+  const vkm_##vec_type* a,\
+  const vkm_##vec_type* b\
+) {\
+  return a->x * b->x + a->y * b->y + a->z * b->z;\
+}\
+\
+static void vkm_##vec_type##_cross(const vkm_##vec_type* a, const vkm_##vec_type* b, vkm_##vec_type* result){\
+  *result = (vkm_##vec_type){\
+    a->y * b->z - a->z * b->y,\
+    a->z * b->x - a->x * b->z,\
+    a->x * b->y - a->y * b->x,\
+  };\
+}\
+\
+static scalar_type vkm_##vec_type##_sqr_magnitude(\
   const vkm_##vec_type* vec\
 ) {\
   return vec->x * vec->x + vec->y * vec->y + vec->z * vec->z;\
@@ -119,6 +132,16 @@ static void vkm_##vec_type##_invert(vkm_##vec_type* vec) {\
 
 VKM_VEC3_MISC_OPERATIONS(vec3, float)
 VKM_VEC3_MISC_OPERATIONS(dvec3, double)
+
+#define vkm_dot(a, b) _Generic((a),\
+  vkm_vec3*: vkm_vec3_dot,\
+  vkm_dvec3*: vkm_dvec3_dot\
+)(a, b)
+
+#define vkm_cross(a, b, result) _Generic((a),\
+  vkm_vec3*: vkm_vec3_cross,\
+  vkm_dvec3*: vkm_dvec3_cross\
+)(a, b, result)
 
 #define VKM_VEC3_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
   const vkm_##type* a,\
