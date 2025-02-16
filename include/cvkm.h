@@ -153,7 +153,7 @@ VKM_VEC3_MISC_OPERATIONS(dvec3, double)
   vkm_dvec3*: vkm_dvec3_magnitude\
 )(vec)
 
-#define vkm_normalize(vec, result) _Generic((vec, result),\
+#define vkm_normalize(vec, result) _Generic((vec),\
   vkm_vec3*: vkm_vec3_normalize,\
   vkm_dvec3*: vkm_dvec3_normalize\
 )(vec, result)
@@ -163,7 +163,7 @@ VKM_VEC3_MISC_OPERATIONS(dvec3, double)
   vkm_dvec3*: vkm_dvec3_clear\
 )(vec)
 
-#define vkm_invert(vec, result) _Generic((vec, result),\
+#define vkm_invert(vec, result) _Generic((vec),\
   vkm_vec3*: vkm_vec3_invert,\
   vkm_dvec3*: vkm_dvec3_invert\
 )(vec, result)

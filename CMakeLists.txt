@@ -27,4 +27,3 @@ else()
 endif()
 
 target_include_directories(tests PRIVATE include libs/munit)
-target_compile_definitions(tests PRIVATE MUNIT_NO_FORK)
