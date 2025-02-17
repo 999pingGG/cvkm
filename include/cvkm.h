@@ -115,7 +115,7 @@ static int vkm_sqrti(const int x) {
   double: sqrt\
 )(x)
 
-#define VKM_VEC3_MISC_OPERATIONS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
+#define VKM_VEC3_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
   const vkm_##vec_type* a,\
   const vkm_##vec_type* b\
 ) {\
@@ -138,13 +138,6 @@ static scalar_type vkm_##vec_type##_magnitude(const vkm_##vec_type* vec) {\
   return vkm_sqrt(vkm_##vec_type##_sqr_magnitude(vec));\
 }\
 \
-static void vkm_##vec_type##_normalize(const vkm_##vec_type* vec, vkm_##vec_type* result) {\
-  const scalar_type magnitude = vkm_##vec_type##_magnitude(vec);\
-  if (magnitude > (scalar_type)0) {\
-    vkm_##vec_type##_div_scalar(vec, magnitude, result);\
-  }\
-}\
-\
 static void vkm_##vec_type##_clear(vkm_##vec_type* vec) {\
   *vec = (vkm_##vec_type){ { (scalar_type)0, (scalar_type)0, (scalar_type)0 } };\
 }\
@@ -153,7 +146,21 @@ static void vkm_##vec_type##_invert(const vkm_##vec_type* vec, vkm_##vec_type* r
   *result = (vkm_##vec_type){ { -vec->x, -vec->y, -vec->z } };\
 }
 
-VKM_VEC3_MISC_OPERATIONS(ivec3, int)
+#define VKM_VEC3_NORMALIZE(vec_type, scalar_type) static void vkm_##vec_type##_normalize(\
+  const vkm_##vec_type* vec,\
+  vkm_##vec_type* result\
+) {\
+  const scalar_type magnitude = vkm_##vec_type##_magnitude(vec);\
+  if (magnitude > (scalar_type)0) {\
+    vkm_##vec_type##_div_scalar(vec, magnitude, result);\
+  }\
+}
+
+#define VKM_VEC3_MISC_OPERATIONS(vec_type, scalar_type)\
+  VKM_VEC3_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
+  VKM_VEC3_NORMALIZE(vec_type, scalar_type)
+
+VKM_VEC3_MISC_OPERATIONS_FOR_INTS(ivec3, int)
 VKM_VEC3_MISC_OPERATIONS(vec3, float)
 VKM_VEC3_MISC_OPERATIONS(dvec3, double)
 
@@ -182,7 +189,6 @@ VKM_VEC3_MISC_OPERATIONS(dvec3, double)
 )(vec)
 
 #define vkm_normalize(vec, result) _Generic((vec),\
-  vkm_ivec3*: vkm_ivec3_normalize,\
   vkm_vec3*: vkm_vec3_normalize,\
   vkm_dvec3*: vkm_dvec3_normalize\
 )(vec, result)

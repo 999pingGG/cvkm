@@ -23,7 +23,7 @@ All of those are generic! Use them with any types that are valid for the operati
 vectors and/or scalars, the `const` ones are inputs while the non-const ones are input/outputs, except when the name is
 `result`; then it's only written, not read.
 
-| Function                | Description                                                                                                              | Formula(s)                                       |
+| Function                | Description                                                                                                              | Formula(e)                                       |
 |-------------------------|--------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
 | `vkm_add(a, b, result)` | Addition.                                                                                                                | $\vec{a} + \vec{b}$                              |
 | `vkm_sub(a, b, result)` | Subtraction.                                                                                                             | $\vec{a} - \vec{b}$                              |

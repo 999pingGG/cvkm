@@ -4,13 +4,13 @@
 
 #define MAX_FLOAT_TO_TEST 1000000.0
 
-#define RANDOM_VEC3(vec_type, scalar_type, n) \
+#define RANDOM_VEC3(vec_type, scalar_type, n)\
   const scalar_type x##n = (scalar_type)(munit_rand_double() * MAX_FLOAT_TO_TEST);\
   const scalar_type y##n = (scalar_type)(munit_rand_double() * MAX_FLOAT_TO_TEST);\
   const scalar_type z##n = (scalar_type)(munit_rand_double() * MAX_FLOAT_TO_TEST);\
   vec_type vec##n = { { x##n, y##n, z##n } }
 
-#define INITIALIZE_TWO_VEC3(vec_type, scalar_type) \
+#define INITIALIZE_TWO_VEC3(vec_type, scalar_type)\
   RANDOM_VEC3(vec_type, scalar_type, 1);\
   RANDOM_VEC3(vec_type, scalar_type, 2);\
 \
@@ -73,7 +73,7 @@ VKM_VEC3_TEST(dvec3, double, div, /)
 VKM_VEC3_SCALAR_TEST(dvec3, double, mul, *)
 VKM_VEC3_SCALAR_TEST(dvec3, double, div, /)
 
-#define VKM_VEC3_MISC_OPERATIONS_TEST(vec_type, scalar_type) static MunitResult vec_type##_dot(\
+#define VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(vec_type, scalar_type) static MunitResult vec_type##_dot(\
   const MunitParameter* params,\
   void* userdata\
 ) {\
@@ -81,9 +81,9 @@ VKM_VEC3_SCALAR_TEST(dvec3, double, div, /)
   (void)userdata;\
   RANDOM_VEC3(vkm_##vec_type, scalar_type, 1);\
   RANDOM_VEC3(vkm_##vec_type, scalar_type, 2);\
-  \
+\
   munit_assert_##scalar_type(vkm_dot(&vec1, &vec2), ==, vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z);\
-  \
+\
   return MUNIT_OK;\
 }\
 \
@@ -98,7 +98,7 @@ static MunitResult vec_type##_cross(\
 \
   vkm_##vec_type result;\
   vkm_cross(&vec1, &vec2, &result);\
-  \
+\
   munit_assert_##scalar_type(result.x, ==, vec1.y * vec2.z - vec1.z * vec2.y);\
   munit_assert_##scalar_type(result.y, ==, vec1.z * vec2.x - vec1.x * vec2.z);\
   munit_assert_##scalar_type(result.z, ==, vec1.x * vec2.y - vec1.y * vec2.x);\
@@ -134,20 +134,6 @@ static MunitResult vec_type##_magnitude(const MunitParameter* params, void* user
   return MUNIT_OK;\
 }\
 \
-static MunitResult vec_type##_normalize(const MunitParameter* params, void* userdata) {\
-  (void)params;\
-  (void)userdata;\
-  RANDOM_VEC3(vkm_##vec_type, scalar_type, 1);\
-\
-  const scalar_type magnitude = vkm_magnitude(&vec1);\
-  vkm_normalize(&vec1, &vec1);\
-  munit_assert_##scalar_type(vec1.x, ==, x1 / magnitude);\
-  munit_assert_##scalar_type(vec1.y, ==, y1 / magnitude);\
-  munit_assert_##scalar_type(vec1.z, ==, z1 / magnitude);\
-\
-  return MUNIT_OK;\
-}\
-\
 static MunitResult vec_type##_clear(const MunitParameter* params, void* userdata) {\
   (void)params;\
   (void)userdata;\
@@ -175,7 +161,28 @@ static MunitResult vec_type##_invert(const MunitParameter* params, void* userdat
   return MUNIT_OK;\
 }
 
-VKM_VEC3_MISC_OPERATIONS_TEST(ivec3, int)
+#define VKM_VEC3_NORMALIZE_TEST(vec_type, scalar_type) static MunitResult vec_type##_normalize(\
+  const MunitParameter* params,\
+  void* userdata\
+) {\
+  (void)params;\
+  (void)userdata;\
+  RANDOM_VEC3(vkm_##vec_type, scalar_type, 1);\
+\
+  const scalar_type magnitude = vkm_magnitude(&vec1);\
+  vkm_normalize(&vec1, &vec1);\
+  munit_assert_##scalar_type(vec1.x, ==, x1 / magnitude);\
+  munit_assert_##scalar_type(vec1.y, ==, y1 / magnitude);\
+  munit_assert_##scalar_type(vec1.z, ==, z1 / magnitude);\
+\
+  return MUNIT_OK;\
+}
+
+#define VKM_VEC3_MISC_OPERATIONS_TEST(vec_type, scalar_type)\
+  VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(vec_type, scalar_type)\
+  VKM_VEC3_NORMALIZE_TEST(vec_type, scalar_type)
+
+VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(ivec3, int)
 VKM_VEC3_MISC_OPERATIONS_TEST(vec3, float)
 VKM_VEC3_MISC_OPERATIONS_TEST(dvec3, double)
 
@@ -188,11 +195,11 @@ static MunitResult vec_type##_##operation(\
   (void)userdata;\
   RANDOM_VEC3(vkm_##vec_type, scalar_type, 1);\
   RANDOM_VEC3(vkm_##vec_type, scalar_type, 2);\
-  \
+\
   munit_assert(\
     vkm_##operation(&vec1, &vec2) == (vec1.x operator vec2.x && vec1.y operator vec2.y && vec1.z operator vec2.z)\
   );\
-  \
+\
   return MUNIT_OK;\
 }
 
@@ -220,7 +227,7 @@ VKM_VEC3_LOGICAL_OPERATION_TEST(dvec3, double, ge, >=)
 }
 
 int main(const int argc, char* const* argv) {
-#define VKM_VEC_TEST_SUITE(type) MunitTest type##_tests[] = {\
+#define VKM_VEC_TEST_SUITE_FOR_INTS(type) MunitTest type##_tests[] = {\
   DEFINE_TEST("/add", type##_add),\
   DEFINE_TEST("/sub", type##_sub),\
   DEFINE_TEST("/mul", type##_mul),\
@@ -231,7 +238,7 @@ int main(const int argc, char* const* argv) {
   DEFINE_TEST("/cross", type##_cross),\
   DEFINE_TEST("/sqr_magnitude", type##_sqr_magnitude),\
   DEFINE_TEST("/magnitude", type##_magnitude),\
-  DEFINE_TEST("/normalize", type##_normalize),\
+  { 0 },\
   DEFINE_TEST("/clear", type##_clear),\
   DEFINE_TEST("/invert", type##_invert),\
   DEFINE_TEST("/eq", type##_eq),\
@@ -242,7 +249,10 @@ int main(const int argc, char* const* argv) {
   { 0 },\
 }
 
-  VKM_VEC_TEST_SUITE(ivec3);
+#define VKM_VEC_TEST_SUITE(type) VKM_VEC_TEST_SUITE_FOR_INTS(type);\
+  type##_tests[10] = (MunitTest)DEFINE_TEST("/normalize", type##_normalize)
+
+  VKM_VEC_TEST_SUITE_FOR_INTS(ivec3);
   VKM_VEC_TEST_SUITE(vec3);
   VKM_VEC_TEST_SUITE(dvec3);
 
