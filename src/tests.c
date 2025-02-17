@@ -52,11 +52,17 @@ static MunitResult vec_type##_##operation##_scalar(\
   return MUNIT_OK;\
 }
 
+VKM_VEC3_TEST(ivec3, int, add, +)
+VKM_VEC3_TEST(ivec3, int, sub, -)
+VKM_VEC3_TEST(ivec3, int, mul, *)
+VKM_VEC3_TEST(ivec3, int, div, /)
+VKM_VEC3_SCALAR_TEST(ivec3, int, mul, *)
+VKM_VEC3_SCALAR_TEST(ivec3, int, div, /)
+
 VKM_VEC3_TEST(vec3, float, add, +)
 VKM_VEC3_TEST(vec3, float, sub, -)
 VKM_VEC3_TEST(vec3, float, mul, *)
 VKM_VEC3_TEST(vec3, float, div, /)
-
 VKM_VEC3_SCALAR_TEST(vec3, float, mul, *)
 VKM_VEC3_SCALAR_TEST(vec3, float, div, /)
 
@@ -64,7 +70,6 @@ VKM_VEC3_TEST(dvec3, double, add, +)
 VKM_VEC3_TEST(dvec3, double, sub, -)
 VKM_VEC3_TEST(dvec3, double, mul, *)
 VKM_VEC3_TEST(dvec3, double, div, /)
-
 VKM_VEC3_SCALAR_TEST(dvec3, double, mul, *)
 VKM_VEC3_SCALAR_TEST(dvec3, double, div, /)
 
@@ -170,6 +175,7 @@ static MunitResult vec_type##_invert(const MunitParameter* params, void* userdat
   return MUNIT_OK;\
 }
 
+VKM_VEC3_MISC_OPERATIONS_TEST(ivec3, int)
 VKM_VEC3_MISC_OPERATIONS_TEST(vec3, float)
 VKM_VEC3_MISC_OPERATIONS_TEST(dvec3, double)
 
@@ -189,6 +195,12 @@ static MunitResult vec_type##_##operation(\
   \
   return MUNIT_OK;\
 }
+
+VKM_VEC3_LOGICAL_OPERATION_TEST(ivec3, int, eq, ==)
+VKM_VEC3_LOGICAL_OPERATION_TEST(ivec3, int, lt, <)
+VKM_VEC3_LOGICAL_OPERATION_TEST(ivec3, int, gt, >)
+VKM_VEC3_LOGICAL_OPERATION_TEST(ivec3, int, le, <=)
+VKM_VEC3_LOGICAL_OPERATION_TEST(ivec3, int, ge, >=)
 
 VKM_VEC3_LOGICAL_OPERATION_TEST(vec3, float, eq, ==)
 VKM_VEC3_LOGICAL_OPERATION_TEST(vec3, float, lt, <)
@@ -230,10 +242,16 @@ int main(const int argc, char* const* argv) {
   { 0 },\
 }
 
+  VKM_VEC_TEST_SUITE(ivec3);
   VKM_VEC_TEST_SUITE(vec3);
   VKM_VEC_TEST_SUITE(dvec3);
 
   MunitSuite suites[] = {
+    {
+      .prefix = "/ivec3",
+      .tests = ivec3_tests,
+      .iterations = 1000000,
+    },
     {
       .prefix = "/vec3",
       .tests = vec3_tests,

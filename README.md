@@ -10,6 +10,14 @@ overloading. The tests are trivial to compile, but I'm using CMake here.
 ## Installation
 This library is all-inline so far, just grab `cvkm.h` and you're good to go.
 
+## Available types
+
+| Type        | Description                    |
+|-------------|--------------------------------|
+| `vkm_ivec3` | 3-component vector of `int`    |
+| `vkm_vec3`  | 3-component vector of `float`  |
+| `vkm_dvec3` | 3-component vector of `double` |
+
 ## Available functions
 All of those are generic! Use them with any types that are valid for the operation. All parameters are pointers to
 vectors and/or scalars, the `const` ones are inputs while the non-const ones are input/outputs, except when the name is
