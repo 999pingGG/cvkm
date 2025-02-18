@@ -12,11 +12,18 @@ This library is all-inline so far, just grab `cvkm.h` and you're good to go.
 
 ## Available types
 
-| Type        | Description                    |
-|-------------|--------------------------------|
-| `vkm_ivec3` | 3-component vector of `int`    |
-| `vkm_vec3`  | 3-component vector of `float`  |
-| `vkm_dvec3` | 3-component vector of `double` |
+| Type         | Description                      |
+|--------------|----------------------------------|
+| `vkm_bvec3`  | 3-component vector of `int8_t`   |
+| `vkm_ubvec3` | 3-component vector of `uint8_t`  |
+| `vkm_svec3`  | 3-component vector of `int16_t`  |
+| `vkm_usvec3` | 3-component vector of `uint16_t` |
+| `vkm_ivec3`  | 3-component vector of `int32_t`  |
+| `vkm_uvec3`  | 3-component vector of `uint32_t` |
+| `vkm_lvec3`  | 3-component vector of `int64_t`  |
+| `vkm_ulvec3` | 3-component vector of `uint64_t` |
+| `vkm_vec3`   | 3-component vector of `float`    |
+| `vkm_dvec3`  | 3-component vector of `double`   |
 
 ## Available functions
 All of those are generic! Use them with any types that are valid for the operation. All parameters are pointers to
