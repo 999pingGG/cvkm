@@ -71,7 +71,7 @@ VKM_VEC3_ALL_TESTS(ulvec3, uint64_t, uint64)
 VKM_VEC3_ALL_TESTS(vec3, float, float)
 VKM_VEC3_ALL_TESTS(dvec3, double, double)
 
-#define VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(vec_type, scalar_type, assertion) static MunitResult vec_type##_dot(\
+#define VKM_VEC3_MISC_OPERATIONS_TEST_FOR_UNSIGNED_INTS(vec_type, scalar_type, assertion) static MunitResult vec_type##_dot(\
   const MunitParameter* params,\
   void* userdata\
 ) {\
@@ -143,9 +143,12 @@ static MunitResult vec_type##_clear(const MunitParameter* params, void* userdata
   munit_assert_##assertion(vec1.z, ==, (scalar_type)0);\
 \
   return MUNIT_OK;\
-}\
-\
-static MunitResult vec_type##_invert(const MunitParameter* params, void* userdata) {\
+}
+
+#define VKM_VEC3_INVERT_TEST(vec_type, scalar_type, assertion) static MunitResult vec_type##_invert(\
+  const MunitParameter* params,\
+  void* userdata\
+) {\
   (void)params;\
   (void)userdata;\
   RANDOM_VEC3(vkm_##vec_type, scalar_type, 1);\
@@ -176,18 +179,22 @@ static MunitResult vec_type##_invert(const MunitParameter* params, void* userdat
   return MUNIT_OK;\
 }
 
+#define VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(vec_type, scalar_type, assertion)\
+  VKM_VEC3_MISC_OPERATIONS_TEST_FOR_UNSIGNED_INTS(vec_type, scalar_type, assertion)\
+  VKM_VEC3_INVERT_TEST(vec_type, scalar_type, assertion)
+
 #define VKM_VEC3_MISC_OPERATIONS_TEST(vec_type, scalar_type, assertion)\
   VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(vec_type, scalar_type, assertion)\
   VKM_VEC3_NORMALIZE_TEST(vec_type, scalar_type)
 
 VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(bvec3, int8_t, int8)
-VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(ubvec3, uint8_t, uint8)
+VKM_VEC3_MISC_OPERATIONS_TEST_FOR_UNSIGNED_INTS(ubvec3, uint8_t, uint8)
 VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(svec3, int16_t, int16)
-VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(usvec3, uint16_t, uint16)
+VKM_VEC3_MISC_OPERATIONS_TEST_FOR_UNSIGNED_INTS(usvec3, uint16_t, uint16)
 VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(ivec3, int32_t, int32)
-VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(uvec3, uint32_t, uint32)
+VKM_VEC3_MISC_OPERATIONS_TEST_FOR_UNSIGNED_INTS(uvec3, uint32_t, uint32)
 VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(lvec3, int64_t, int64)
-VKM_VEC3_MISC_OPERATIONS_TEST_FOR_INTS(ulvec3, uint64_t, uint64)
+VKM_VEC3_MISC_OPERATIONS_TEST_FOR_UNSIGNED_INTS(ulvec3, uint64_t, uint64)
 VKM_VEC3_MISC_OPERATIONS_TEST(vec3, float, float)
 VKM_VEC3_MISC_OPERATIONS_TEST(dvec3, double, double)
 
@@ -223,8 +230,8 @@ VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(ivec3, int32_t)
 VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(uvec3, uint32_t)
 VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(lvec3, int64_t)
 VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(ulvec3, uint64_t)
-VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(vec3, int32_t)
-VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(dvec3, int32_t)
+VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(vec3, float)
+VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(dvec3, double)
 
 #define DEFINE_TEST(test_name, func) {\
   .name = test_name,\
@@ -232,6 +239,26 @@ VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(dvec3, int32_t)
 }
 
 int main(const int argc, char* const* argv) {
+#define VKM_VEC_TEST_SUITE_DECL_FOR_UNSIGNED_INTS(type) MunitTest type##_tests[] = {\
+  DEFINE_TEST("/add", type##_add),\
+  DEFINE_TEST("/sub", type##_sub),\
+  DEFINE_TEST("/mul", type##_mul),\
+  DEFINE_TEST("/div", type##_div),\
+  DEFINE_TEST("/mul_scalar", type##_mul_scalar),\
+  DEFINE_TEST("/div_scalar", type##_div_scalar),\
+  DEFINE_TEST("/dot", type##_dot),\
+  DEFINE_TEST("/cross", type##_cross),\
+  DEFINE_TEST("/sqr_magnitude", type##_sqr_magnitude),\
+  DEFINE_TEST("/magnitude", type##_magnitude),\
+  DEFINE_TEST("/clear", type##_clear),\
+  DEFINE_TEST("/eq", type##_eq),\
+  DEFINE_TEST("/lt", type##_lt),\
+  DEFINE_TEST("/gt", type##_gt),\
+  DEFINE_TEST("/le", type##_le),\
+  DEFINE_TEST("/ge", type##_ge),\
+  { 0 },\
+}
+
 #define VKM_VEC_TEST_SUITE_DECL_FOR_INTS(type) MunitTest type##_tests[] = {\
   DEFINE_TEST("/add", type##_add),\
   DEFINE_TEST("/sub", type##_sub),\
@@ -243,7 +270,6 @@ int main(const int argc, char* const* argv) {
   DEFINE_TEST("/cross", type##_cross),\
   DEFINE_TEST("/sqr_magnitude", type##_sqr_magnitude),\
   DEFINE_TEST("/magnitude", type##_magnitude),\
-  { 0 },\
   DEFINE_TEST("/clear", type##_clear),\
   DEFINE_TEST("/invert", type##_invert),\
   DEFINE_TEST("/eq", type##_eq),\
@@ -254,17 +280,36 @@ int main(const int argc, char* const* argv) {
   { 0 },\
 }
 
-#define VKM_VEC_TEST_SUITE_DECL(type) VKM_VEC_TEST_SUITE_DECL_FOR_INTS(type);\
-  type##_tests[10] = (MunitTest)DEFINE_TEST("/normalize", type##_normalize)
+#define VKM_VEC_TEST_SUITE_DECL(type) MunitTest type##_tests[] = {\
+  DEFINE_TEST("/add", type##_add),\
+  DEFINE_TEST("/sub", type##_sub),\
+  DEFINE_TEST("/mul", type##_mul),\
+  DEFINE_TEST("/div", type##_div),\
+  DEFINE_TEST("/mul_scalar", type##_mul_scalar),\
+  DEFINE_TEST("/div_scalar", type##_div_scalar),\
+  DEFINE_TEST("/dot", type##_dot),\
+  DEFINE_TEST("/cross", type##_cross),\
+  DEFINE_TEST("/sqr_magnitude", type##_sqr_magnitude),\
+  DEFINE_TEST("/magnitude", type##_magnitude),\
+  DEFINE_TEST("/normalize", type##_normalize),\
+  DEFINE_TEST("/clear", type##_clear),\
+  DEFINE_TEST("/invert", type##_invert),\
+  DEFINE_TEST("/eq", type##_eq),\
+  DEFINE_TEST("/lt", type##_lt),\
+  DEFINE_TEST("/gt", type##_gt),\
+  DEFINE_TEST("/le", type##_le),\
+  DEFINE_TEST("/ge", type##_ge),\
+  { 0 },\
+}
 
   VKM_VEC_TEST_SUITE_DECL_FOR_INTS(bvec3);
-  VKM_VEC_TEST_SUITE_DECL_FOR_INTS(ubvec3);
+  VKM_VEC_TEST_SUITE_DECL_FOR_UNSIGNED_INTS(ubvec3);
   VKM_VEC_TEST_SUITE_DECL_FOR_INTS(svec3);
-  VKM_VEC_TEST_SUITE_DECL_FOR_INTS(usvec3);
+  VKM_VEC_TEST_SUITE_DECL_FOR_UNSIGNED_INTS(usvec3);
   VKM_VEC_TEST_SUITE_DECL_FOR_INTS(ivec3);
-  VKM_VEC_TEST_SUITE_DECL_FOR_INTS(uvec3);
+  VKM_VEC_TEST_SUITE_DECL_FOR_UNSIGNED_INTS(uvec3);
   VKM_VEC_TEST_SUITE_DECL_FOR_INTS(lvec3);
-  VKM_VEC_TEST_SUITE_DECL_FOR_INTS(ulvec3);
+  VKM_VEC_TEST_SUITE_DECL_FOR_UNSIGNED_INTS(ulvec3);
   VKM_VEC_TEST_SUITE_DECL(vec3);
   VKM_VEC_TEST_SUITE_DECL(dvec3);
 
