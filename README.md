@@ -14,6 +14,16 @@ This library is all-inline so far, just grab `cvkm.h` and you're good to go.
 
 | Type         | Description                      |
 |--------------|----------------------------------|
+| `vkm_bvec2`  | 2-component vector of `int8_t`   |
+| `vkm_ubvec2` | 2-component vector of `uint8_t`  |
+| `vkm_svec2`  | 2-component vector of `int16_t`  |
+| `vkm_usvec2` | 2-component vector of `uint16_t` |
+| `vkm_ivec2`  | 2-component vector of `int32_t`  |
+| `vkm_uvec2`  | 2-component vector of `uint32_t` |
+| `vkm_lvec2`  | 2-component vector of `int64_t`  |
+| `vkm_ulvec2` | 2-component vector of `uint64_t` |
+| `vkm_vec2`   | 2-component vector of `float`    |
+| `vkm_dvec2`  | 2-component vector of `double`   |
 | `vkm_bvec3`  | 3-component vector of `int8_t`   |
 | `vkm_ubvec3` | 3-component vector of `uint8_t`  |
 | `vkm_svec3`  | 3-component vector of `int16_t`  |
@@ -54,7 +64,7 @@ vectors and/or scalars, the `const` ones are inputs while the non-const ones are
 Do a standard CMake build to build the tests.
 
 ## Motivation
-Because cglm doesn't support doubles and I thought it would be cool to use generics in C!
+Because cglm doesn't support doubles or vecs of all int types and I thought it would be cool to use generics in C!
 
 ## Roadmap
 - [Flecs](https://www.flecs.dev/flecs/) components.
