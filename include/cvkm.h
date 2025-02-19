@@ -6,6 +6,19 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#if defined(__GNUC__)
+#define IGNORE_WARNINGS_BEGIN\
+_Pragma("GCC diagnostic push")\
+_Pragma("GCC diagnostic ignored \"-Wunused-function\"")
+#define IGNORE_WARNINGS_END\
+_Pragma("GCC diagnostic pop")
+#else
+#define IGNORE_WARNINGS_BEGIN
+#define IGNORE_WARNINGS_END
+#endif
+
+IGNORE_WARNINGS_BEGIN
+
 #define VKM_DEFINE_VEC3(prefix, type) typedef union vkm_##prefix##vec3 {\
   struct {\
     type x, y, z;\
@@ -373,4 +386,6 @@ VKM_VEC3_LOGICAL_OPERATIONS(dvec3)
   vkm_vec3*: vkm_vec3_ge,\
   vkm_dvec3*: vkm_dvec3_ge\
 )(a, b)
+
+IGNORE_WARNINGS_END
 #endif
