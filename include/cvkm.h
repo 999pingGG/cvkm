@@ -27,7 +27,7 @@ IGNORE_WARNINGS_BEGIN
     type r, g;\
   };\
   struct {\
-    type s, t;\
+    type u, v;\
   };\
   type raw[2];\
 } vkm_##prefix##vec2
@@ -41,6 +41,24 @@ IGNORE_WARNINGS_BEGIN
   };\
   type raw[3];\
 } vkm_##prefix##vec3
+
+typedef struct vkm_vec4 {
+  struct {
+    float x, y, z, w;
+  };
+  struct {
+    float r, g, b, a;
+  };
+  struct {
+    float u, v, s, t;
+  };
+  float raw[4];
+} vkm_vec4;
+
+typedef union vkm_mat4 {
+  vkm_vec4 col[4];
+  float raw[16];
+} vkm_mat4;
 
 VKM_DEFINE_VEC2(b, int8_t);
 VKM_DEFINE_VEC2(ub, uint8_t);
@@ -659,6 +677,49 @@ VKM_VEC3_LOGICAL_OPERATIONS(dvec3)
   vkm_vec3*: vkm_vec3_ge,\
   vkm_dvec3*: vkm_dvec3_ge\
 )(a, b)
+
+static void vkm_ortho_rh_no(
+  const float left,
+  const float right,
+  const float bottom,
+  const float top,
+  const float nearZ,
+  const float farZ,
+  vkm_mat4* result
+) {
+  *result = { 0 };
+
+  const float rl = 1.0f / (right - left);
+  const float tb = 1.0f / (top - bottom);
+  const float fn = -1.0f / (farZ - nearZ);
+
+  result->col[0].raw[0] = 2.0f * rl;
+  result->col[1].raw[1] = 2.0f * tb;
+  result->col[2].raw[2] = 2.0f * fn;
+  result->col[3].raw[0] =-(right + left) * rl;
+  result->col[3].raw[1] =-(top + bottom) * tb;
+  result->col[3].raw[2] = (farZ + nearZ) * fn;
+  result->col[3].raw[3] = 1.0f;
+}
+
+static void vkm_ortho(
+  const float left,
+  const float right,
+  const float bottom,
+  const float top,
+  const float nearZ,
+  const float farZ,
+  vkm_mat4* result
+) {
+  vkm_ortho_rh_no(left, right, bottom, top, nearZ, farZ, result);
+}
+
+static void vkm_mat4_identity(vkm_mat4* result) {
+  *result->raw = {1.0f, 0.0f, 0.0f, 0.0f};
+                                 {0.0f, 1.0f, 0.0f, 0.0f},
+                                 {0.0f, 0.0f, 1.0f, 0.0f},
+                                 {0.0f, 0.0f, 0.0f, 1.0f}};
+}
 
 IGNORE_WARNINGS_END
 #endif
