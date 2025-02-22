@@ -1,12 +1,15 @@
 #pragma once
 #ifndef _CVKM_H_
 #define _CVKM_H_
-
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 
-#if defined(__GNUC__)
+#ifdef VKM_ENABLE_FLECS
+#include <flecs.h>
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
 #define IGNORE_WARNINGS_BEGIN\
   _Pragma("GCC diagnostic push")\
   _Pragma("GCC diagnostic ignored \"-Wunused-function\"")
@@ -155,7 +158,7 @@ VKM_VEC3_ALL_OPERATIONS(dvec3, double)
   vkm_ulvec3*: vkm_ulvec3_add,\
   vkm_vec3*: vkm_vec3_add,\
   vkm_dvec3*: vkm_dvec3_add\
-)(a, b, result)
+)((a), (b), (result))
 
 #define vkm_sub(a, b, result) _Generic((a),\
   vkm_bvec2*: vkm_bvec2_sub,\
@@ -178,7 +181,7 @@ VKM_VEC3_ALL_OPERATIONS(dvec3, double)
   vkm_ulvec3*: vkm_ulvec3_sub,\
   vkm_vec3*: vkm_vec3_sub,\
   vkm_dvec3*: vkm_dvec3_sub\
-)(a, b, result)
+)((a), (b), (result))
 
 #define VKM_MUL_DIV_OPERATIONS(vec_type, scalar_type, operation, b) vkm_##vec_type*: _Generic((b),\
   vkm_##vec_type*: vkm_##vec_type##_##operation,\
@@ -207,7 +210,7 @@ VKM_VEC3_ALL_OPERATIONS(dvec3, double)
   VKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, mul, b),\
   VKM_MUL_DIV_OPERATIONS(vec3, float, mul, b),\
   VKM_MUL_DIV_OPERATIONS(dvec3, double, mul, b)\
-)(a, b, result)
+)((a), (b), (result))
 
 #define vkm_div(a, b, result) _Generic((a),\
   VKM_MUL_DIV_OPERATIONS(bvec2, int8_t, div, b),\
@@ -230,7 +233,7 @@ VKM_VEC3_ALL_OPERATIONS(dvec3, double)
   VKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, div, b),\
   VKM_MUL_DIV_OPERATIONS(vec3, float, div, b),\
   VKM_MUL_DIV_OPERATIONS(dvec3, double, div, b)\
-)(a, b, result)
+)((a), (b), (result))
 
 #define VKM_SQRT(type, suffix) static type vkm_sqrt##suffix(const type x) {\
   return (type)sqrt((double)x);\
@@ -391,7 +394,7 @@ VKM_VEC3_MISC_OPERATIONS(dvec3, double)
   vkm_ulvec3*: vkm_ulvec3_dot,\
   vkm_vec3*: vkm_vec3_dot,\
   vkm_dvec3*: vkm_dvec3_dot\
-)(a, b)
+)((a), (b))
 
 #define vkm_cross(a, b, result) _Generic((a),\
   vkm_bvec3*: vkm_bvec3_cross,\
@@ -404,7 +407,7 @@ VKM_VEC3_MISC_OPERATIONS(dvec3, double)
   vkm_ulvec3*: vkm_ulvec3_cross,\
   vkm_vec3*: vkm_vec3_cross,\
   vkm_dvec3*: vkm_dvec3_cross\
-)(a, b, result)
+)((a), (b), (result))
 
 #define vkm_sqr_magnitude(vec) _Generic((vec),\
   vkm_bvec2*: vkm_bvec2_sqr_magnitude,\
@@ -457,7 +460,7 @@ VKM_VEC3_MISC_OPERATIONS(dvec3, double)
   vkm_dvec2*: vkm_dvec2_normalize,\
   vkm_vec3*: vkm_vec3_normalize,\
   vkm_dvec3*: vkm_dvec3_normalize\
-)(vec, result)
+)((vec), (result))
 
 #define vkm_clear(vec) _Generic((vec),\
   vkm_bvec2*: vkm_bvec2_clear,\
@@ -495,7 +498,7 @@ VKM_VEC3_MISC_OPERATIONS(dvec3, double)
   vkm_lvec3*: vkm_lvec3_invert,\
   vkm_vec3*: vkm_vec3_invert,\
   vkm_dvec3*: vkm_dvec3_invert\
-)(vec, result)
+)((vec), (result))
 
 #define VKM_VEC2_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
 const vkm_##type* a,\
@@ -566,7 +569,7 @@ VKM_VEC3_LOGICAL_OPERATIONS(dvec3)
   vkm_ulvec3*: vkm_ulvec3_eq,\
   vkm_vec3*: vkm_vec3_eq,\
   vkm_dvec3*: vkm_dvec3_eq\
-)(a, b)
+)((a), (b))
 
 #define vkm_lt(a, b) _Generic((a),\
   vkm_bvec2*: vkm_bvec2_lt,\
@@ -589,7 +592,7 @@ VKM_VEC3_LOGICAL_OPERATIONS(dvec3)
   vkm_ulvec3*: vkm_ulvec3_lt,\
   vkm_vec3*: vkm_vec3_lt,\
   vkm_dvec3*: vkm_dvec3_lt\
-)(a, b)
+)((a), (b))
 
 #define vkm_gt(a, b) _Generic((a),\
   vkm_bvec2*: vkm_bvec2_gt,\
@@ -612,7 +615,7 @@ VKM_VEC3_LOGICAL_OPERATIONS(dvec3)
   vkm_ulvec3*: vkm_ulvec3_gt,\
   vkm_vec3*: vkm_vec3_gt,\
   vkm_dvec3*: vkm_dvec3_gt\
-)(a, b)
+)((a), (b))
 
 #define vkm_le(a, b) _Generic((a),\
   vkm_bvec2*: vkm_bvec2_le,\
@@ -635,7 +638,7 @@ VKM_VEC3_LOGICAL_OPERATIONS(dvec3)
   vkm_ulvec3*: vkm_ulvec3_le,\
   vkm_vec3*: vkm_vec3_le,\
   vkm_dvec3*: vkm_dvec3_le\
-)(a, b)
+)((a), (b))
 
 #define vkm_ge(a, b) _Generic((a),\
   vkm_bvec2*: vkm_bvec2_ge,\
@@ -658,7 +661,151 @@ VKM_VEC3_LOGICAL_OPERATIONS(dvec3)
   vkm_ulvec3*: vkm_ulvec3_ge,\
   vkm_vec3*: vkm_vec3_ge,\
   vkm_dvec3*: vkm_dvec3_ge\
-)(a, b)
+)((a), (b))
+
+typedef vkm_vec2 Position2;
+typedef vkm_vec3 Position3;
+typedef vkm_dvec2 DoublePosition2;
+typedef vkm_dvec3 DoublePosition3;
+typedef vkm_vec2 Velocity2;
+typedef vkm_vec3 Velocity3;
+typedef float Mass;
+typedef float Damping;
+
+#ifdef VKM_3D
+typedef Velocity3 Velocity;
+
+#ifdef VKM_DOUBLE_PRECISION
+typedef DoublePosition3 Position;
+#else
+typedef Position3 Position;
+#endif
+
+#else
+typedef Velocity2 Velocity;
+
+#ifdef VKM_DOUBLE_PRECISION
+typedef DoublePosition2 Position;
+#else
+typedef Position2 Position;
+#endif
+
+#endif
+
+extern ECS_COMPONENT_DECLARE(Position2);
+extern ECS_COMPONENT_DECLARE(Position3);
+extern ECS_COMPONENT_DECLARE(DoublePosition2);
+extern ECS_COMPONENT_DECLARE(DoublePosition3);
+extern ECS_COMPONENT_DECLARE(Position);
+extern ECS_COMPONENT_DECLARE(Velocity2);
+extern ECS_COMPONENT_DECLARE(Velocity3);
+extern ECS_COMPONENT_DECLARE(Velocity);
+extern ECS_COMPONENT_DECLARE(Mass);
+extern ECS_COMPONENT_DECLARE(Damping);
+
+void cvkmImport(ecs_world_t* world);
+
+#ifdef VKM_FLECS_IMPLEMENTATION
+ECS_COMPONENT_DECLARE(Position2);
+ECS_COMPONENT_DECLARE(Position3);
+ECS_COMPONENT_DECLARE(DoublePosition2);
+ECS_COMPONENT_DECLARE(DoublePosition3);
+ECS_COMPONENT_DECLARE(Position);
+ECS_COMPONENT_DECLARE(Velocity2);
+ECS_COMPONENT_DECLARE(Velocity3);
+ECS_COMPONENT_DECLARE(Velocity);
+ECS_COMPONENT_DECLARE(Mass);
+ECS_COMPONENT_DECLARE(Damping);
+
+#define VKM_VEC2_COMPONENT(struct_type, member_type, unit_) ECS_COMPONENT_DEFINE(world, struct_type);\
+  ecs_struct(\
+    world,\
+    {\
+      .entity = ecs_id(struct_type),\
+      .members = {\
+        {\
+          .name = "x",\
+          .type = ecs_id(member_type),\
+          .offset = offsetof(struct_type, x),\
+          .unit = unit_,\
+        },\
+        {\
+          .name = "y",\
+          .type = ecs_id(member_type),\
+          .offset = offsetof(struct_type, y),\
+          .unit = unit_,\
+        },\
+      },\
+    }\
+  )
+
+#define VKM_VEC3_COMPONENT(struct_type, member_type, unit_) ECS_COMPONENT_DEFINE(world, struct_type);\
+  ecs_struct(\
+    world,\
+    {\
+      .entity = ecs_id(struct_type),\
+      .members = {\
+        {\
+          .name = "x",\
+          .type = ecs_id(member_type),\
+          .offset = offsetof(struct_type, x),\
+          .unit = unit_,\
+        },\
+        {\
+          .name = "y",\
+          .type = ecs_id(member_type),\
+          .offset = offsetof(struct_type, y),\
+          .unit = unit_,\
+        },\
+        {\
+          .name = "z",\
+          .type = ecs_id(member_type),\
+          .offset = offsetof(struct_type, z),\
+          .unit = unit_,\
+        },\
+      },\
+    }\
+  )
+
+void cvkmImport(ecs_world_t* world) {
+  ECS_MODULE(world, cvkm);
+
+  ECS_IMPORT(world, FlecsUnits);
+
+  VKM_VEC2_COMPONENT(Position2, ecs_f32_t, EcsMeters);
+  VKM_VEC3_COMPONENT(Position3, ecs_f32_t, EcsMeters);
+  VKM_VEC2_COMPONENT(DoublePosition2, ecs_f64_t, EcsMeters);
+  VKM_VEC3_COMPONENT(DoublePosition3, ecs_f64_t, EcsMeters);
+  VKM_VEC2_COMPONENT(Velocity2, ecs_f32_t, EcsMetersPerSecond);
+  VKM_VEC2_COMPONENT(Velocity3, ecs_f32_t, EcsMetersPerSecond);
+  ECS_COMPONENT_DEFINE(world, Mass);
+  ecs_add_pair(world, ecs_id(Mass), EcsIsA, EcsKiloGrams);
+  ECS_COMPONENT_DEFINE(world, Damping);
+  ecs_primitive(world, { .entity = ecs_id(Damping), .kind = EcsF32 });
+
+#ifdef VKM_3D
+  VKM_VEC3_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
+
+#ifdef VKM_DOUBLE_PRECISION
+  VKM_VEC3_COMPONENT(Position, ecs_f64_t, EcsMeters);
+#else
+  VKM_VEC3_COMPONENT(Position, ecs_f32_t, EcsMeters);
+#endif
+
+#else
+  VKM_VEC2_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
+
+#ifdef VKM_DOUBLE_PRECISION
+  VKM_VEC2_COMPONENT(Position, ecs_f64_t, EcsMeters);
+#else
+  VKM_VEC2_COMPONENT(Position, ecs_f32_t, EcsMeters);
+#endif
+
+#endif
+}
+
+#undef VKM_FLECS_IMPLEMENTATION
+#endif
 
 IGNORE_WARNINGS_END
 #endif

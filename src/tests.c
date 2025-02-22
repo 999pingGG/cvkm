@@ -1,6 +1,8 @@
 #include <stdint.h>
 
+#define VKM_FLECS_IMPLEMENTATION
 #include <cvkm.h>
+#include <flecs.h>
 #include <munit.h>
 
 #define MAX_FLOAT_TO_TEST 1000000.0
@@ -233,6 +235,83 @@ VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(ulvec3, uint64_t)
 VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(vec3, float)
 VKM_VEC3_LOGICAL_OPERATION_TEST_ALL(dvec3, double)
 
+static void Simulate(ecs_iter_t* it) {
+  Position* positions = ecs_field(it, Position, 0);
+  Velocity* velocities = ecs_field(it, Velocity, 1);
+  //const Mass* masses = ecs_field(it, Mass, 2);
+  const Damping* dampings = ecs_field(it, Damping, 3);
+
+  for (int i = 0; i < it->count; i++) {
+    Position* position = positions + i;
+    Velocity* velocity = velocities + i;
+    const Damping* damping = dampings ? dampings + i : NULL;
+
+    vkm_vec2 delta;
+    vkm_mul(velocity, it->delta_time, &delta);
+    vkm_add(position, &delta, position);
+
+    vkm_add(velocity, (&(vkm_vec2){ { 0.0f, -9.81f * it->delta_time } }), velocity);
+
+    if (damping) {
+      vkm_mul(velocity, *damping, velocity);
+    }
+  }
+}
+
+static MunitResult flecs(const MunitParameter* params, void* userdata) {
+  (void)params;
+  ecs_world_t* world = userdata;
+
+  for (int i = 0; i < 100; i++) {
+    const ecs_entity_t entity = ecs_new(world);
+
+    ecs_set(world, entity, Position, {
+      .x = (float)munit_rand_double() * 100.0f,
+      .y = (float)munit_rand_double() * 100.0f,
+    });
+    ecs_set(world, entity, Velocity, {
+      .x = (float)munit_rand_double() * 10.0f,
+      .y = (float)munit_rand_double() * 10.0f,
+    });
+    ecs_set(world, entity, Mass, { (float)munit_rand_double() * 9.0f + 1.0f });
+    if (munit_rand_double() < 0.5) {
+      ecs_set(world, entity, Damping, { (float)munit_rand_double() * 0.01f + 0.99f });
+    }
+  }
+
+  ecs_app_run(world, &(ecs_app_desc_t){
+    .target_fps = 10,
+    .delta_time = 0.1f,
+    .frames = 30,
+    .enable_rest = true,
+    .enable_stats = true,
+  });
+
+  return MUNIT_OK;
+}
+
+static void* flecs_setup(const MunitParameter params[], void* user_data) {
+  (void)params;
+  (void)user_data;
+
+  ecs_world_t* world = ecs_init();
+
+  ECS_IMPORT(world, cvkm);
+
+  ECS_SYSTEM(world, Simulate, EcsOnUpdate,
+    [inout] cvkm.Position,
+    [inout] cvkm.Velocity,
+    [in] cvkm.Mass,
+    [in] ?cvkm.Damping
+  );
+  
+  return world;
+}
+
+static void flecs_tear_down(void* fixture) {
+  ecs_fini(fixture);
+}
+
 #define DEFINE_TEST(test_name, func) {\
   .name = test_name,\
   .test = func,\
@@ -313,6 +392,16 @@ int main(const int argc, char* const* argv) {
   VKM_VEC_TEST_SUITE_DECL(vec3);
   VKM_VEC_TEST_SUITE_DECL(dvec3);
 
+  MunitTest flecs_tests[] = {
+    {
+      .name = "/basic-system",
+      .test = flecs,
+      .setup = flecs_setup,
+      .tear_down = flecs_tear_down,
+    },
+    { 0 },
+  };
+
 #define VKM_VEC_TEST_SUITE(type) {\
   .prefix = "/"#type,\
   .tests = type##_tests,\
@@ -330,6 +419,7 @@ int main(const int argc, char* const* argv) {
     VKM_VEC_TEST_SUITE(ulvec3),
     VKM_VEC_TEST_SUITE(vec3),
     VKM_VEC_TEST_SUITE(dvec3),
+    VKM_VEC_TEST_SUITE(flecs),
     { 0 },
   };
 
