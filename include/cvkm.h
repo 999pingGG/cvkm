@@ -32,6 +32,9 @@ IGNORE_WARNINGS_BEGIN
   struct {\
     type s, t;\
   };\
+  struct {\
+    type u, v;\
+  };\
   type raw[2];\
 } vkm_##prefix##vec2
 
@@ -41,6 +44,9 @@ IGNORE_WARNINGS_BEGIN
   };\
   struct {\
     type r, g, b;\
+  };\
+  struct {\
+    type s, t, p;\
   };\
   type raw[3];\
 } vkm_##prefix##vec3
