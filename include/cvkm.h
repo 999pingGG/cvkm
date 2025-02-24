@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#ifdef VKM_ENABLE_FLECS
+#ifdef CVKM_ENABLE_FLECS
 #include <flecs.h>
 #endif
 
@@ -22,7 +22,7 @@
 
 IGNORE_WARNINGS_BEGIN
 
-#define VKM_DEFINE_VEC2(prefix, type) typedef union vkm_##prefix##vec2 {\
+#define CVKM_DEFINE_VEC2(prefix, type) typedef union vkm_##prefix##vec2 {\
   struct {\
     type x, y;\
   };\
@@ -38,7 +38,7 @@ IGNORE_WARNINGS_BEGIN
   type raw[2];\
 } vkm_##prefix##vec2
 
-#define VKM_DEFINE_VEC3(prefix, type) typedef union vkm_##prefix##vec3 {\
+#define CVKM_DEFINE_VEC3(prefix, type) typedef union vkm_##prefix##vec3 {\
   struct {\
     type x, y, z;\
   };\
@@ -51,7 +51,7 @@ IGNORE_WARNINGS_BEGIN
   type raw[3];\
 } vkm_##prefix##vec3
 
-#define VKM_DEFINE_VEC4(prefix, type) typedef union vkm_##prefix##vec4 {\
+#define CVKM_DEFINE_VEC4(prefix, type) typedef union vkm_##prefix##vec4 {\
   struct {\
     type x, y, z, w;\
   };\
@@ -64,38 +64,38 @@ IGNORE_WARNINGS_BEGIN
   type raw[4];\
 } vkm_##prefix##vec4
 
-VKM_DEFINE_VEC2(b, int8_t);
-VKM_DEFINE_VEC2(ub, uint8_t);
-VKM_DEFINE_VEC2(s, int16_t);
-VKM_DEFINE_VEC2(us, uint16_t);
-VKM_DEFINE_VEC2(i, int32_t);
-VKM_DEFINE_VEC2(u, uint32_t);
-VKM_DEFINE_VEC2(l, int64_t);
-VKM_DEFINE_VEC2(ul, uint64_t);
-VKM_DEFINE_VEC2(, float);
-VKM_DEFINE_VEC2(d, double);
+CVKM_DEFINE_VEC2(b, int8_t);
+CVKM_DEFINE_VEC2(ub, uint8_t);
+CVKM_DEFINE_VEC2(s, int16_t);
+CVKM_DEFINE_VEC2(us, uint16_t);
+CVKM_DEFINE_VEC2(i, int32_t);
+CVKM_DEFINE_VEC2(u, uint32_t);
+CVKM_DEFINE_VEC2(l, int64_t);
+CVKM_DEFINE_VEC2(ul, uint64_t);
+CVKM_DEFINE_VEC2(, float);
+CVKM_DEFINE_VEC2(d, double);
 
-VKM_DEFINE_VEC3(b, int8_t);
-VKM_DEFINE_VEC3(ub, uint8_t);
-VKM_DEFINE_VEC3(s, int16_t);
-VKM_DEFINE_VEC3(us, uint16_t);
-VKM_DEFINE_VEC3(i, int32_t);
-VKM_DEFINE_VEC3(u, uint32_t);
-VKM_DEFINE_VEC3(l, int64_t);
-VKM_DEFINE_VEC3(ul, uint64_t);
-VKM_DEFINE_VEC3(, float);
-VKM_DEFINE_VEC3(d, double);
+CVKM_DEFINE_VEC3(b, int8_t);
+CVKM_DEFINE_VEC3(ub, uint8_t);
+CVKM_DEFINE_VEC3(s, int16_t);
+CVKM_DEFINE_VEC3(us, uint16_t);
+CVKM_DEFINE_VEC3(i, int32_t);
+CVKM_DEFINE_VEC3(u, uint32_t);
+CVKM_DEFINE_VEC3(l, int64_t);
+CVKM_DEFINE_VEC3(ul, uint64_t);
+CVKM_DEFINE_VEC3(, float);
+CVKM_DEFINE_VEC3(d, double);
 
-VKM_DEFINE_VEC4(b, int8_t);
-VKM_DEFINE_VEC4(ub, uint8_t);
-VKM_DEFINE_VEC4(s, int16_t);
-VKM_DEFINE_VEC4(us, uint16_t);
-VKM_DEFINE_VEC4(i, int32_t);
-VKM_DEFINE_VEC4(u, uint32_t);
-VKM_DEFINE_VEC4(l, int64_t);
-VKM_DEFINE_VEC4(ul, uint64_t);
-VKM_DEFINE_VEC4(, float);
-VKM_DEFINE_VEC4(d, double);
+CVKM_DEFINE_VEC4(b, int8_t);
+CVKM_DEFINE_VEC4(ub, uint8_t);
+CVKM_DEFINE_VEC4(s, int16_t);
+CVKM_DEFINE_VEC4(us, uint16_t);
+CVKM_DEFINE_VEC4(i, int32_t);
+CVKM_DEFINE_VEC4(u, uint32_t);
+CVKM_DEFINE_VEC4(l, int64_t);
+CVKM_DEFINE_VEC4(ul, uint64_t);
+CVKM_DEFINE_VEC4(, float);
+CVKM_DEFINE_VEC4(d, double);
 
 typedef union vkm_mat4 {
   vkm_vec4 columns[4];
@@ -108,14 +108,14 @@ typedef union vkm_mat4 {
   float raw[16];
 } vkm_mat4;
 
-#define VKM_MAT4_IDENTITY (vkm_mat4){\
+#define CVKM_MAT4_IDENTITY (vkm_mat4){\
   1.0f, 0.0f, 0.0f, 0.0f,\
   0.0f, 1.0f, 0.0f, 0.0f,\
   0.0f, 0.0f, 1.0f, 0.0f,\
   0.0f, 0.0f, 0.0f, 1.0f,\
 }
 
-#define VKM_VEC2_OPERATION(type, operation, operator) static void vkm_##type##_##operation(\
+#define CVKM_VEC2_OPERATION(type, operation, operator) static void vkm_##type##_##operation(\
   const vkm_##type* a,\
   const vkm_##type* b,\
   vkm_##type* result\
@@ -123,7 +123,7 @@ typedef union vkm_mat4 {
   *result = (vkm_##type){ { a->x operator b->x, a->y operator b->y } };\
 }
 
-#define VKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
+#define CVKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
 static void vkm_##vec_type##_##operation##_scalar(\
   const vkm_##vec_type* vec,\
   const scalar_type scalar,\
@@ -132,25 +132,25 @@ static void vkm_##vec_type##_##operation##_scalar(\
   *result = (vkm_##vec_type){ { vec->x operator scalar, vec->y operator scalar } };\
 }
 
-#define VKM_VEC2_ALL_OPERATIONS(vec_type, scalar_type) VKM_VEC2_OPERATION(vec_type, add, +)\
-  VKM_VEC2_OPERATION(vec_type, sub, -)\
-  VKM_VEC2_OPERATION(vec_type, mul, *)\
-  VKM_VEC2_OPERATION(vec_type, div, /)\
-  VKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
-  VKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, div, /)
+#define CVKM_VEC2_ALL_OPERATIONS(vec_type, scalar_type) CVKM_VEC2_OPERATION(vec_type, add, +)\
+  CVKM_VEC2_OPERATION(vec_type, sub, -)\
+  CVKM_VEC2_OPERATION(vec_type, mul, *)\
+  CVKM_VEC2_OPERATION(vec_type, div, /)\
+  CVKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
+  CVKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, div, /)
 
-VKM_VEC2_ALL_OPERATIONS(bvec2, int8_t)
-VKM_VEC2_ALL_OPERATIONS(ubvec2, uint8_t)
-VKM_VEC2_ALL_OPERATIONS(svec2, int16_t)
-VKM_VEC2_ALL_OPERATIONS(usvec2, uint16_t)
-VKM_VEC2_ALL_OPERATIONS(ivec2, int32_t)
-VKM_VEC2_ALL_OPERATIONS(uvec2, uint32_t)
-VKM_VEC2_ALL_OPERATIONS(lvec2, int64_t)
-VKM_VEC2_ALL_OPERATIONS(ulvec2, uint64_t)
-VKM_VEC2_ALL_OPERATIONS(vec2, float)
-VKM_VEC2_ALL_OPERATIONS(dvec2, double)
+CVKM_VEC2_ALL_OPERATIONS(bvec2, int8_t)
+CVKM_VEC2_ALL_OPERATIONS(ubvec2, uint8_t)
+CVKM_VEC2_ALL_OPERATIONS(svec2, int16_t)
+CVKM_VEC2_ALL_OPERATIONS(usvec2, uint16_t)
+CVKM_VEC2_ALL_OPERATIONS(ivec2, int32_t)
+CVKM_VEC2_ALL_OPERATIONS(uvec2, uint32_t)
+CVKM_VEC2_ALL_OPERATIONS(lvec2, int64_t)
+CVKM_VEC2_ALL_OPERATIONS(ulvec2, uint64_t)
+CVKM_VEC2_ALL_OPERATIONS(vec2, float)
+CVKM_VEC2_ALL_OPERATIONS(dvec2, double)
 
-#define VKM_VEC3_OPERATION(type, operation, operator) static void vkm_##type##_##operation(\
+#define CVKM_VEC3_OPERATION(type, operation, operator) static void vkm_##type##_##operation(\
   const vkm_##type* a,\
   const vkm_##type* b,\
   vkm_##type* result\
@@ -158,7 +158,7 @@ VKM_VEC2_ALL_OPERATIONS(dvec2, double)
   *result = (vkm_##type){ { a->x operator b->x, a->y operator b->y, a->z operator b->z } };\
 }
 
-#define VKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
+#define CVKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
 static void vkm_##vec_type##_##operation##_scalar(\
   const vkm_##vec_type* vec,\
   const scalar_type scalar,\
@@ -167,25 +167,25 @@ static void vkm_##vec_type##_##operation##_scalar(\
   *result = (vkm_##vec_type){ { vec->x operator scalar, vec->y operator scalar, vec->z operator scalar } };\
 }
 
-#define VKM_VEC3_ALL_OPERATIONS(vec_type, scalar_type) VKM_VEC3_OPERATION(vec_type, add, +)\
-  VKM_VEC3_OPERATION(vec_type, sub, -)\
-  VKM_VEC3_OPERATION(vec_type, mul, *)\
-  VKM_VEC3_OPERATION(vec_type, div, /)\
-  VKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
-  VKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, div, /)
+#define CVKM_VEC3_ALL_OPERATIONS(vec_type, scalar_type) CVKM_VEC3_OPERATION(vec_type, add, +)\
+  CVKM_VEC3_OPERATION(vec_type, sub, -)\
+  CVKM_VEC3_OPERATION(vec_type, mul, *)\
+  CVKM_VEC3_OPERATION(vec_type, div, /)\
+  CVKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
+  CVKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, div, /)
 
-VKM_VEC3_ALL_OPERATIONS(bvec3, int8_t)
-VKM_VEC3_ALL_OPERATIONS(ubvec3, uint8_t)
-VKM_VEC3_ALL_OPERATIONS(svec3, int16_t)
-VKM_VEC3_ALL_OPERATIONS(usvec3, uint16_t)
-VKM_VEC3_ALL_OPERATIONS(ivec3, int32_t)
-VKM_VEC3_ALL_OPERATIONS(uvec3, uint32_t)
-VKM_VEC3_ALL_OPERATIONS(lvec3, int64_t)
-VKM_VEC3_ALL_OPERATIONS(ulvec3, uint64_t)
-VKM_VEC3_ALL_OPERATIONS(vec3, float)
-VKM_VEC3_ALL_OPERATIONS(dvec3, double)
+CVKM_VEC3_ALL_OPERATIONS(bvec3, int8_t)
+CVKM_VEC3_ALL_OPERATIONS(ubvec3, uint8_t)
+CVKM_VEC3_ALL_OPERATIONS(svec3, int16_t)
+CVKM_VEC3_ALL_OPERATIONS(usvec3, uint16_t)
+CVKM_VEC3_ALL_OPERATIONS(ivec3, int32_t)
+CVKM_VEC3_ALL_OPERATIONS(uvec3, uint32_t)
+CVKM_VEC3_ALL_OPERATIONS(lvec3, int64_t)
+CVKM_VEC3_ALL_OPERATIONS(ulvec3, uint64_t)
+CVKM_VEC3_ALL_OPERATIONS(vec3, float)
+CVKM_VEC3_ALL_OPERATIONS(dvec3, double)
 
-#define VKM_VEC4_OPERATION(type, operation, operator) static void vkm_##type##_##operation(\
+#define CVKM_VEC4_OPERATION(type, operation, operator) static void vkm_##type##_##operation(\
   const vkm_##type* a,\
   const vkm_##type* b,\
   vkm_##type* result\
@@ -193,7 +193,7 @@ VKM_VEC3_ALL_OPERATIONS(dvec3, double)
   *result = (vkm_##type){ { a->x operator b->x, a->y operator b->y, a->z operator b->z, a->w operator b->w } };\
 }
 
-#define VKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
+#define CVKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
 static void vkm_##vec_type##_##operation##_scalar(\
   const vkm_##vec_type* vec,\
   const scalar_type scalar,\
@@ -207,23 +207,23 @@ static void vkm_##vec_type##_##operation##_scalar(\
   } };\
 }
 
-#define VKM_VEC4_ALL_OPERATIONS(vec_type, scalar_type) VKM_VEC4_OPERATION(vec_type, add, +)\
-  VKM_VEC4_OPERATION(vec_type, sub, -)\
-  VKM_VEC4_OPERATION(vec_type, mul, *)\
-  VKM_VEC4_OPERATION(vec_type, div, /)\
-  VKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
-  VKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, div, /)
+#define CVKM_VEC4_ALL_OPERATIONS(vec_type, scalar_type) CVKM_VEC4_OPERATION(vec_type, add, +)\
+  CVKM_VEC4_OPERATION(vec_type, sub, -)\
+  CVKM_VEC4_OPERATION(vec_type, mul, *)\
+  CVKM_VEC4_OPERATION(vec_type, div, /)\
+  CVKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
+  CVKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, div, /)
 
-VKM_VEC4_ALL_OPERATIONS(bvec4, int8_t)
-VKM_VEC4_ALL_OPERATIONS(ubvec4, uint8_t)
-VKM_VEC4_ALL_OPERATIONS(svec4, int16_t)
-VKM_VEC4_ALL_OPERATIONS(usvec4, uint16_t)
-VKM_VEC4_ALL_OPERATIONS(ivec4, int32_t)
-VKM_VEC4_ALL_OPERATIONS(uvec4, uint32_t)
-VKM_VEC4_ALL_OPERATIONS(lvec4, int64_t)
-VKM_VEC4_ALL_OPERATIONS(ulvec4, uint64_t)
-VKM_VEC4_ALL_OPERATIONS(vec4, float)
-VKM_VEC4_ALL_OPERATIONS(dvec4, double)
+CVKM_VEC4_ALL_OPERATIONS(bvec4, int8_t)
+CVKM_VEC4_ALL_OPERATIONS(ubvec4, uint8_t)
+CVKM_VEC4_ALL_OPERATIONS(svec4, int16_t)
+CVKM_VEC4_ALL_OPERATIONS(usvec4, uint16_t)
+CVKM_VEC4_ALL_OPERATIONS(ivec4, int32_t)
+CVKM_VEC4_ALL_OPERATIONS(uvec4, uint32_t)
+CVKM_VEC4_ALL_OPERATIONS(lvec4, int64_t)
+CVKM_VEC4_ALL_OPERATIONS(ulvec4, uint64_t)
+CVKM_VEC4_ALL_OPERATIONS(vec4, float)
+CVKM_VEC4_ALL_OPERATIONS(dvec4, double)
 
 #define vkm_add(a, b, result) _Generic((result),\
   vkm_bvec2*: vkm_bvec2_add,\
@@ -291,43 +291,43 @@ VKM_VEC4_ALL_OPERATIONS(dvec4, double)
   vkm_dvec4*: vkm_dvec4_sub\
 )((a), (b), (result))
 
-#define VKM_MUL_DIV_OPERATIONS(vec_type, scalar_type, operation, b) vkm_##vec_type*: _Generic((b),\
+#define CVKM_MUL_DIV_OPERATIONS(vec_type, scalar_type, operation, b) vkm_##vec_type*: _Generic((b),\
   vkm_##vec_type*: vkm_##vec_type##_##operation,\
   scalar_type: vkm_##vec_type##_##operation##_scalar,\
   default: ((void)0)\
 )\
 
 #define vkm_mul(a, b, result) _Generic((result),\
-  VKM_MUL_DIV_OPERATIONS(bvec2, int8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec2, uint8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(svec2, int16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec2, uint16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec2, int32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec2, uint32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec2, int64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec2, uint64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(vec2, float, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec2, double, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(bvec3, int8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec3, uint8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(svec3, int16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec3, uint16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec3, int32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec3, uint32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec3, int64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(vec3, float, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec3, double, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(bvec4, int8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec4, uint8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(svec4, int16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec4, uint16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec4, int32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec4, uint32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec4, int64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec4, uint64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(vec4, float, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec4, double, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(bvec2, int8_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec2, uint8_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(svec2, int16_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(usvec2, uint16_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ivec2, int32_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(uvec2, uint32_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(lvec2, int64_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec2, uint64_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(vec2, float, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(dvec2, double, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(bvec3, int8_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec3, uint8_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(svec3, int16_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(usvec3, uint16_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ivec3, int32_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(uvec3, uint32_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(lvec3, int64_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(vec3, float, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(dvec3, double, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(bvec4, int8_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec4, uint8_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(svec4, int16_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(usvec4, uint16_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ivec4, int32_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(uvec4, uint32_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(lvec4, int64_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec4, uint64_t, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(vec4, float, mul, b),\
+  CVKM_MUL_DIV_OPERATIONS(dvec4, double, mul, b),\
   vkm_mat4*: _Generic((b),\
     vkm_mat4*: vkm_mat4_mul,\
     default: ((void)0)\
@@ -335,50 +335,50 @@ VKM_VEC4_ALL_OPERATIONS(dvec4, double)
 )((a), (b), (result))
 
 #define vkm_div(a, b, result) _Generic((result),\
-  VKM_MUL_DIV_OPERATIONS(bvec2, int8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec2, uint8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(svec2, int16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec2, uint16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec2, int32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec2, uint32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec2, int64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec2, uint64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(vec2, float, div, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec2, double, div, b),\
-  VKM_MUL_DIV_OPERATIONS(bvec3, int8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec3, uint8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(svec3, int16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec3, uint16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec3, int32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec3, uint32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec3, int64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(vec3, float, div, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec3, double, div, b),\
-  VKM_MUL_DIV_OPERATIONS(bvec4, int8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec4, uint8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(svec4, int16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec4, uint16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec4, int32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec4, uint32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec4, int64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec4, uint64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(vec4, float, div, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec4, double, div, b)\
+  CVKM_MUL_DIV_OPERATIONS(bvec2, int8_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec2, uint8_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(svec2, int16_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(usvec2, uint16_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ivec2, int32_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(uvec2, uint32_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(lvec2, int64_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec2, uint64_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(vec2, float, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(dvec2, double, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(bvec3, int8_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec3, uint8_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(svec3, int16_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(usvec3, uint16_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ivec3, int32_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(uvec3, uint32_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(lvec3, int64_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(vec3, float, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(dvec3, double, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(bvec4, int8_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec4, uint8_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(svec4, int16_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(usvec4, uint16_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ivec4, int32_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(uvec4, uint32_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(lvec4, int64_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec4, uint64_t, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(vec4, float, div, b),\
+  CVKM_MUL_DIV_OPERATIONS(dvec4, double, div, b)\
 )((a), (b), (result))
 
-#define VKM_SQRT(type, suffix) static type vkm_sqrt##suffix(const type x) {\
+#define CVKM_SQRT(type, suffix) static type vkm_sqrt##suffix(const type x) {\
   return (type)sqrt((double)x);\
 }
 
-VKM_SQRT(int8_t, b)
-VKM_SQRT(uint8_t, ub)
-VKM_SQRT(int16_t, s)
-VKM_SQRT(uint16_t, us)
-VKM_SQRT(int32_t, i)
-VKM_SQRT(uint32_t, ui)
-VKM_SQRT(int64_t, l)
-VKM_SQRT(uint64_t, ul)
+CVKM_SQRT(int8_t, b)
+CVKM_SQRT(uint8_t, ub)
+CVKM_SQRT(int16_t, s)
+CVKM_SQRT(uint16_t, us)
+CVKM_SQRT(int32_t, i)
+CVKM_SQRT(uint32_t, ui)
+CVKM_SQRT(int64_t, l)
+CVKM_SQRT(uint64_t, ul)
 
 #define vkm_sqrt(x) _Generic((x),\
   int8_t: vkm_sqrtb,\
@@ -393,7 +393,7 @@ VKM_SQRT(uint64_t, ul)
   double: sqrt\
 )(x)
 
-#define VKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
+#define CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
   const vkm_##vec_type* a,\
   const vkm_##vec_type* b\
 ) {\
@@ -412,14 +412,14 @@ static void vkm_##vec_type##_clear(vkm_##vec_type* vec) {\
   *vec = (vkm_##vec_type){ { (scalar_type)0, (scalar_type)0 } };\
 }
 
-#define VKM_VEC2_INVERT(vec_type) static void vkm_##vec_type##_invert(\
+#define CVKM_VEC2_INVERT(vec_type) static void vkm_##vec_type##_invert(\
   const vkm_##vec_type* vec,\
   vkm_##vec_type* result\
 ) {\
   *result = (vkm_##vec_type){ { -vec->x, -vec->y } };\
 }
 
-#define VKM_VEC2_NORMALIZE(vec_type, scalar_type) static void vkm_##vec_type##_normalize(\
+#define CVKM_VEC2_NORMALIZE(vec_type, scalar_type) static void vkm_##vec_type##_normalize(\
   const vkm_##vec_type* vec,\
   vkm_##vec_type* result\
 ) {\
@@ -429,26 +429,26 @@ static void vkm_##vec_type##_clear(vkm_##vec_type* vec) {\
   }\
 }
 
-#define VKM_VEC2_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
-  VKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type)\
-  VKM_VEC2_INVERT(vec_type)
+#define CVKM_VEC2_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
+  CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type)\
+  CVKM_VEC2_INVERT(vec_type)
 
-#define VKM_VEC2_MISC_OPERATIONS(vec_type, scalar_type)\
-  VKM_VEC2_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
-  VKM_VEC2_NORMALIZE(vec_type, scalar_type)
+#define CVKM_VEC2_MISC_OPERATIONS(vec_type, scalar_type)\
+  CVKM_VEC2_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
+  CVKM_VEC2_NORMALIZE(vec_type, scalar_type)
 
-VKM_VEC2_MISC_OPERATIONS_FOR_INTS(bvec2, int8_t)
-VKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ubvec2, uint8_t)
-VKM_VEC2_MISC_OPERATIONS_FOR_INTS(svec2, int16_t)
-VKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(usvec2, uint16_t)
-VKM_VEC2_MISC_OPERATIONS_FOR_INTS(ivec2, int32_t)
-VKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(uvec2, uint32_t)
-VKM_VEC2_MISC_OPERATIONS_FOR_INTS(lvec2, int64_t)
-VKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ulvec2, uint64_t)
-VKM_VEC2_MISC_OPERATIONS(vec2, float)
-VKM_VEC2_MISC_OPERATIONS(dvec2, double)
+CVKM_VEC2_MISC_OPERATIONS_FOR_INTS(bvec2, int8_t)
+CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ubvec2, uint8_t)
+CVKM_VEC2_MISC_OPERATIONS_FOR_INTS(svec2, int16_t)
+CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(usvec2, uint16_t)
+CVKM_VEC2_MISC_OPERATIONS_FOR_INTS(ivec2, int32_t)
+CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(uvec2, uint32_t)
+CVKM_VEC2_MISC_OPERATIONS_FOR_INTS(lvec2, int64_t)
+CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ulvec2, uint64_t)
+CVKM_VEC2_MISC_OPERATIONS(vec2, float)
+CVKM_VEC2_MISC_OPERATIONS(dvec2, double)
 
-#define VKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
+#define CVKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
   const vkm_##vec_type* a,\
   const vkm_##vec_type* b\
 ) {\
@@ -475,14 +475,14 @@ static void vkm_##vec_type##_clear(vkm_##vec_type* vec) {\
   *vec = (vkm_##vec_type){ { (scalar_type)0, (scalar_type)0, (scalar_type)0 } };\
 }
 
-#define VKM_VEC3_INVERT(vec_type) static void vkm_##vec_type##_invert(\
+#define CVKM_VEC3_INVERT(vec_type) static void vkm_##vec_type##_invert(\
   const vkm_##vec_type* vec,\
   vkm_##vec_type* result\
 ) {\
   *result = (vkm_##vec_type){ { -vec->x, -vec->y, -vec->z } };\
 }
 
-#define VKM_VEC3_NORMALIZE(vec_type, scalar_type) static void vkm_##vec_type##_normalize(\
+#define CVKM_VEC3_NORMALIZE(vec_type, scalar_type) static void vkm_##vec_type##_normalize(\
   const vkm_##vec_type* vec,\
   vkm_##vec_type* result\
 ) {\
@@ -492,26 +492,26 @@ static void vkm_##vec_type##_clear(vkm_##vec_type* vec) {\
   }\
 }
 
-#define VKM_VEC3_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
-  VKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type)\
-  VKM_VEC3_INVERT(vec_type)
+#define CVKM_VEC3_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
+  CVKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type)\
+  CVKM_VEC3_INVERT(vec_type)
 
-#define VKM_VEC3_MISC_OPERATIONS(vec_type, scalar_type)\
-  VKM_VEC3_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
-  VKM_VEC3_NORMALIZE(vec_type, scalar_type)
+#define CVKM_VEC3_MISC_OPERATIONS(vec_type, scalar_type)\
+  CVKM_VEC3_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
+  CVKM_VEC3_NORMALIZE(vec_type, scalar_type)
 
-VKM_VEC3_MISC_OPERATIONS_FOR_INTS(bvec3, int8_t)
-VKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ubvec3, uint8_t)
-VKM_VEC3_MISC_OPERATIONS_FOR_INTS(svec3, int16_t)
-VKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(usvec3, uint16_t)
-VKM_VEC3_MISC_OPERATIONS_FOR_INTS(ivec3, int32_t)
-VKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(uvec3, uint32_t)
-VKM_VEC3_MISC_OPERATIONS_FOR_INTS(lvec3, int64_t)
-VKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ulvec3, uint64_t)
-VKM_VEC3_MISC_OPERATIONS(vec3, float)
-VKM_VEC3_MISC_OPERATIONS(dvec3, double)
+CVKM_VEC3_MISC_OPERATIONS_FOR_INTS(bvec3, int8_t)
+CVKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ubvec3, uint8_t)
+CVKM_VEC3_MISC_OPERATIONS_FOR_INTS(svec3, int16_t)
+CVKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(usvec3, uint16_t)
+CVKM_VEC3_MISC_OPERATIONS_FOR_INTS(ivec3, int32_t)
+CVKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(uvec3, uint32_t)
+CVKM_VEC3_MISC_OPERATIONS_FOR_INTS(lvec3, int64_t)
+CVKM_VEC3_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ulvec3, uint64_t)
+CVKM_VEC3_MISC_OPERATIONS(vec3, float)
+CVKM_VEC3_MISC_OPERATIONS(dvec3, double)
 
-#define VKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
+#define CVKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
   const vkm_##vec_type* a,\
   const vkm_##vec_type* b\
 ) {\
@@ -530,14 +530,14 @@ static void vkm_##vec_type##_clear(vkm_##vec_type* vec) {\
   *vec = (vkm_##vec_type){ { (scalar_type)0, (scalar_type)0, (scalar_type)0, (scalar_type)0 } };\
 }
 
-#define VKM_VEC4_INVERT(vec_type) static void vkm_##vec_type##_invert(\
+#define CVKM_VEC4_INVERT(vec_type) static void vkm_##vec_type##_invert(\
   const vkm_##vec_type* vec,\
   vkm_##vec_type* result\
 ) {\
   *result = (vkm_##vec_type){ { -vec->x, -vec->y, -vec->z, -vec->w } };\
 }
 
-#define VKM_VEC4_NORMALIZE(vec_type, scalar_type) static void vkm_##vec_type##_normalize(\
+#define CVKM_VEC4_NORMALIZE(vec_type, scalar_type) static void vkm_##vec_type##_normalize(\
   const vkm_##vec_type* vec,\
   vkm_##vec_type* result\
 ) {\
@@ -547,24 +547,24 @@ static void vkm_##vec_type##_clear(vkm_##vec_type* vec) {\
   }\
 }
 
-#define VKM_VEC4_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
-  VKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type)\
-  VKM_VEC4_INVERT(vec_type)
+#define CVKM_VEC4_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
+  CVKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type)\
+  CVKM_VEC4_INVERT(vec_type)
 
-#define VKM_VEC4_MISC_OPERATIONS(vec_type, scalar_type)\
-  VKM_VEC4_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
-  VKM_VEC4_NORMALIZE(vec_type, scalar_type)
+#define CVKM_VEC4_MISC_OPERATIONS(vec_type, scalar_type)\
+  CVKM_VEC4_MISC_OPERATIONS_FOR_INTS(vec_type, scalar_type)\
+  CVKM_VEC4_NORMALIZE(vec_type, scalar_type)
 
-VKM_VEC4_MISC_OPERATIONS_FOR_INTS(bvec4, int8_t)
-VKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ubvec4, uint8_t)
-VKM_VEC4_MISC_OPERATIONS_FOR_INTS(svec4, int16_t)
-VKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(usvec4, uint16_t)
-VKM_VEC4_MISC_OPERATIONS_FOR_INTS(ivec4, int32_t)
-VKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(uvec4, uint32_t)
-VKM_VEC4_MISC_OPERATIONS_FOR_INTS(lvec4, int64_t)
-VKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ulvec4, uint64_t)
-VKM_VEC4_MISC_OPERATIONS(vec4, float)
-VKM_VEC4_MISC_OPERATIONS(dvec4, double)
+CVKM_VEC4_MISC_OPERATIONS_FOR_INTS(bvec4, int8_t)
+CVKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ubvec4, uint8_t)
+CVKM_VEC4_MISC_OPERATIONS_FOR_INTS(svec4, int16_t)
+CVKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(usvec4, uint16_t)
+CVKM_VEC4_MISC_OPERATIONS_FOR_INTS(ivec4, int32_t)
+CVKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(uvec4, uint32_t)
+CVKM_VEC4_MISC_OPERATIONS_FOR_INTS(lvec4, int64_t)
+CVKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ulvec4, uint64_t)
+CVKM_VEC4_MISC_OPERATIONS(vec4, float)
+CVKM_VEC4_MISC_OPERATIONS(dvec4, double)
 
 #define vkm_dot(a, b) _Generic((a),\
   vkm_bvec2*: vkm_bvec2_dot,\
@@ -831,77 +831,77 @@ VKM_VEC4_MISC_OPERATIONS(dvec4, double)
   vkm_dvec4*: vkm_dvec4_invert\
 )((vec), (result))
 
-#define VKM_VEC2_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
+#define CVKM_VEC2_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
 const vkm_##type* a,\
 const vkm_##type* b\
 ) {\
   return a->x operator b->x && a->y operator b->y;\
 }
 
-#define VKM_VEC2_LOGICAL_OPERATIONS(type) VKM_VEC2_LOGICAL_OPERATION(type, eq, ==)\
-VKM_VEC2_LOGICAL_OPERATION(type, lt, <)\
-VKM_VEC2_LOGICAL_OPERATION(type, gt, >)\
-VKM_VEC2_LOGICAL_OPERATION(type, le, <=)\
-VKM_VEC2_LOGICAL_OPERATION(type, ge, >=)
+#define CVKM_VEC2_LOGICAL_OPERATIONS(type) CVKM_VEC2_LOGICAL_OPERATION(type, eq, ==)\
+CVKM_VEC2_LOGICAL_OPERATION(type, lt, <)\
+CVKM_VEC2_LOGICAL_OPERATION(type, gt, >)\
+CVKM_VEC2_LOGICAL_OPERATION(type, le, <=)\
+CVKM_VEC2_LOGICAL_OPERATION(type, ge, >=)
 
-VKM_VEC2_LOGICAL_OPERATIONS(bvec2)
-VKM_VEC2_LOGICAL_OPERATIONS(ubvec2)
-VKM_VEC2_LOGICAL_OPERATIONS(svec2)
-VKM_VEC2_LOGICAL_OPERATIONS(usvec2)
-VKM_VEC2_LOGICAL_OPERATIONS(ivec2)
-VKM_VEC2_LOGICAL_OPERATIONS(uvec2)
-VKM_VEC2_LOGICAL_OPERATIONS(lvec2)
-VKM_VEC2_LOGICAL_OPERATIONS(ulvec2)
-VKM_VEC2_LOGICAL_OPERATIONS(vec2)
-VKM_VEC2_LOGICAL_OPERATIONS(dvec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(bvec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(ubvec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(svec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(usvec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(ivec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(uvec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(lvec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(ulvec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(vec2)
+CVKM_VEC2_LOGICAL_OPERATIONS(dvec2)
 
-#define VKM_VEC3_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
+#define CVKM_VEC3_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
   const vkm_##type* a,\
   const vkm_##type* b\
 ) {\
   return a->x operator b->x && a->y operator b->y && a->z operator b->z;\
 }
 
-#define VKM_VEC3_LOGICAL_OPERATIONS(type) VKM_VEC3_LOGICAL_OPERATION(type, eq, ==)\
-  VKM_VEC3_LOGICAL_OPERATION(type, lt, <)\
-  VKM_VEC3_LOGICAL_OPERATION(type, gt, >)\
-  VKM_VEC3_LOGICAL_OPERATION(type, le, <=)\
-  VKM_VEC3_LOGICAL_OPERATION(type, ge, >=)
+#define CVKM_VEC3_LOGICAL_OPERATIONS(type) CVKM_VEC3_LOGICAL_OPERATION(type, eq, ==)\
+  CVKM_VEC3_LOGICAL_OPERATION(type, lt, <)\
+  CVKM_VEC3_LOGICAL_OPERATION(type, gt, >)\
+  CVKM_VEC3_LOGICAL_OPERATION(type, le, <=)\
+  CVKM_VEC3_LOGICAL_OPERATION(type, ge, >=)
 
-VKM_VEC3_LOGICAL_OPERATIONS(bvec3)
-VKM_VEC3_LOGICAL_OPERATIONS(ubvec3)
-VKM_VEC3_LOGICAL_OPERATIONS(svec3)
-VKM_VEC3_LOGICAL_OPERATIONS(usvec3)
-VKM_VEC3_LOGICAL_OPERATIONS(ivec3)
-VKM_VEC3_LOGICAL_OPERATIONS(uvec3)
-VKM_VEC3_LOGICAL_OPERATIONS(lvec3)
-VKM_VEC3_LOGICAL_OPERATIONS(ulvec3)
-VKM_VEC3_LOGICAL_OPERATIONS(vec3)
-VKM_VEC3_LOGICAL_OPERATIONS(dvec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(bvec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(ubvec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(svec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(usvec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(ivec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(uvec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(lvec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(ulvec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(vec3)
+CVKM_VEC3_LOGICAL_OPERATIONS(dvec3)
 
-#define VKM_VEC4_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
+#define CVKM_VEC4_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
 const vkm_##type* a,\
 const vkm_##type* b\
 ) {\
   return a->x operator b->x && a->y operator b->y && a->z operator b->z && a->w operator b->w;\
 }
 
-#define VKM_VEC4_LOGICAL_OPERATIONS(type) VKM_VEC4_LOGICAL_OPERATION(type, eq, ==)\
-VKM_VEC4_LOGICAL_OPERATION(type, lt, <)\
-VKM_VEC4_LOGICAL_OPERATION(type, gt, >)\
-VKM_VEC4_LOGICAL_OPERATION(type, le, <=)\
-VKM_VEC4_LOGICAL_OPERATION(type, ge, >=)
+#define CVKM_VEC4_LOGICAL_OPERATIONS(type) CVKM_VEC4_LOGICAL_OPERATION(type, eq, ==)\
+CVKM_VEC4_LOGICAL_OPERATION(type, lt, <)\
+CVKM_VEC4_LOGICAL_OPERATION(type, gt, >)\
+CVKM_VEC4_LOGICAL_OPERATION(type, le, <=)\
+CVKM_VEC4_LOGICAL_OPERATION(type, ge, >=)
 
-VKM_VEC4_LOGICAL_OPERATIONS(bvec4)
-VKM_VEC4_LOGICAL_OPERATIONS(ubvec4)
-VKM_VEC4_LOGICAL_OPERATIONS(svec4)
-VKM_VEC4_LOGICAL_OPERATIONS(usvec4)
-VKM_VEC4_LOGICAL_OPERATIONS(ivec4)
-VKM_VEC4_LOGICAL_OPERATIONS(uvec4)
-VKM_VEC4_LOGICAL_OPERATIONS(lvec4)
-VKM_VEC4_LOGICAL_OPERATIONS(ulvec4)
-VKM_VEC4_LOGICAL_OPERATIONS(vec4)
-VKM_VEC4_LOGICAL_OPERATIONS(dvec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(bvec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(ubvec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(svec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(usvec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(ivec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(uvec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(lvec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(ulvec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(vec4)
+CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
 
 #define vkm_eq(a, b) _Generic((a),\
   vkm_bvec2*: vkm_bvec2_eq,\
@@ -1255,17 +1255,17 @@ static void vkm_rotate(vkm_mat4* matrix, const float angle, const vkm_vec3* axis
   vkm_mat4_mul_rotation(matrix, &rotation, matrix);
 }
 
-#if !defined(LH_ZO) && !defined(LH_NO) && !defined(RH_ZO) && !defined(RH_NO)
-#define VKM_RH_ZO
+#if !defined(CVKM_LH_ZO) && !defined(CVKM_LH_NO) && !defined(CVKM_RH_ZO) && !defined(CVKM_RH_NO)
+#define CVKM_RH_ZO
 #endif
 
-#ifdef VKM_LH_ZO
+#ifdef CVKM_LH_ZO
 #define vkm_ortho vkm_ortho_lh_zo
-#elif defined(VKM_LH_NO)
+#elif defined(CVKM_LH_NO)
 #define vkm_ortho vkm_ortho_lh_no
-#elif defined(VKM_RH_ZO)
+#elif defined(CVKM_RH_ZO)
 #define vkm_ortho vkm_ortho_rh_zo
-#elif defined(VKM_RH_NO)
+#elif defined(CVKM_RH_NO)
 #define vkm_ortho vkm_ortho_rh_no
 #endif
 
@@ -1283,19 +1283,19 @@ typedef float Mass;
 typedef float Damping;
 typedef float GravityScale;
 
-#ifdef VKM_3D
+#ifdef CVKM_3D
 typedef Velocity3 Velocity;
 
-#ifdef VKM_DOUBLE_PRECISION
+#ifdef CVKM_DOUBLE_PRECISION
 typedef DoublePosition3 Position;
 #else
 typedef Position3 Position;
 #endif
 
-#elif VKM_4D
+#elif CVKM_4D
 typedef Velocity4 Velocity;
 
-#ifdef VKM_DOUBLE_PRECISION
+#ifdef CVKM_DOUBLE_PRECISION
 typedef DoublePosition4 Position;
 #else
 typedef Position4 Position;
@@ -1304,7 +1304,7 @@ typedef Position4 Position;
 #else
 typedef Velocity2 Velocity;
 
-#ifdef VKM_DOUBLE_PRECISION
+#ifdef CVKM_DOUBLE_PRECISION
 typedef DoublePosition2 Position;
 #else
 typedef Position2 Position;
@@ -1330,7 +1330,7 @@ extern ECS_COMPONENT_DECLARE(GravityScale);
 
 void cvkmImport(ecs_world_t* world);
 
-#ifdef VKM_FLECS_IMPLEMENTATION
+#ifdef CVKM_FLECS_IMPLEMENTATION
 ECS_COMPONENT_DECLARE(Position2);
 ECS_COMPONENT_DECLARE(Position3);
 ECS_COMPONENT_DECLARE(Position4);
@@ -1347,74 +1347,74 @@ ECS_COMPONENT_DECLARE(Mass);
 ECS_COMPONENT_DECLARE(Damping);
 ECS_COMPONENT_DECLARE(GravityScale);
 
-#define VKM_MEMBER(member, member_type, struct_type, unit_) {\
+#define CVKM_MEMBER(member, member_type, struct_type, unit_) {\
   .name = #member,\
   .type = ecs_id(member_type),\
   .offset = offsetof(struct_type, member),\
   .unit = unit_,\
 }
 
-#define VKM_VEC2_COMPONENT(struct_type, member_type, unit_) ECS_COMPONENT_DEFINE(world, struct_type);\
+#define CVKM_VEC2_COMPONENT(struct_type, member_type, unit_) ECS_COMPONENT_DEFINE(world, struct_type);\
   ecs_struct(\
     world,\
     {\
       .entity = ecs_id(struct_type),\
       .members = {\
-        VKM_MEMBER(x, member_type, struct_type, unit_),\
-        VKM_MEMBER(y, member_type, struct_type, unit_),\
+        CVKM_MEMBER(x, member_type, struct_type, unit_),\
+        CVKM_MEMBER(y, member_type, struct_type, unit_),\
       },\
     }\
   )
 
-#define VKM_VEC3_COMPONENT(struct_type, member_type, unit_) ECS_COMPONENT_DEFINE(world, struct_type);\
+#define CVKM_VEC3_COMPONENT(struct_type, member_type, unit_) ECS_COMPONENT_DEFINE(world, struct_type);\
   ecs_struct(\
     world,\
     {\
       .entity = ecs_id(struct_type),\
       .members = {\
-        VKM_MEMBER(x, member_type, struct_type, unit_),\
-        VKM_MEMBER(y, member_type, struct_type, unit_),\
-        VKM_MEMBER(z, member_type, struct_type, unit_),\
+        CVKM_MEMBER(x, member_type, struct_type, unit_),\
+        CVKM_MEMBER(y, member_type, struct_type, unit_),\
+        CVKM_MEMBER(z, member_type, struct_type, unit_),\
       },\
     }\
   )
 
-#define VKM_VEC4_COMPONENT(struct_type, member_type, unit_) ECS_COMPONENT_DEFINE(world, struct_type);\
+#define CVKM_VEC4_COMPONENT(struct_type, member_type, unit_) ECS_COMPONENT_DEFINE(world, struct_type);\
   ecs_struct(\
     world,\
     {\
       .entity = ecs_id(struct_type),\
       .members = {\
-        VKM_MEMBER(x, member_type, struct_type, unit_),\
-        VKM_MEMBER(y, member_type, struct_type, unit_),\
-        VKM_MEMBER(z, member_type, struct_type, unit_),\
-        VKM_MEMBER(w, member_type, struct_type, unit_),\
+        CVKM_MEMBER(x, member_type, struct_type, unit_),\
+        CVKM_MEMBER(y, member_type, struct_type, unit_),\
+        CVKM_MEMBER(z, member_type, struct_type, unit_),\
+        CVKM_MEMBER(w, member_type, struct_type, unit_),\
       },\
     }\
   )
 
-#define VKM_MAT4_COMPONENT(struct_type, member_type) ECS_COMPONENT_DEFINE(world, struct_type);\
+#define CVKM_MAT4_COMPONENT(struct_type, member_type) ECS_COMPONENT_DEFINE(world, struct_type);\
   ecs_struct(\
     world,\
     {\
       .entity = ecs_id(struct_type),\
       .members = {\
-        VKM_MEMBER(m00, member_type, struct_type, 0),\
-        VKM_MEMBER(m01, member_type, struct_type, 0),\
-        VKM_MEMBER(m02, member_type, struct_type, 0),\
-        VKM_MEMBER(m03, member_type, struct_type, 0),\
-        VKM_MEMBER(m10, member_type, struct_type, 0),\
-        VKM_MEMBER(m11, member_type, struct_type, 0),\
-        VKM_MEMBER(m12, member_type, struct_type, 0),\
-        VKM_MEMBER(m13, member_type, struct_type, 0),\
-        VKM_MEMBER(m20, member_type, struct_type, 0),\
-        VKM_MEMBER(m21, member_type, struct_type, 0),\
-        VKM_MEMBER(m22, member_type, struct_type, 0),\
-        VKM_MEMBER(m23, member_type, struct_type, 0),\
-        VKM_MEMBER(m30, member_type, struct_type, 0),\
-        VKM_MEMBER(m31, member_type, struct_type, 0),\
-        VKM_MEMBER(m32, member_type, struct_type, 0),\
-        VKM_MEMBER(m33, member_type, struct_type, 0),\
+        CVKM_MEMBER(m00, member_type, struct_type, 0),\
+        CVKM_MEMBER(m01, member_type, struct_type, 0),\
+        CVKM_MEMBER(m02, member_type, struct_type, 0),\
+        CVKM_MEMBER(m03, member_type, struct_type, 0),\
+        CVKM_MEMBER(m10, member_type, struct_type, 0),\
+        CVKM_MEMBER(m11, member_type, struct_type, 0),\
+        CVKM_MEMBER(m12, member_type, struct_type, 0),\
+        CVKM_MEMBER(m13, member_type, struct_type, 0),\
+        CVKM_MEMBER(m20, member_type, struct_type, 0),\
+        CVKM_MEMBER(m21, member_type, struct_type, 0),\
+        CVKM_MEMBER(m22, member_type, struct_type, 0),\
+        CVKM_MEMBER(m23, member_type, struct_type, 0),\
+        CVKM_MEMBER(m30, member_type, struct_type, 0),\
+        CVKM_MEMBER(m31, member_type, struct_type, 0),\
+        CVKM_MEMBER(m32, member_type, struct_type, 0),\
+        CVKM_MEMBER(m33, member_type, struct_type, 0),\
       },\
     }\
   )
@@ -1424,16 +1424,16 @@ void cvkmImport(ecs_world_t* world) {
 
   ECS_IMPORT(world, FlecsUnits);
 
-  VKM_VEC2_COMPONENT(Position2, ecs_f32_t, EcsMeters);
-  VKM_VEC3_COMPONENT(Position3, ecs_f32_t, EcsMeters);
-  VKM_VEC3_COMPONENT(Position4, ecs_f32_t, EcsMeters);
-  VKM_VEC2_COMPONENT(DoublePosition2, ecs_f64_t, EcsMeters);
-  VKM_VEC3_COMPONENT(DoublePosition3, ecs_f64_t, EcsMeters);
-  VKM_VEC3_COMPONENT(DoublePosition4, ecs_f64_t, EcsMeters);
-  VKM_MAT4_COMPONENT(Transform, ecs_f32_t);
-  VKM_VEC2_COMPONENT(Velocity2, ecs_f32_t, EcsMetersPerSecond);
-  VKM_VEC2_COMPONENT(Velocity3, ecs_f32_t, EcsMetersPerSecond);
-  VKM_VEC2_COMPONENT(Velocity4, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC2_COMPONENT(Position2, ecs_f32_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(Position3, ecs_f32_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(Position4, ecs_f32_t, EcsMeters);
+  CVKM_VEC2_COMPONENT(DoublePosition2, ecs_f64_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(DoublePosition3, ecs_f64_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(DoublePosition4, ecs_f64_t, EcsMeters);
+  CVKM_MAT4_COMPONENT(Transform, ecs_f32_t);
+  CVKM_VEC2_COMPONENT(Velocity2, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC2_COMPONENT(Velocity3, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC2_COMPONENT(Velocity4, ecs_f32_t, EcsMetersPerSecond);
   ECS_COMPONENT_DEFINE(world, Mass);
   ecs_add_pair(world, ecs_id(Mass), EcsIsA, EcsKiloGrams);
   ECS_COMPONENT_DEFINE(world, Damping);
@@ -1441,37 +1441,37 @@ void cvkmImport(ecs_world_t* world) {
   ECS_COMPONENT_DEFINE(world, GravityScale);
   ecs_primitive(world, { .entity = ecs_id(GravityScale), .kind = EcsF32 });
 
-#ifdef VKM_3D
-  VKM_VEC3_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
+#ifdef CVKM_3D
+  CVKM_VEC3_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
 
-#ifdef VKM_DOUBLE_PRECISION
-  VKM_VEC3_COMPONENT(Position, ecs_f64_t, EcsMeters);
+#ifdef CVKM_DOUBLE_PRECISION
+  CVKM_VEC3_COMPONENT(Position, ecs_f64_t, EcsMeters);
 #else
-  VKM_VEC3_COMPONENT(Position, ecs_f32_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(Position, ecs_f32_t, EcsMeters);
 #endif
 
-#elif VKM_4D
-  VKM_VEC4_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
+#elif CVKM_4D
+  CVKM_VEC4_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
 
-#ifdef VKM_DOUBLE_PRECISION
-  VKM_VEC4_COMPONENT(Position, ecs_f64_t, EcsMeters);
+#ifdef CVKM_DOUBLE_PRECISION
+  CVKM_VEC4_COMPONENT(Position, ecs_f64_t, EcsMeters);
 #else
-  VKM_VEC4_COMPONENT(Position, ecs_f32_t, EcsMeters);
+  CVKM_VEC4_COMPONENT(Position, ecs_f32_t, EcsMeters);
 #endif
 
 #else
-  VKM_VEC2_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC2_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
 
-#ifdef VKM_DOUBLE_PRECISION
-  VKM_VEC2_COMPONENT(Position, ecs_f64_t, EcsMeters);
+#ifdef CVKM_DOUBLE_PRECISION
+  CVKM_VEC2_COMPONENT(Position, ecs_f64_t, EcsMeters);
 #else
-  VKM_VEC2_COMPONENT(Position, ecs_f32_t, EcsMeters);
+  CVKM_VEC2_COMPONENT(Position, ecs_f32_t, EcsMeters);
 #endif
 
 #endif
 }
 
-#undef VKM_FLECS_IMPLEMENTATION
+#undef CVKM_FLECS_IMPLEMENTATION
 #endif
 
 IGNORE_WARNINGS_END

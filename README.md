@@ -63,21 +63,21 @@ vectors and/or scalars, the `const` ones are inputs while the non-const ones are
 ## [Flecs](https://www.flecs.dev/flecs/) module
 
 This library provides the `cvkm` module, providing components useful for graphics and physics (but not the systems
-themselves). Define `VKM_ENABLE_FLECS` project-wide, define `VKM_FLECS_IMPLEMENTATION` in **one** `.c` file before
+themselves). Define `CVKM_ENABLE_FLECS` project-wide, define `CVKM_FLECS_IMPLEMENTATION` in **one** `.c` file before
 including `cvkm.h`, then you can do `ECS_IMPORT(world, cvkm);`
 
-| Component         | Equivalent                                                                         |
-|-------------------|------------------------------------------------------------------------------------|
-| `Position2`       | `vkm_vec2`                                                                         |
-| `Position3`       | `vkm_vec3`                                                                         |
-| `DoublePosition2` | `vkm_dvec2`                                                                        |
-| `DoublePosition3` | `vkm_dvec3`                                                                        |
-| `Position`        | `Position2` by default. Define `VKM_3D` and `VKM_DOUBLE_PRECISION` to change this. |
-| `Velocity2`       | `vkm_vec2`                                                                         |
-| `Velocity3`       | `vkm_vec3`                                                                         |
-| `Velocity`        | `vkm_vec2`                                                                         |
-| `Mass`            | `float`                                                                            |
-| `Damping`         | `float`                                                                            |
+| Component         | Equivalent                                                                           |
+|-------------------|--------------------------------------------------------------------------------------|
+| `Position2`       | `vkm_vec2`                                                                           |
+| `Position3`       | `vkm_vec3`                                                                           |
+| `DoublePosition2` | `vkm_dvec2`                                                                          |
+| `DoublePosition3` | `vkm_dvec3`                                                                          |
+| `Position`        | `Position2` by default. Define `CVKM_3D` and `CVKM_DOUBLE_PRECISION` to change this. |
+| `Velocity2`       | `vkm_vec2`                                                                           |
+| `Velocity3`       | `vkm_vec3`                                                                           |
+| `Velocity`        | `vkm_vec2`                                                                           |
+| `Mass`            | `float`                                                                              |
+| `Damping`         | `float`                                                                              |
 
 ## Testing
 Do a standard CMake build to build the tests. CTest is supported.
