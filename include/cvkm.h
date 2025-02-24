@@ -1256,7 +1256,7 @@ static void vkm_rotate(vkm_mat4* matrix, const float angle, const vkm_vec3* axis
 }
 
 #if !defined(LH_ZO) && !defined(LH_NO) && !defined(RH_ZO) && !defined(RH_NO)
-#define VKM_RH_NO
+#define VKM_RH_ZO
 #endif
 
 #ifdef VKM_LH_ZO
