@@ -1312,6 +1312,7 @@ typedef Position2 Position;
 
 #endif
 
+#ifdef CVKM_ENABLE_FLECS
 extern ECS_COMPONENT_DECLARE(Position2);
 extern ECS_COMPONENT_DECLARE(Position3);
 extern ECS_COMPONENT_DECLARE(Position4);
@@ -1472,6 +1473,7 @@ void cvkmImport(ecs_world_t* world) {
 }
 
 #undef CVKM_FLECS_IMPLEMENTATION
+#endif
 #endif
 
 IGNORE_WARNINGS_END
