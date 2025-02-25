@@ -105,7 +105,43 @@ VKM_DEFINE_VEC4(d, double);
   *result = (vkm_##type){ { a->x operator b->x, a->y operator b->y } };\
 }
 
-#define VKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
+#define CVKM_VEC2_MULADD_OPERATIONS(type, scalar_type) static void vkm_##type##_muladd(\
+  const vkm_##type* a,\
+  const vkm_##type* b,\
+  vkm_##type* result\
+) {\
+  result->x += a->x * b->x;\
+  result->y += a->y * b->y;\
+}\
+\
+static void vkm_##type##_muladd_scalar(\
+  const vkm_##type* vector,\
+  const scalar_type scalar,\
+  vkm_##type* result\
+) {\
+  result->x += vector->x * scalar;\
+  result->y += vector->y * scalar;\
+}
+
+#define CVKM_VEC2_MULADD_OPERATIONS(type, scalar_type) static void vkm_##type##_muladd(\
+  const vkm_##type* a,\
+  const vkm_##type* b,\
+  vkm_##type* result\
+) {\
+  result->x += a->x * b->x;\
+  result->y += a->y * b->y;\
+}\
+\
+static void vkm_##type##_muladd_scalar(\
+  const vkm_##type* vector,\
+  const scalar_type scalar,\
+  vkm_##type* result\
+) {\
+  result->x += vector->x * scalar;\
+  result->y += vector->y * scalar;\
+}
+
+#define CVKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
 static void vkm_##vec_type##_##operation##_scalar(\
   const vkm_##vec_type* vec,\
   const scalar_type scalar,\
@@ -114,12 +150,13 @@ static void vkm_##vec_type##_##operation##_scalar(\
   *result = (vkm_##vec_type){ { vec->x operator scalar, vec->y operator scalar } };\
 }
 
-#define VKM_VEC2_ALL_OPERATIONS(vec_type, scalar_type) VKM_VEC2_OPERATION(vec_type, add, +)\
-  VKM_VEC2_OPERATION(vec_type, sub, -)\
-  VKM_VEC2_OPERATION(vec_type, mul, *)\
-  VKM_VEC2_OPERATION(vec_type, div, /)\
-  VKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
-  VKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, div, /)
+#define CVKM_VEC2_ALL_OPERATIONS(vec_type, scalar_type) CVKM_VEC2_OPERATION(vec_type, add, +)\
+  CVKM_VEC2_OPERATION(vec_type, sub, -)\
+  CVKM_VEC2_OPERATION(vec_type, mul, *)\
+  CVKM_VEC2_OPERATION(vec_type, div, /)\
+  CVKM_VEC2_MULADD_OPERATIONS(vec_type, scalar_type)\
+  CVKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
+  CVKM_VEC2_SCALAR_OPERATION(vec_type, scalar_type, div, /)
 
 VKM_VEC2_ALL_OPERATIONS(bvec2, int8_t)
 VKM_VEC2_ALL_OPERATIONS(ubvec2, uint8_t)
@@ -140,7 +177,27 @@ VKM_VEC2_ALL_OPERATIONS(dvec2, double)
   *result = (vkm_##type){ { a->x operator b->x, a->y operator b->y, a->z operator b->z } };\
 }
 
-#define VKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
+#define CVKM_VEC3_MULADD_OPERATIONS(type, scalar_type) static void vkm_##type##_muladd(\
+  const vkm_##type* a,\
+  const vkm_##type* b,\
+  vkm_##type* result\
+) {\
+  result->x += a->x * b->x;\
+  result->y += a->y * b->y;\
+  result->z += a->z * b->z;\
+}\
+\
+static void vkm_##type##_muladd_scalar(\
+  const vkm_##type* vector,\
+  const scalar_type scalar,\
+  vkm_##type* result\
+) {\
+  result->x += vector->x * scalar;\
+  result->y += vector->y * scalar;\
+  result->z += vector->z * scalar;\
+}
+
+#define CVKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
 static void vkm_##vec_type##_##operation##_scalar(\
   const vkm_##vec_type* vec,\
   const scalar_type scalar,\
@@ -149,12 +206,13 @@ static void vkm_##vec_type##_##operation##_scalar(\
   *result = (vkm_##vec_type){ { vec->x operator scalar, vec->y operator scalar, vec->z operator scalar } };\
 }
 
-#define VKM_VEC3_ALL_OPERATIONS(vec_type, scalar_type) VKM_VEC3_OPERATION(vec_type, add, +)\
-  VKM_VEC3_OPERATION(vec_type, sub, -)\
-  VKM_VEC3_OPERATION(vec_type, mul, *)\
-  VKM_VEC3_OPERATION(vec_type, div, /)\
-  VKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
-  VKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, div, /)
+#define CVKM_VEC3_ALL_OPERATIONS(vec_type, scalar_type) CVKM_VEC3_OPERATION(vec_type, add, +)\
+  CVKM_VEC3_OPERATION(vec_type, sub, -)\
+  CVKM_VEC3_OPERATION(vec_type, mul, *)\
+  CVKM_VEC3_OPERATION(vec_type, div, /)\
+  CVKM_VEC3_MULADD_OPERATIONS(vec_type, scalar_type)\
+  CVKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
+  CVKM_VEC3_SCALAR_OPERATION(vec_type, scalar_type, div, /)
 
 VKM_VEC3_ALL_OPERATIONS(bvec3, int8_t)
 VKM_VEC3_ALL_OPERATIONS(ubvec3, uint8_t)
@@ -175,7 +233,29 @@ VKM_VEC3_ALL_OPERATIONS(dvec3, double)
   *result = (vkm_##type){ { a->x operator b->x, a->y operator b->y, a->z operator b->z, a->w operator b->w } };\
 }
 
-#define VKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
+#define CVKM_VEC4_MULADD_OPERATIONS(type, scalar_type) static void vkm_##type##_muladd(\
+  const vkm_##type* a,\
+  const vkm_##type* b,\
+  vkm_##type* result\
+) {\
+  result->x += a->x * b->x;\
+  result->y += a->y * b->y;\
+  result->z += a->z * b->z;\
+  result->w += a->w * b->w;\
+}\
+\
+static void vkm_##type##_muladd_scalar(\
+  const vkm_##type* vector,\
+  const scalar_type scalar,\
+  vkm_##type* result\
+) {\
+  result->x += vector->x * scalar;\
+  result->y += vector->y * scalar;\
+  result->z += vector->z * scalar;\
+  result->w += vector->w * scalar;\
+}
+
+#define CVKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, operation, operator)\
 static void vkm_##vec_type##_##operation##_scalar(\
   const vkm_##vec_type* vec,\
   const scalar_type scalar,\
@@ -189,12 +269,13 @@ static void vkm_##vec_type##_##operation##_scalar(\
   } };\
 }
 
-#define VKM_VEC4_ALL_OPERATIONS(vec_type, scalar_type) VKM_VEC4_OPERATION(vec_type, add, +)\
-  VKM_VEC4_OPERATION(vec_type, sub, -)\
-  VKM_VEC4_OPERATION(vec_type, mul, *)\
-  VKM_VEC4_OPERATION(vec_type, div, /)\
-  VKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
-  VKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, div, /)
+#define CVKM_VEC4_ALL_OPERATIONS(vec_type, scalar_type) CVKM_VEC4_OPERATION(vec_type, add, +)\
+  CVKM_VEC4_OPERATION(vec_type, sub, -)\
+  CVKM_VEC4_OPERATION(vec_type, mul, *)\
+  CVKM_VEC4_OPERATION(vec_type, div, /)\
+  CVKM_VEC4_MULADD_OPERATIONS(vec_type, scalar_type)\
+  CVKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, mul, *)\
+  CVKM_VEC4_SCALAR_OPERATION(vec_type, scalar_type, div, /)
 
 VKM_VEC4_ALL_OPERATIONS(bvec4, int8_t)
 VKM_VEC4_ALL_OPERATIONS(ubvec4, uint8_t)
@@ -273,79 +354,128 @@ VKM_VEC4_ALL_OPERATIONS(dvec4, double)
   vkm_dvec4*: vkm_dvec4_sub\
 )((a), (b), (result))
 
-#define VKM_MUL_DIV_OPERATIONS(vec_type, scalar_type, operation, b) vkm_##vec_type*: _Generic((b),\
-  vkm_##vec_type*: vkm_##vec_type##_##operation,\
-  scalar_type: vkm_##vec_type##_##operation##_scalar,\
+#define CVKM_MUL_DIV_OPERATIONS(vec_type, scalar_type, operation, a, b, result) vkm_##vec_type*: _Generic((b),\
+  vkm_##vec_type*: vkm_##vec_type##_##operation((a), (b), (result)),\
+  scalar_type: vkm_##vec_type##_##operation##_scalar((a), (b), (result)),\
   default: ((void)0)\
 )\
 
-#define vkm_mul(a, b, result) _Generic((a),\
-  VKM_MUL_DIV_OPERATIONS(bvec2, int8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec2, uint8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(svec2, int16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec2, uint16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec2, int32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec2, uint32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec2, int64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec2, uint64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(vec2, float, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec2, double, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(bvec3, int8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec3, uint8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(svec3, int16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec3, uint16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec3, int32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec3, uint32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec3, int64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(vec3, float, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec3, double, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(bvec4, int8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec4, uint8_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(svec4, int16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec4, uint16_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec4, int32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec4, uint32_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec4, int64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec4, uint64_t, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(vec4, float, mul, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec4, double, mul, b)\
+#define vkm_mul(a, b, result) _Generic((result),\
+  CVKM_MUL_DIV_OPERATIONS(bvec2, int8_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec2, uint8_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(svec2, int16_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(usvec2, uint16_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ivec2, int32_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(uvec2, uint32_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(lvec2, int64_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec2, uint64_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(vec2, float, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(dvec2, double, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(bvec3, int8_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec3, uint8_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(svec3, int16_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(usvec3, uint16_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ivec3, int32_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(uvec3, uint32_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(lvec3, int64_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(vec3, float, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(dvec3, double, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(bvec4, int8_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ubvec4, uint8_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(svec4, int16_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(usvec4, uint16_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ivec4, int32_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(uvec4, uint32_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(lvec4, int64_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(ulvec4, uint64_t, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(vec4, float, mul, a, b, result),\
+  CVKM_MUL_DIV_OPERATIONS(dvec4, double, mul, a, b, result),\
+  vkm_mat4*: _Generic((b),\
+    vkm_mat4*: vkm_mat4_mul((a), (b), (result)),\
+    default: ((void)0)\
+  )\
+)
+
+//#define CVKM_MULADD_OPERATIONS(vector_type, scalar_type, b) vkm_##vector_type*: _Generic((b),\
+//  vkm_##vector_type*: vkm_##vector_type##_muladd,\
+//  scalar_type: vkm_##vector_type##_muladd_scalar,\
+//  default: ((void)0)\
+//)
+
+#define vkm_muladd(a, b, result) _Generic((result),\
+  /*CVKM_MULADD_OPERATIONS(bvec2, int8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ubvec2, uint8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(svec2, int16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(usvec2, uint16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ivec2, int32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(uvec2, uint32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(lvec2, int64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ulvec2, uint64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(vec2, float, b),*/\
+  /*CVKM_MULADD_OPERATIONS(dvec2, double, b),*/\
+  /*CVKM_MULADD_OPERATIONS(bvec3, int8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ubvec3, uint8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(svec3, int16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(usvec3, uint16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ivec3, int32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(uvec3, uint32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(lvec3, int64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ulvec3, uint64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(vec3, float, b),*/\
+  /*CVKM_MULADD_OPERATIONS(dvec3, double, b),*/\
+  /*CVKM_MULADD_OPERATIONS(bvec4, int8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ubvec4, uint8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(svec4, int16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(usvec4, uint16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ivec4, int32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(uvec4, uint32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(lvec4, int64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ulvec4, uint64_t, b),*/\
+  CVKM_MULADD_OPERATIONS(vec4, float, b),\
+  CVKM_MULADD_OPERATIONS(dvec4, double, b)\
 )((a), (b), (result))
 
-#define vkm_div(a, b, result) _Generic((a),\
-  VKM_MUL_DIV_OPERATIONS(bvec2, int8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec2, uint8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(svec2, int16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec2, uint16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec2, int32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec2, uint32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec2, int64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec2, uint64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(vec2, float, div, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec2, double, div, b),\
-  VKM_MUL_DIV_OPERATIONS(bvec3, int8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec3, uint8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(svec3, int16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec3, uint16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec3, int32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec3, uint32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec3, int64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec3, uint64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(vec3, float, div, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec3, double, div, b),\
-  VKM_MUL_DIV_OPERATIONS(bvec4, int8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ubvec4, uint8_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(svec4, int16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(usvec4, uint16_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ivec4, int32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(uvec4, uint32_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(lvec4, int64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(ulvec4, uint64_t, div, b),\
-  VKM_MUL_DIV_OPERATIONS(vec4, float, div, b),\
-  VKM_MUL_DIV_OPERATIONS(dvec4, double, div, b)\
+//#define CVKM_MULADD_OPERATIONS(vector_type, scalar_type, b) vkm_##vector_type*: _Generic((b),\
+//  vkm_##vector_type*: vkm_##vector_type##_muladd,\
+//  scalar_type: vkm_##vector_type##_muladd_scalar,\
+//  default: ((void)0)\
+//)
+
+#define vkm_muladd(a, b, result) _Generic((result),\
+  /*CVKM_MULADD_OPERATIONS(bvec2, int8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ubvec2, uint8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(svec2, int16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(usvec2, uint16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ivec2, int32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(uvec2, uint32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(lvec2, int64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ulvec2, uint64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(vec2, float, b),*/\
+  /*CVKM_MULADD_OPERATIONS(dvec2, double, b),*/\
+  /*CVKM_MULADD_OPERATIONS(bvec3, int8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ubvec3, uint8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(svec3, int16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(usvec3, uint16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ivec3, int32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(uvec3, uint32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(lvec3, int64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ulvec3, uint64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(vec3, float, b),*/\
+  /*CVKM_MULADD_OPERATIONS(dvec3, double, b),*/\
+  /*CVKM_MULADD_OPERATIONS(bvec4, int8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ubvec4, uint8_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(svec4, int16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(usvec4, uint16_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ivec4, int32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(uvec4, uint32_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(lvec4, int64_t, b),*/\
+  /*CVKM_MULADD_OPERATIONS(ulvec4, uint64_t, b),*/\
+  CVKM_MULADD_OPERATIONS(vec4, float, b),\
+  CVKM_MULADD_OPERATIONS(dvec4, double, b)\
 )((a), (b), (result))
 
-#define VKM_SQRT(type, suffix) static type vkm_sqrt##suffix(const type x) {\
+#define CVKM_SQRT(type, suffix) static type vkm_sqrt##suffix(const type x) {\
   return (type)sqrt((double)x);\
 }
 
@@ -955,6 +1085,213 @@ VKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   vkm_vec4*: vkm_vec4_ge,\
   vkm_dvec4*: vkm_dvec4_ge\
 )((a), (b))
+
+static void vkm_mat4_ortho_lh_zo(
+  const float left,
+  const float right,
+  const float bottom,
+  const float top,
+  const float near_z,
+  const float far_z,
+  vkm_mat4* result
+) {
+  const float x_reciprocal = 1.0f / (right - left);
+  const float y_reciprocal = 1.0f / (top - bottom);
+  const float z_reciprocal = 1.0f / (far_z - near_z);
+
+  // @formatter:off
+  *result = (vkm_mat4){ .raw = {
+    2.0f * x_reciprocal,            0.0f,                           0.0f,                   0.0f,
+    0.0f,                           2.0f * y_reciprocal,            0.0f,                   0.0f,
+    0.0f,                           0.0f,                           z_reciprocal,           0.0f,
+    -(right + left) * x_reciprocal, -(top + bottom) * y_reciprocal, near_z * -z_reciprocal, 1.0f,
+  }};
+  // @formatter:on
+}
+
+static void vkm_ortho_lh_no(
+  const float left,
+  const float right,
+  const float bottom,
+  const float top,
+  const float near_z,
+  const float far_z,
+  vkm_mat4* result
+) {
+  const float x_reciprocal = 1.0f / (right - left);
+  const float y_reciprocal = 1.0f / (top - bottom);
+  const float z_reciprocal = 1.0f / (far_z - near_z);
+
+  // @formatter:off
+  *result = (vkm_mat4){ .raw = {
+    2.0f * x_reciprocal,            0.0f,                           0.0f,                             0.0f,
+    0.0f,                           2.0f * y_reciprocal,            0.0f,                             0.0f,
+    0.0f,                           0.0f,                           2.0f * z_reciprocal,              0.0f,
+    -(right + left) * x_reciprocal, -(top + bottom) * y_reciprocal, (far_z + near_z) * -z_reciprocal, 1.0f,
+  }};
+  // @formatter:on
+}
+
+static void vkm_ortho_rh_zo(
+  const float left,
+  const float right,
+  const float bottom,
+  const float top,
+  const float near_z,
+  const float far_z,
+  vkm_mat4* result
+) {
+  const float x_reciprocal = 1.0f / (right - left);
+  const float y_reciprocal = 1.0f / (top - bottom);
+  const float z_reciprocal = -1.0f / (far_z - near_z);
+
+  // @formatter:off
+  *result = (vkm_mat4){ .raw = {
+    2.0f * x_reciprocal,            0.0f,                           0.0f,                  0.0f,
+    0.0f,                           2.0f * y_reciprocal,            0.0f,                  0.0f,
+    0.0f,                           0.0f,                           z_reciprocal,          0.0f,
+    -(right + left) * x_reciprocal, -(top + bottom) * y_reciprocal, near_z * z_reciprocal, 1.0f,
+  }};
+  // @formatter:on
+}
+
+static void vkm_ortho_rh_no(
+  const float left,
+  const float right,
+  const float bottom,
+  const float top,
+  const float near_z,
+  const float far_z,
+  vkm_mat4* result
+) {
+  const float x_reciprocal = 1.0f / (right - left);
+  const float y_reciprocal = 1.0f / (top - bottom);
+  const float z_reciprocal = -1.0f / (far_z - near_z);
+
+  // @formatter:off
+  *result = (vkm_mat4){ .raw = {
+    2.0f * x_reciprocal,            0.0f,                           0.0f,                            0.0f,
+    0.0f,                           2.0f * y_reciprocal,            0.0f,                            0.0f,
+    0.0f,                           0.0f,                           2.0f * z_reciprocal,             0.0f,
+    -(right + left) * x_reciprocal, -(top + bottom) * y_reciprocal, (far_z + near_z) * z_reciprocal, 1.0f,
+  }};
+  // @formatter:on
+}
+
+static void vkm_mat4_mul(const vkm_mat4* a, const vkm_mat4* b, vkm_mat4* result) {
+  result->m00 = a->m00 * b->m00 + a->m10 * b->m01 + a->m20 * b->m02 + a->m30 * b->m03;
+  result->m01 = a->m01 * b->m00 + a->m11 * b->m01 + a->m21 * b->m02 + a->m31 * b->m03;
+  result->m02 = a->m02 * b->m00 + a->m12 * b->m01 + a->m22 * b->m02 + a->m32 * b->m03;
+  result->m03 = a->m03 * b->m00 + a->m13 * b->m01 + a->m23 * b->m02 + a->m33 * b->m03;
+
+  result->m10 = a->m00 * b->m10 + a->m10 * b->m11 + a->m20 * b->m12 + a->m30 * b->m13;
+  result->m11 = a->m01 * b->m10 + a->m11 * b->m11 + a->m21 * b->m12 + a->m31 * b->m13;
+  result->m12 = a->m02 * b->m10 + a->m12 * b->m11 + a->m22 * b->m12 + a->m32 * b->m13;
+  result->m13 = a->m03 * b->m10 + a->m13 * b->m11 + a->m23 * b->m12 + a->m33 * b->m13;
+
+  result->m20 = a->m00 * b->m20 + a->m10 * b->m21 + a->m20 * b->m22 + a->m30 * b->m23;
+  result->m21 = a->m01 * b->m20 + a->m11 * b->m21 + a->m21 * b->m22 + a->m31 * b->m23;
+  result->m22 = a->m02 * b->m20 + a->m12 * b->m21 + a->m22 * b->m22 + a->m32 * b->m23;
+  result->m23 = a->m03 * b->m20 + a->m13 * b->m21 + a->m23 * b->m22 + a->m33 * b->m23;
+
+  result->m30 = a->m00 * b->m30 + a->m10 * b->m31 + a->m20 * b->m32 + a->m30 * b->m33;
+  result->m31 = a->m01 * b->m30 + a->m11 * b->m31 + a->m21 * b->m32 + a->m31 * b->m33;
+  result->m32 = a->m02 * b->m30 + a->m12 * b->m31 + a->m22 * b->m32 + a->m32 * b->m33;
+  result->m33 = a->m03 * b->m30 + a->m13 * b->m31 + a->m23 * b->m32 + a->m33 * b->m33;
+}
+
+static void vkm_mat4_mul_transform(const vkm_mat4* a, const vkm_mat4* b, vkm_mat4* result) {
+  result->m00 = a->m00 * b->m00 + a->m10 * b->m01 + a->m20 * b->m02;
+  result->m01 = a->m01 * b->m00 + a->m11 * b->m01 + a->m21 * b->m02;
+  result->m02 = a->m02 * b->m00 + a->m12 * b->m01 + a->m22 * b->m02;
+  result->m03 = a->m03 * b->m00 + a->m13 * b->m01 + a->m23 * b->m02;
+
+  result->m10 = a->m00 * b->m10 + a->m10 * b->m11 + a->m20 * b->m12;
+  result->m11 = a->m01 * b->m10 + a->m11 * b->m11 + a->m21 * b->m12;
+  result->m12 = a->m02 * b->m10 + a->m12 * b->m11 + a->m22 * b->m12;
+  result->m13 = a->m03 * b->m10 + a->m13 * b->m11 + a->m23 * b->m12;
+
+  result->m20 = a->m00 * b->m20 + a->m10 * b->m21 + a->m20 * b->m22;
+  result->m21 = a->m01 * b->m20 + a->m11 * b->m21 + a->m21 * b->m22;
+  result->m22 = a->m02 * b->m20 + a->m12 * b->m21 + a->m22 * b->m22;
+  result->m23 = a->m03 * b->m20 + a->m13 * b->m21 + a->m23 * b->m22;
+
+  result->m30 = a->m00 * b->m30 + a->m10 * b->m31 + a->m20 * b->m32 + a->m30 * b->m33;
+  result->m31 = a->m01 * b->m30 + a->m11 * b->m31 + a->m21 * b->m32 + a->m31 * b->m33;
+  result->m32 = a->m02 * b->m30 + a->m12 * b->m31 + a->m22 * b->m32 + a->m32 * b->m33;
+  result->m33 = a->m03 * b->m30 + a->m13 * b->m31 + a->m23 * b->m32 + a->m33 * b->m33;
+}
+
+static void vkm_mat4_mul_rotation(const vkm_mat4* a, const vkm_mat4* b, vkm_mat4* result) {
+  result->m00 = a->m00 * b->m00 + a->m10 * b->m01 + a->m20 * b->m02;
+  result->m01 = a->m01 * b->m00 + a->m11 * b->m01 + a->m21 * b->m02;
+  result->m02 = a->m02 * b->m00 + a->m12 * b->m01 + a->m22 * b->m02;
+  result->m03 = a->m03 * b->m00 + a->m13 * b->m01 + a->m23 * b->m02;
+
+  result->m10 = a->m00 * b->m10 + a->m10 * b->m11 + a->m20 * b->m12;
+  result->m11 = a->m01 * b->m10 + a->m11 * b->m11 + a->m21 * b->m12;
+  result->m12 = a->m02 * b->m10 + a->m12 * b->m11 + a->m22 * b->m12;
+  result->m13 = a->m03 * b->m10 + a->m13 * b->m11 + a->m23 * b->m12;
+
+  result->m20 = a->m00 * b->m20 + a->m10 * b->m21 + a->m20 * b->m22;
+  result->m21 = a->m01 * b->m20 + a->m11 * b->m21 + a->m21 * b->m22;
+  result->m22 = a->m02 * b->m20 + a->m12 * b->m21 + a->m22 * b->m22;
+  result->m23 = a->m03 * b->m20 + a->m13 * b->m21 + a->m23 * b->m22;
+
+  result->m30 = a->m30;
+  result->m31 = a->m31;
+  result->m32 = a->m32;
+  result->m33 = a->m33;
+}
+
+static void vkm_make_rotation(const float angle, const vkm_vec3* axis, vkm_mat4* result) {
+  vkm_vec3 axis_normalized = *axis;
+  vkm_normalize(axis, &axis_normalized);
+  const float cosine = cosf(angle);
+  vkm_vec3 vec_cosine, vec_sine;
+
+  vkm_mul(&axis_normalized, 1.0f - cosine, &vec_cosine);
+  vkm_mul(&axis_normalized, sinf(angle), &vec_sine);
+
+  vkm_mul(&axis_normalized, vec_cosine.x, (vkm_vec3*)result->columns->raw);
+  vkm_mul(&axis_normalized, vec_cosine.y, (vkm_vec3*)(result->columns->raw + 1));
+  vkm_mul(&axis_normalized, vec_cosine.z, (vkm_vec3*)(result->columns->raw + 2));
+
+  // @formatter:off
+  result->m00 += cosine;     result->m10 -= vec_sine.z; result->m20 += vec_sine.y;
+  result->m01 += vec_sine.z; result->m11 += cosine;     result->m21 -= vec_sine.x;
+  result->m02 -= vec_sine.y; result->m12 += vec_sine.x; result->m22 += cosine;
+
+  result->m03 = result->m13 = result->m23 = result->m30 = result->m31 = result->m32 = 0.0f;
+  result->m33 = 1.0f;
+  // @formatter:on
+}
+
+static void vkm_translate(vkm_mat4* matrix, const vkm_vec3* translation) {
+  vkm_muladd(matrix->columns, translation->x, matrix->columns + 3);
+  vkm_muladd(matrix->columns + 1, translation->y, matrix->columns + 3);
+  vkm_muladd(matrix->columns + 2, translation->z, matrix->columns + 3);
+}
+
+static void vkm_rotate(vkm_mat4* matrix, const float angle, const vkm_vec3* axis) {
+  vkm_mat4 rotation;
+  vkm_make_rotation(angle, axis, &rotation);
+  vkm_mat4_mul_rotation(matrix, &rotation, matrix);
+}
+
+#if !defined(CVKM_LH_ZO) && !defined(CVKM_LH_NO) && !defined(CVKM_RH_ZO) && !defined(CVKM_RH_NO)
+#define CVKM_RH_ZO
+#endif
+
+#ifdef CVKM_LH_ZO
+#define vkm_ortho vkm_ortho_lh_zo
+#elif defined(CVKM_LH_NO)
+#define vkm_ortho vkm_ortho_lh_no
+#elif defined(CVKM_RH_ZO)
+#define vkm_ortho vkm_ortho_rh_zo
+#elif defined(CVKM_RH_NO)
+#define vkm_ortho vkm_ortho_rh_no
+#endif
 
 typedef vkm_vec2 Position2;
 typedef vkm_vec3 Position3;
