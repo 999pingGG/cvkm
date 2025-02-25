@@ -235,6 +235,22 @@ CVKM_VEC3_LOGICAL_OPERATION_TEST_ALL(ulvec3, uint64_t)
 CVKM_VEC3_LOGICAL_OPERATION_TEST_ALL(vec3, float)
 CVKM_VEC3_LOGICAL_OPERATION_TEST_ALL(dvec3, double)
 
+static MunitResult translate(const MunitParameter* params, void* userdata) {
+  (void)params;
+  (void)userdata;
+
+  RANDOM_VEC3(vkm_vec3, float, 1);
+
+  vkm_mat4 transform = CVKM_MAT4_IDENTITY;
+  vkm_translate(&transform, &vec1);
+
+  munit_assert_float(transform.raw[12], ==, x1);
+  munit_assert_float(transform.raw[13], ==, y1);
+  munit_assert_float(transform.raw[14], ==, z1);
+
+  return MUNIT_OK;
+}
+
 static void Simulate(ecs_iter_t* it) {
   Position* positions = ecs_field(it, Position, 0);
   Velocity* velocities = ecs_field(it, Velocity, 1);
@@ -392,6 +408,14 @@ int main(const int argc, char* const* argv) {
   CVKM_VEC_TEST_SUITE_DECL(vec3);
   CVKM_VEC_TEST_SUITE_DECL(dvec3);
 
+  MunitTest mat4_tests[] = {
+    {
+      .name = "/translate",
+      .test = translate,
+    },
+    { 0 },
+  };
+
   MunitTest flecs_tests[] = {
     {
       .name = "/basic-system",
@@ -419,6 +443,7 @@ int main(const int argc, char* const* argv) {
     CVKM_VEC_TEST_SUITE(ulvec3),
     CVKM_VEC_TEST_SUITE(vec3),
     CVKM_VEC_TEST_SUITE(dvec3),
+    CVKM_VEC_TEST_SUITE(mat4),
     CVKM_VEC_TEST_SUITE(flecs),
     { 0 },
   };
