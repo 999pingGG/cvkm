@@ -1511,7 +1511,7 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   vkm_dvec4*: vkm_dvec4_ge\
 )((a), (b))
 
-static void vkm_ortho_lh_zo(
+static void vkm_orthogonal_lh_zo(
   const float left,
   const float right,
   const float bottom,
@@ -1534,7 +1534,7 @@ static void vkm_ortho_lh_zo(
   // @formatter:on
 }
 
-static void vkm_ortho_lh_no(
+static void vkm_orthogonal_lh_no(
   const float left,
   const float right,
   const float bottom,
@@ -1557,7 +1557,7 @@ static void vkm_ortho_lh_no(
   // @formatter:on
 }
 
-static void vkm_ortho_rh_zo(
+static void vkm_orthogonal_rh_zo(
   const float left,
   const float right,
   const float bottom,
@@ -1580,7 +1580,7 @@ static void vkm_ortho_rh_zo(
   // @formatter:on
 }
 
-static void vkm_ortho_rh_no(
+static void vkm_orthogonal_rh_no(
   const float left,
   const float right,
   const float bottom,
@@ -1604,13 +1604,99 @@ static void vkm_ortho_rh_no(
 }
 
 #ifdef CVKM_LH_ZO
-#define vkm_ortho vkm_ortho_lh_zo
+#define vkm_orthogonal vkm_orthogonal_lh_zo
 #elif defined(CVKM_LH_NO)
-#define vkm_ortho vkm_ortho_lh_no
+#define vkm_orthogonal vkm_orthogonal_lh_no
 #elif defined(CVKM_RH_ZO)
-#define vkm_ortho vkm_ortho_rh_zo
+#define vkm_orthogonal vkm_orthogonal_rh_zo
 #elif defined(CVKM_RH_NO)
-#define vkm_ortho vkm_ortho_rh_no
+#define vkm_orthogonal vkm_orthogonal_rh_no
+#endif
+
+static void vkm_perspective_lh_zo(
+  float field_of_view,
+  float aspect_ratio,
+  float near_plane,
+  float far_plane,
+  vkm_mat4* result
+) {
+  const float focal_length = 1.0f / vkm_tan(field_of_view * 0.5f);
+  const float depth_normalization_factor = 1.0f / (near_plane - far_plane);
+
+  *result = (vkm_mat4){
+    .m00 = focal_length / aspect_ratio,
+    .m11 = focal_length,
+    .m22 = -far_plane * depth_normalization_factor,
+    .m23 = 1.0f,
+    .m32 = near_plane * far_plane * depth_normalization_factor,
+  };
+}
+
+static void vkm_perspective_lh_no(
+  float field_of_view,
+  float aspect_ratio,
+  float near_plane,
+  float far_plane,
+  vkm_mat4* result
+) {
+  const float focal_length = 1.0f / vkm_tan(field_of_view * 0.5f);
+  const float depth_normalization_factor = 1.0f / (near_plane - far_plane);
+
+  *result = (vkm_mat4){
+    .m00 = focal_length / aspect_ratio,
+    .m11 = focal_length,
+    .m22 = -(near_plane + far_plane) * depth_normalization_factor,
+    .m23 = 1.0f,
+    .m32 = 2.0f * near_plane * far_plane * depth_normalization_factor,
+  };
+}
+
+static void vkm_perspective_rh_zo(
+  float field_of_view,
+  float aspect_ratio,
+  float near_plane,
+  float far_plane,
+  vkm_mat4* result
+) {
+  const float focal_length = 1.0f / vkm_tan(field_of_view * 0.5f);
+  const float depth_normalization_factor = 1.0f / (near_plane - far_plane);
+
+  *result = (vkm_mat4){
+    .m00 = focal_length / aspect_ratio,
+    .m11 = focal_length,
+    .m22 = far_plane * depth_normalization_factor,
+    .m23 = -1.0f,
+    .m32 = near_plane * far_plane * depth_normalization_factor,
+  };
+}
+
+static void vkm_perspective_rh_no(
+  float field_of_view,
+  float aspect_ratio,
+  float near_plane,
+  float far_plane,
+  vkm_mat4* result
+) {
+  const float focal_length = 1.0f / vkm_tan(field_of_view * 0.5f);
+  const float depth_normalization_factor = 1.0f / (near_plane - far_plane);
+
+  *result = (vkm_mat4){
+    .m00 = focal_length / aspect_ratio,
+    .m11 = focal_length,
+    .m22 = (near_plane + far_plane) * depth_normalization_factor,
+    .m23 = -1.0f,
+    .m32 = 2.0f * near_plane * far_plane * depth_normalization_factor,
+  };
+}
+
+#ifdef CVKM_LH_ZO
+#define vkm_perspective vkm_perspective_lh_zo
+#elif defined(CVKM_LH_NO)
+#define vkm_perspective vkm_perspective_lh_no
+#elif defined(CVKM_RH_ZO)
+#define vkm_perspective vkm_perspective_rh_zo
+#elif defined(CVKM_RH_NO)
+#define vkm_perspective vkm_perspective_rh_no
 #endif
 
 static void vkm_mat4_mul(const vkm_mat4* a, const vkm_mat4* b, vkm_mat4* result) {
