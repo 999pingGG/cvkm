@@ -1849,61 +1849,61 @@ static void vkm_quat_to_mat4(const vkm_versor* versor, vkm_mat4* result) {
   result->m03 = result->m13 = result->m23 = result->m30 = result->m31 = result->m32 = result->m33 = 1.0f;
 }
 
-typedef vkm_vec2 Position2;
-typedef vkm_vec3 Position3;
-typedef vkm_vec4 Position4;
-typedef vkm_dvec2 DoublePosition2;
-typedef vkm_dvec3 DoublePosition3;
-typedef vkm_dvec4 DoublePosition4;
+typedef vkm_vec2 Position2D;
+typedef vkm_vec3 Position3D;
+typedef vkm_vec4 Position4D;
+typedef vkm_dvec2 DoublePosition2D;
+typedef vkm_dvec3 DoublePosition3D;
+typedef vkm_dvec4 DoublePosition4D;
 typedef vkm_mat4 Transform;
-typedef vkm_vec2 Velocity2;
-typedef vkm_vec3 Velocity3;
-typedef vkm_vec4 Velocity4;
+typedef vkm_vec2 Velocity2D;
+typedef vkm_vec3 Velocity3D;
+typedef vkm_vec4 Velocity4D;
 typedef float Mass;
 typedef float Damping;
 typedef float GravityScale;
 
 #ifdef CVKM_3D
-typedef Velocity3 Velocity;
+typedef Velocity3D Velocity;
 
 #ifdef CVKM_DOUBLE_PRECISION
-typedef DoublePosition3 Position;
+typedef DoublePosition3D Position;
 #else
-typedef Position3 Position;
+typedef Position3D Position;
 #endif
 
 #elif CVKM_4D
-typedef Velocity4 Velocity;
+typedef Velocity4D Velocity;
 
 #ifdef CVKM_DOUBLE_PRECISION
-typedef DoublePosition4 Position;
+typedef DoublePosition4D Position;
 #else
-typedef Position4 Position;
+typedef Position4D Position;
 #endif
 
 #else
-typedef Velocity2 Velocity;
+typedef Velocity2D Velocity;
 
 #ifdef CVKM_DOUBLE_PRECISION
-typedef DoublePosition2 Position;
+typedef DoublePosition2D Position;
 #else
-typedef Position2 Position;
+typedef Position2D Position;
 #endif
 
 #endif
 
 #ifdef CVKM_ENABLE_FLECS
-extern ECS_COMPONENT_DECLARE(Position2);
-extern ECS_COMPONENT_DECLARE(Position3);
-extern ECS_COMPONENT_DECLARE(Position4);
-extern ECS_COMPONENT_DECLARE(DoublePosition2);
-extern ECS_COMPONENT_DECLARE(DoublePosition3);
-extern ECS_COMPONENT_DECLARE(DoublePosition4);
+extern ECS_COMPONENT_DECLARE(Position2D);
+extern ECS_COMPONENT_DECLARE(Position3D);
+extern ECS_COMPONENT_DECLARE(Position4D);
+extern ECS_COMPONENT_DECLARE(DoublePosition2D);
+extern ECS_COMPONENT_DECLARE(DoublePosition3D);
+extern ECS_COMPONENT_DECLARE(DoublePosition4D);
 extern ECS_COMPONENT_DECLARE(Position);
 extern ECS_COMPONENT_DECLARE(Transform);
-extern ECS_COMPONENT_DECLARE(Velocity2);
-extern ECS_COMPONENT_DECLARE(Velocity3);
-extern ECS_COMPONENT_DECLARE(Velocity4);
+extern ECS_COMPONENT_DECLARE(Velocity2D);
+extern ECS_COMPONENT_DECLARE(Velocity3D);
+extern ECS_COMPONENT_DECLARE(Velocity4D);
 extern ECS_COMPONENT_DECLARE(Velocity);
 extern ECS_COMPONENT_DECLARE(Mass);
 extern ECS_COMPONENT_DECLARE(Damping);
@@ -1912,17 +1912,17 @@ extern ECS_COMPONENT_DECLARE(GravityScale);
 void cvkmImport(ecs_world_t* world);
 
 #ifdef CVKM_FLECS_IMPLEMENTATION
-ECS_COMPONENT_DECLARE(Position2);
-ECS_COMPONENT_DECLARE(Position3);
-ECS_COMPONENT_DECLARE(Position4);
-ECS_COMPONENT_DECLARE(DoublePosition2);
-ECS_COMPONENT_DECLARE(DoublePosition3);
-ECS_COMPONENT_DECLARE(DoublePosition4);
+ECS_COMPONENT_DECLARE(Position2D);
+ECS_COMPONENT_DECLARE(Position3D);
+ECS_COMPONENT_DECLARE(Position4D);
+ECS_COMPONENT_DECLARE(DoublePosition2D);
+ECS_COMPONENT_DECLARE(DoublePosition3D);
+ECS_COMPONENT_DECLARE(DoublePosition4D);
 ECS_COMPONENT_DECLARE(Position);
 ECS_COMPONENT_DECLARE(Transform);
-ECS_COMPONENT_DECLARE(Velocity2);
-ECS_COMPONENT_DECLARE(Velocity3);
-ECS_COMPONENT_DECLARE(Velocity4);
+ECS_COMPONENT_DECLARE(Velocity2D);
+ECS_COMPONENT_DECLARE(Velocity3D);
+ECS_COMPONENT_DECLARE(Velocity4D);
 ECS_COMPONENT_DECLARE(Velocity);
 ECS_COMPONENT_DECLARE(Mass);
 ECS_COMPONENT_DECLARE(Damping);
@@ -2005,16 +2005,16 @@ void cvkmImport(ecs_world_t* world) {
 
   ECS_IMPORT(world, FlecsUnits);
 
-  CVKM_VEC2_COMPONENT(Position2, ecs_f32_t, EcsMeters);
-  CVKM_VEC3_COMPONENT(Position3, ecs_f32_t, EcsMeters);
-  CVKM_VEC3_COMPONENT(Position4, ecs_f32_t, EcsMeters);
-  CVKM_VEC2_COMPONENT(DoublePosition2, ecs_f64_t, EcsMeters);
-  CVKM_VEC3_COMPONENT(DoublePosition3, ecs_f64_t, EcsMeters);
-  CVKM_VEC3_COMPONENT(DoublePosition4, ecs_f64_t, EcsMeters);
+  CVKM_VEC2_COMPONENT(Position2D, ecs_f32_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(Position3D, ecs_f32_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(Position4D, ecs_f32_t, EcsMeters);
+  CVKM_VEC2_COMPONENT(DoublePosition2D, ecs_f64_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(DoublePosition3D, ecs_f64_t, EcsMeters);
+  CVKM_VEC3_COMPONENT(DoublePosition4D, ecs_f64_t, EcsMeters);
   CVKM_MAT4_COMPONENT(Transform, ecs_f32_t);
-  CVKM_VEC2_COMPONENT(Velocity2, ecs_f32_t, EcsMetersPerSecond);
-  CVKM_VEC2_COMPONENT(Velocity3, ecs_f32_t, EcsMetersPerSecond);
-  CVKM_VEC2_COMPONENT(Velocity4, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC2_COMPONENT(Velocity2D, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC2_COMPONENT(Velocity3D, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC2_COMPONENT(Velocity4D, ecs_f32_t, EcsMetersPerSecond);
   ECS_COMPONENT_DEFINE(world, Mass);
   ecs_add_pair(world, ecs_id(Mass), EcsIsA, EcsKiloGrams);
   ECS_COMPONENT_DEFINE(world, Damping);
