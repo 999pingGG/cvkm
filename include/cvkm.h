@@ -1863,35 +1863,6 @@ typedef float Mass;
 typedef float Damping;
 typedef float GravityScale;
 
-#ifdef CVKM_3D
-typedef Velocity3D Velocity;
-
-#ifdef CVKM_DOUBLE_PRECISION
-typedef DoublePosition3D Position;
-#else
-typedef Position3D Position;
-#endif
-
-#elif CVKM_4D
-typedef Velocity4D Velocity;
-
-#ifdef CVKM_DOUBLE_PRECISION
-typedef DoublePosition4D Position;
-#else
-typedef Position4D Position;
-#endif
-
-#else
-typedef Velocity2D Velocity;
-
-#ifdef CVKM_DOUBLE_PRECISION
-typedef DoublePosition2D Position;
-#else
-typedef Position2D Position;
-#endif
-
-#endif
-
 #ifdef CVKM_ENABLE_FLECS
 extern ECS_COMPONENT_DECLARE(Position2D);
 extern ECS_COMPONENT_DECLARE(Position3D);
@@ -1899,12 +1870,10 @@ extern ECS_COMPONENT_DECLARE(Position4D);
 extern ECS_COMPONENT_DECLARE(DoublePosition2D);
 extern ECS_COMPONENT_DECLARE(DoublePosition3D);
 extern ECS_COMPONENT_DECLARE(DoublePosition4D);
-extern ECS_COMPONENT_DECLARE(Position);
 extern ECS_COMPONENT_DECLARE(Transform);
 extern ECS_COMPONENT_DECLARE(Velocity2D);
 extern ECS_COMPONENT_DECLARE(Velocity3D);
 extern ECS_COMPONENT_DECLARE(Velocity4D);
-extern ECS_COMPONENT_DECLARE(Velocity);
 extern ECS_COMPONENT_DECLARE(Mass);
 extern ECS_COMPONENT_DECLARE(Damping);
 extern ECS_COMPONENT_DECLARE(GravityScale);
@@ -1918,15 +1887,41 @@ ECS_COMPONENT_DECLARE(Position4D);
 ECS_COMPONENT_DECLARE(DoublePosition2D);
 ECS_COMPONENT_DECLARE(DoublePosition3D);
 ECS_COMPONENT_DECLARE(DoublePosition4D);
-ECS_COMPONENT_DECLARE(Position);
 ECS_COMPONENT_DECLARE(Transform);
 ECS_COMPONENT_DECLARE(Velocity2D);
 ECS_COMPONENT_DECLARE(Velocity3D);
 ECS_COMPONENT_DECLARE(Velocity4D);
-ECS_COMPONENT_DECLARE(Velocity);
 ECS_COMPONENT_DECLARE(Mass);
 ECS_COMPONENT_DECLARE(Damping);
 ECS_COMPONENT_DECLARE(GravityScale);
+
+#define CVKM_SPAWN_ZERO_CTOR(type) static ECS_CTOR(type, ptr, {\
+  *ptr = (type){ 0 };\
+})
+
+#define CVKM_SPAWN_ONE_CTOR(type) static ECS_CTOR(type, ptr, {\
+  *ptr = (type){ 1 };\
+})
+
+CVKM_SPAWN_ZERO_CTOR(Position2D);
+CVKM_SPAWN_ZERO_CTOR(Position3D);
+CVKM_SPAWN_ZERO_CTOR(Position4D);
+CVKM_SPAWN_ZERO_CTOR(DoublePosition2D);
+CVKM_SPAWN_ZERO_CTOR(DoublePosition3D);
+CVKM_SPAWN_ZERO_CTOR(DoublePosition4D);
+CVKM_SPAWN_ZERO_CTOR(Velocity2D);
+CVKM_SPAWN_ZERO_CTOR(Velocity3D);
+CVKM_SPAWN_ZERO_CTOR(Velocity4D);
+CVKM_SPAWN_ONE_CTOR(Mass);
+CVKM_SPAWN_ONE_CTOR(GravityScale);
+
+ECS_CTOR(Transform, ptr, {
+  *ptr = CVKM_MAT4_IDENTITY;
+})
+
+ECS_CTOR(Damping, ptr, {
+  *ptr = 0.995f;
+})
 
 #define CVKM_MEMBER(member, member_type, struct_type, unit_) {\
   .name = #member,\
@@ -2022,34 +2017,19 @@ void cvkmImport(ecs_world_t* world) {
   ECS_COMPONENT_DEFINE(world, GravityScale);
   ecs_primitive(world, { .entity = ecs_id(GravityScale), .kind = EcsF32 });
 
-#ifdef CVKM_3D
-  CVKM_VEC3_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
-
-#ifdef CVKM_DOUBLE_PRECISION
-  CVKM_VEC3_COMPONENT(Position, ecs_f64_t, EcsMeters);
-#else
-  CVKM_VEC3_COMPONENT(Position, ecs_f32_t, EcsMeters);
-#endif
-
-#elif CVKM_4D
-  CVKM_VEC4_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
-
-#ifdef CVKM_DOUBLE_PRECISION
-  CVKM_VEC4_COMPONENT(Position, ecs_f64_t, EcsMeters);
-#else
-  CVKM_VEC4_COMPONENT(Position, ecs_f32_t, EcsMeters);
-#endif
-
-#else
-  CVKM_VEC2_COMPONENT(Velocity, ecs_f32_t, EcsMetersPerSecond);
-
-#ifdef CVKM_DOUBLE_PRECISION
-  CVKM_VEC2_COMPONENT(Position, ecs_f64_t, EcsMeters);
-#else
-  CVKM_VEC2_COMPONENT(Position, ecs_f32_t, EcsMeters);
-#endif
-
-#endif
+  ecs_set_hooks(world, Position2D, { .ctor = ecs_ctor(Position2D) });
+  ecs_set_hooks(world, Position3D, { .ctor = ecs_ctor(Position3D) });
+  ecs_set_hooks(world, Position4D, { .ctor = ecs_ctor(Position4D) });
+  ecs_set_hooks(world, DoublePosition2D, { .ctor = ecs_ctor(DoublePosition2D) });
+  ecs_set_hooks(world, DoublePosition3D, { .ctor = ecs_ctor(DoublePosition3D) });
+  ecs_set_hooks(world, DoublePosition4D, { .ctor = ecs_ctor(DoublePosition4D) });
+  ecs_set_hooks(world, Transform, { .ctor = ecs_ctor(Transform) });
+  ecs_set_hooks(world, Velocity2D, { .ctor = ecs_ctor(Velocity2D) });
+  ecs_set_hooks(world, Velocity3D, { .ctor = ecs_ctor(Velocity3D) });
+  ecs_set_hooks(world, Velocity4D, { .ctor = ecs_ctor(Velocity4D) });
+  ecs_set_hooks(world, Mass, { .ctor = ecs_ctor(Mass) });
+  ecs_set_hooks(world, Damping, { .ctor = ecs_ctor(Damping) });
+  ecs_set_hooks(world, GravityScale, { .ctor = ecs_ctor(GravityScale) });
 }
 
 #undef CVKM_FLECS_IMPLEMENTATION
