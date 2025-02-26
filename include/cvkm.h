@@ -327,6 +327,11 @@ CVKM_DEFINE_VEC4(ul, uint64_t);
 CVKM_DEFINE_VEC4(, float);
 CVKM_DEFINE_VEC4(d, double);
 
+typedef vkm_vec4 vkm_versor;
+typedef vkm_vec4 vkm_quat;
+
+#define CVKM_QUAT_IDENTITY ((vkm_quat){ { 0.0f, 0.0f, 0.0f, 1.0f } })
+
 typedef union vkm_mat4 {
   vkm_vec4 columns[4];
   struct {
@@ -1598,6 +1603,16 @@ static void vkm_ortho_rh_no(
   // @formatter:on
 }
 
+#ifdef CVKM_LH_ZO
+#define vkm_ortho vkm_ortho_lh_zo
+#elif defined(CVKM_LH_NO)
+#define vkm_ortho vkm_ortho_lh_no
+#elif defined(CVKM_RH_ZO)
+#define vkm_ortho vkm_ortho_rh_zo
+#elif defined(CVKM_RH_NO)
+#define vkm_ortho vkm_ortho_rh_no
+#endif
+
 static void vkm_mat4_mul(const vkm_mat4* a, const vkm_mat4* b, vkm_mat4* result) {
   result->m00 = a->m00 * b->m00 + a->m10 * b->m01 + a->m20 * b->m02 + a->m30 * b->m03;
   result->m01 = a->m01 * b->m00 + a->m11 * b->m01 + a->m21 * b->m02 + a->m31 * b->m03;
@@ -1717,15 +1732,36 @@ static void vkm_scale(vkm_mat4* matrix, const vkm_vec3* vector) {
   vkm_mul(matrix->columns + 2, vector->y, matrix->columns + 2);
 }
 
-#ifdef CVKM_LH_ZO
-#define vkm_ortho vkm_ortho_lh_zo
-#elif defined(CVKM_LH_NO)
-#define vkm_ortho vkm_ortho_lh_no
-#elif defined(CVKM_RH_ZO)
-#define vkm_ortho vkm_ortho_rh_zo
-#elif defined(CVKM_RH_NO)
-#define vkm_ortho vkm_ortho_rh_no
-#endif
+static void vkm_quat_to_mat4(const vkm_versor* versor, vkm_mat4* result) {
+  float scale_factor = vkm_vec4_magnitude(versor);
+  scale_factor = scale_factor > 0.0f ? 2.0f / scale_factor : 0.0f;
+
+  const float xx = scale_factor * versor->x * versor->x;
+  const float yy = scale_factor * versor->y * versor->y;
+  const float zz = scale_factor * versor->z * versor->z;
+
+  const float xy = scale_factor * versor->x * versor->y;
+  const float yz = scale_factor * versor->y * versor->z;
+  const float xz = scale_factor * versor->x * versor->z;
+
+  const float wx = scale_factor * versor->w * versor->x;
+  const float wy = scale_factor * versor->w * versor->y;
+  const float wz = scale_factor * versor->w * versor->z;
+
+  result->m00 = 1.0f - yy - zz;
+  result->m11 = 1.0f - xx - zz;
+  result->m22 = 1.0f - xx - yy;
+
+  result->m01 = xy + wz;
+  result->m12 = yz + wx;
+  result->m20 = xz + wy;
+
+  result->m10 = xy - wz;
+  result->m21 = yz - wx;
+  result->m02 = xz - wy;
+
+  result->m03 = result->m13 = result->m23 = result->m30 = result->m31 = result->m32 = result->m33 = 1.0f;
+}
 
 typedef vkm_vec2 Position2;
 typedef vkm_vec3 Position3;
