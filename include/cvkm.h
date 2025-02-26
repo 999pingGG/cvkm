@@ -699,18 +699,114 @@ CVKM_VEC4_ALL_OPERATIONS(dvec4, double)
   CVKM_MULADD_OPERATIONS(dvec4, double, b)\
 )((a), (b), (result))
 
-#define CVKM_SQRT(type, suffix) static type vkm_sqrt##suffix(const type x) {\
-  return (type)sqrt((double)x);\
+#define CVKM_SCALAR_OPERATION(operation, type, suffix) static type vkm_##operation##suffix(const type x) {\
+  return (type)operation((double)x);\
 }
 
-CVKM_SQRT(int8_t, b)
-CVKM_SQRT(uint8_t, ub)
-CVKM_SQRT(int16_t, s)
-CVKM_SQRT(uint16_t, us)
-CVKM_SQRT(int32_t, i)
-CVKM_SQRT(uint32_t, ui)
-CVKM_SQRT(int64_t, l)
-CVKM_SQRT(uint64_t, ul)
+CVKM_SCALAR_OPERATION(sin, int8_t, b)
+CVKM_SCALAR_OPERATION(sin, uint8_t, ub)
+CVKM_SCALAR_OPERATION(sin, int16_t, s)
+CVKM_SCALAR_OPERATION(sin, uint16_t, us)
+CVKM_SCALAR_OPERATION(sin, int32_t, i)
+CVKM_SCALAR_OPERATION(sin, uint32_t, ui)
+CVKM_SCALAR_OPERATION(sin, int64_t, l)
+CVKM_SCALAR_OPERATION(sin, uint64_t, ul)
+
+CVKM_SCALAR_OPERATION(cos, int8_t, b)
+CVKM_SCALAR_OPERATION(cos, uint8_t, ub)
+CVKM_SCALAR_OPERATION(cos, int16_t, s)
+CVKM_SCALAR_OPERATION(cos, uint16_t, us)
+CVKM_SCALAR_OPERATION(cos, int32_t, i)
+CVKM_SCALAR_OPERATION(cos, uint32_t, ui)
+CVKM_SCALAR_OPERATION(cos, int64_t, l)
+CVKM_SCALAR_OPERATION(cos, uint64_t, ul)
+
+CVKM_SCALAR_OPERATION(tan, int8_t, b)
+CVKM_SCALAR_OPERATION(tan, uint8_t, ub)
+CVKM_SCALAR_OPERATION(tan, int16_t, s)
+CVKM_SCALAR_OPERATION(tan, uint16_t, us)
+CVKM_SCALAR_OPERATION(tan, int32_t, i)
+CVKM_SCALAR_OPERATION(tan, uint32_t, ui)
+CVKM_SCALAR_OPERATION(tan, int64_t, l)
+CVKM_SCALAR_OPERATION(tan, uint64_t, ul)
+
+CVKM_SCALAR_OPERATION(sqrt, int8_t, b)
+CVKM_SCALAR_OPERATION(sqrt, uint8_t, ub)
+CVKM_SCALAR_OPERATION(sqrt, int16_t, s)
+CVKM_SCALAR_OPERATION(sqrt, uint16_t, us)
+CVKM_SCALAR_OPERATION(sqrt, int32_t, i)
+CVKM_SCALAR_OPERATION(sqrt, uint32_t, ui)
+CVKM_SCALAR_OPERATION(sqrt, int64_t, l)
+CVKM_SCALAR_OPERATION(sqrt, uint64_t, ul)
+
+#define vkm_sin(x) _Generic((x),\
+  int8_t: vkm_sinb,\
+  uint8_t: vkm_sinub,\
+  int16_t: vkm_sins,\
+  uint16_t: vkm_sinus,\
+  int32_t: vkm_sini,\
+  uint32_t: vkm_sinui,\
+  int64_t: vkm_sinl,\
+  uint64_t: vkm_sinul,\
+  float: sinf,\
+  double: sin,\
+  const int8_t: vkm_sinb,\
+  const uint8_t: vkm_sinub,\
+  const int16_t: vkm_sins,\
+  const uint16_t: vkm_sinus,\
+  const int32_t: vkm_sini,\
+  const uint32_t: vkm_sinui,\
+  const int64_t: vkm_sinl,\
+  const uint64_t: vkm_sinul,\
+  const float: sinf,\
+  const double: sin\
+)(x)
+
+#define vkm_cos(x) _Generic((x),\
+  int8_t: vkm_cosb,\
+  uint8_t: vkm_cosub,\
+  int16_t: vkm_coss,\
+  uint16_t: vkm_cosus,\
+  int32_t: vkm_cosi,\
+  uint32_t: vkm_cosui,\
+  int64_t: vkm_cosl,\
+  uint64_t: vkm_cosul,\
+  float: cosf,\
+  double: cos,\
+  const int8_t: vkm_cosb,\
+  const uint8_t: vkm_cosub,\
+  const int16_t: vkm_coss,\
+  const uint16_t: vkm_cosus,\
+  const int32_t: vkm_cosi,\
+  const uint32_t: vkm_cosui,\
+  const int64_t: vkm_cosl,\
+  const uint64_t: vkm_cosul,\
+  const float: cosf,\
+  const double: cos\
+)(x)
+
+#define vkm_tan(x) _Generic((x),\
+  int8_t: vkm_tanb,\
+  uint8_t: vkm_tanub,\
+  int16_t: vkm_tans,\
+  uint16_t: vkm_tanus,\
+  int32_t: vkm_tani,\
+  uint32_t: vkm_tanui,\
+  int64_t: vkm_tanl,\
+  uint64_t: vkm_tanul,\
+  float: tanf,\
+  double: tan,\
+  const int8_t: vkm_tanb,\
+  const uint8_t: vkm_tanub,\
+  const int16_t: vkm_tans,\
+  const uint16_t: vkm_tanus,\
+  const int32_t: vkm_tani,\
+  const uint32_t: vkm_tanui,\
+  const int64_t: vkm_tanl,\
+  const uint64_t: vkm_tanul,\
+  const float: tanf,\
+  const double: tan\
+)(x)
 
 #define vkm_sqrt(x) _Generic((x),\
   int8_t: vkm_sqrtb,\
@@ -722,7 +818,17 @@ CVKM_SQRT(uint64_t, ul)
   int64_t: vkm_sqrtl,\
   uint64_t: vkm_sqrtul,\
   float: sqrtf,\
-  double: sqrt\
+  double: sqrt,\
+  const int8_t: vkm_sqrtb,\
+  const uint8_t: vkm_sqrtub,\
+  const int16_t: vkm_sqrts,\
+  const uint16_t: vkm_sqrtus,\
+  const int32_t: vkm_sqrti,\
+  const uint32_t: vkm_sqrtui,\
+  const int64_t: vkm_sqrtl,\
+  const uint64_t: vkm_sqrtul,\
+  const float: sqrtf,\
+  const double: sqrt\
 )(x)
 
 #define CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
@@ -1581,16 +1687,34 @@ static void vkm_make_rotation(const float angle, const vkm_vec3* axis, vkm_mat4*
   // @formatter:on
 }
 
-static void vkm_translate(vkm_mat4* matrix, const vkm_vec3* translation) {
+static void vkm_translate_vec2(vkm_mat4* matrix, const vkm_vec2* translation) {
+  vkm_muladd(matrix->columns, translation->x, matrix->columns + 3);
+  vkm_muladd(matrix->columns + 1, translation->y, matrix->columns + 3);
+}
+
+static void vkm_translate_vec3(vkm_mat4* matrix, const vkm_vec3* translation) {
   vkm_muladd(matrix->columns, translation->x, matrix->columns + 3);
   vkm_muladd(matrix->columns + 1, translation->y, matrix->columns + 3);
   vkm_muladd(matrix->columns + 2, translation->z, matrix->columns + 3);
 }
 
+#define vkm_translate(matrix, vector) _Generic((vector),\
+  vkm_vec2*: vkm_translate_vec2,\
+  const vkm_vec2*: vkm_translate_vec2,\
+  vkm_vec3*: vkm_translate_vec3,\
+  const vkm_vec3*: vkm_translate_vec3\
+)((matrix), (vector))
+
 static void vkm_rotate(vkm_mat4* matrix, const float angle, const vkm_vec3* axis) {
   vkm_mat4 rotation;
   vkm_make_rotation(angle, axis, &rotation);
   vkm_mat4_mul_rotation(matrix, &rotation, matrix);
+}
+
+static void vkm_scale(vkm_mat4* matrix, const vkm_vec3* vector) {
+  vkm_mul(matrix->columns, vector->x, matrix->columns);
+  vkm_mul(matrix->columns + 1, vector->y, matrix->columns + 1);
+  vkm_mul(matrix->columns + 2, vector->y, matrix->columns + 2);
 }
 
 #ifdef CVKM_LH_ZO
