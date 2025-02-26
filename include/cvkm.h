@@ -1506,7 +1506,7 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   vkm_dvec4*: vkm_dvec4_ge\
 )((a), (b))
 
-static void vkm_mat4_ortho_lh_zo(
+static void vkm_ortho_lh_zo(
   const float left,
   const float right,
   const float bottom,
