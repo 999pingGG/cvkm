@@ -252,14 +252,14 @@ static MunitResult translate(const MunitParameter* params, void* userdata) {
 }
 
 static void Simulate(ecs_iter_t* it) {
-  Position* positions = ecs_field(it, Position, 0);
-  Velocity* velocities = ecs_field(it, Velocity, 1);
+  Position2D* positions = ecs_field(it, Position2D, 0);
+  Velocity2D* velocities = ecs_field(it, Velocity2D, 1);
   //const Mass* masses = ecs_field(it, Mass, 2);
   const Damping* dampings = ecs_field(it, Damping, 3);
 
   for (int i = 0; i < it->count; i++) {
-    Position* position = positions + i;
-    Velocity* velocity = velocities + i;
+    Position2D* position = positions + i;
+    Velocity2D* velocity = velocities + i;
     const Damping* damping = dampings ? dampings + i : NULL;
 
     vkm_vec2 delta;
@@ -281,11 +281,11 @@ static MunitResult flecs(const MunitParameter* params, void* userdata) {
   for (int i = 0; i < 100; i++) {
     const ecs_entity_t entity = ecs_new(world);
 
-    ecs_set(world, entity, Position, {
+    ecs_set(world, entity, Position2D, {
       .x = (float)munit_rand_double() * 100.0f,
       .y = (float)munit_rand_double() * 100.0f,
     });
-    ecs_set(world, entity, Velocity, {
+    ecs_set(world, entity, Velocity2D, {
       .x = (float)munit_rand_double() * 10.0f,
       .y = (float)munit_rand_double() * 10.0f,
     });
@@ -315,8 +315,8 @@ static void* flecs_setup(const MunitParameter params[], void* user_data) {
   ECS_IMPORT(world, cvkm);
 
   ECS_SYSTEM(world, Simulate, EcsOnUpdate,
-    [inout] cvkm.Position,
-    [inout] cvkm.Velocity,
+    [inout] cvkm.Position2D,
+    [inout] cvkm.Velocity2D,
     [in] cvkm.Mass,
     [in] ?cvkm.Damping
   );
