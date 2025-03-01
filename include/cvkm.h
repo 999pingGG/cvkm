@@ -59,19 +59,15 @@
 #define CVKM_SQRT2_F ((float)CVKM_SQRT2)
 #define CVKM_SQRT1_2_F ((float)CVKM_SQRT1_2)
 
-#ifndef _MSC_VER
 #ifdef __clang__
-// Push twice and pop once at the end of the file. This restores the unused function warning but leaves the rest
-// suppressed, in order to avoid having user code throw the warning.
-#pragma GCC diagnostic push
-// This is ignored because in some macros using _Generic we list both const and non-const types. Some compilers (clang
-// and possibly others...?) throw a warning complaining about unreachable cases because qualifiers (const and others)
-// are discarded, so we just tell them to shut up, we use the same function in both variants anyway.
+// This is left ignored because in some macros using _Generic we list both const and non-const types. Some compilers
+// (clang and possibly others...?) throw a warning complaining about unreachable cases because qualifiers (const and
+// others) are discarded, so we just tell them to shut up, we use the same function in both variants anyway.
 #pragma GCC diagnostic ignored "-Wunreachable-code-generic-assoc"
 #endif
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
-#endif
 
 #define CVKM_DEFINE_VEC2(prefix, type) typedef union vkm_##prefix##vec2 {\
   struct {\
@@ -2205,7 +2201,5 @@ void cvkmImport(ecs_world_t* world) {
 #endif
 #endif
 
-#ifndef _MSC_VER
 #pragma GCC diagnostic pop
-#endif
 #endif
