@@ -778,6 +778,30 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   return (type)operation((double)a, (double)b);\
 }
 
+static float vkm_inverse_sqrtf(const float x) {
+  return 1.0f / sqrtf(x);
+}
+
+static double vkm_inverse_sqrtd(const double x) {
+  return 1.0 / sqrt(x);
+}
+
+#define CVKM_MIN_OPERATION(type, suffix) static type vkm_min##suffix(const type a, const type b) {\
+  return a < b ? a : b;\
+}
+
+#define CVKM_MAX_OPERATION(type, suffix) static type vkm_max##suffix(const type a, const type b) {\
+  return a > b ? a : b;\
+}
+
+#define CVKM_CLAMP_OPERATION(type, suffix) static type vkm_clamp##suffix(\
+  const type value,\
+  const type min,\
+  const type max\
+) {\
+  return vkm_min##suffix(vkm_max##suffix(value, min), max);\
+}\
+
 CVKM_SCALAR_OPERATION(sin, int8_t, b)
 CVKM_SCALAR_OPERATION(sin, uint8_t, ub)
 CVKM_SCALAR_OPERATION(sin, int16_t, s)
@@ -849,6 +873,48 @@ CVKM_SCALAR_OPERATION(sqrt, int32_t, i)
 CVKM_SCALAR_OPERATION(sqrt, uint32_t, ui)
 CVKM_SCALAR_OPERATION(sqrt, int64_t, l)
 CVKM_SCALAR_OPERATION(sqrt, uint64_t, ul)
+
+CVKM_TWO_SCALAR_OPERATION(pow, int8_t, b)
+CVKM_TWO_SCALAR_OPERATION(pow, uint8_t, ub)
+CVKM_TWO_SCALAR_OPERATION(pow, int16_t, s)
+CVKM_TWO_SCALAR_OPERATION(pow, uint16_t, us)
+CVKM_TWO_SCALAR_OPERATION(pow, int32_t, i)
+CVKM_TWO_SCALAR_OPERATION(pow, uint32_t, ui)
+CVKM_TWO_SCALAR_OPERATION(pow, int64_t, l)
+CVKM_TWO_SCALAR_OPERATION(pow, uint64_t, ul)
+
+CVKM_MIN_OPERATION(int8_t, b)
+CVKM_MIN_OPERATION(uint8_t, ub)
+CVKM_MIN_OPERATION(int16_t, s)
+CVKM_MIN_OPERATION(uint16_t, us)
+CVKM_MIN_OPERATION(int32_t, i)
+CVKM_MIN_OPERATION(uint32_t, ui)
+CVKM_MIN_OPERATION(int64_t, l)
+CVKM_MIN_OPERATION(uint64_t, ul)
+CVKM_MIN_OPERATION(float, f)
+CVKM_MIN_OPERATION(double,)
+
+CVKM_MAX_OPERATION(int8_t, b)
+CVKM_MAX_OPERATION(uint8_t, ub)
+CVKM_MAX_OPERATION(int16_t, s)
+CVKM_MAX_OPERATION(uint16_t, us)
+CVKM_MAX_OPERATION(int32_t, i)
+CVKM_MAX_OPERATION(uint32_t, ui)
+CVKM_MAX_OPERATION(int64_t, l)
+CVKM_MAX_OPERATION(uint64_t, ul)
+CVKM_MAX_OPERATION(float, f)
+CVKM_MAX_OPERATION(double,)
+
+CVKM_CLAMP_OPERATION(int8_t, b)
+CVKM_CLAMP_OPERATION(uint8_t, ub)
+CVKM_CLAMP_OPERATION(int16_t, s)
+CVKM_CLAMP_OPERATION(uint16_t, us)
+CVKM_CLAMP_OPERATION(int32_t, i)
+CVKM_CLAMP_OPERATION(uint32_t, ui)
+CVKM_CLAMP_OPERATION(int64_t, l)
+CVKM_CLAMP_OPERATION(uint64_t, ul)
+CVKM_CLAMP_OPERATION(float, f)
+CVKM_CLAMP_OPERATION(double, )
 
 #define vkm_sin(x) _Generic((x),\
   int8_t: vkm_sinb,\
@@ -1034,6 +1100,106 @@ CVKM_SCALAR_OPERATION(sqrt, uint64_t, ul)
   const double: sqrt\
 )(x)
 
+#define vkm_min(a, b) _Generic((a),\
+  int8_t: vkm_minb,\
+  uint8_t: vkm_minub,\
+  int16_t: vkm_mins,\
+  uint16_t: vkm_minus,\
+  int32_t: vkm_mini,\
+  uint32_t: vkm_minui,\
+  int64_t: vkm_minl,\
+  uint64_t: vkm_minul,\
+  float: vkm_minf,\
+  double: vkm_min,\
+  const int8_t: vkm_minb,\
+  const uint8_t: vkm_minub,\
+  const int16_t: vkm_mins,\
+  const uint16_t: vkm_minus,\
+  const int32_t: vkm_mini,\
+  const uint32_t: vkm_minui,\
+  const int64_t: vkm_minl,\
+  const uint64_t: vkm_minul,\
+  const float: vkm_minf,\
+  const double: vkm_min\
+)((a), (b))
+
+#define vkm_max(a, b) _Generic((a),\
+  int8_t: vkm_maxb,\
+  uint8_t: vkm_maxub,\
+  int16_t: vkm_maxs,\
+  uint16_t: vkm_maxus,\
+  int32_t: vkm_maxi,\
+  uint32_t: vkm_maxui,\
+  int64_t: vkm_maxl,\
+  uint64_t: vkm_maxul,\
+  float: vkm_maxf,\
+  double: vkm_max,\
+  const int8_t: vkm_maxb,\
+  const uint8_t: vkm_maxub,\
+  const int16_t: vkm_maxs,\
+  const uint16_t: vkm_maxus,\
+  const int32_t: vkm_maxi,\
+  const uint32_t: vkm_maxui,\
+  const int64_t: vkm_maxl,\
+  const uint64_t: vkm_maxul,\
+  const float: vkm_maxf,\
+  const double: vkm_max\
+)((a), (b))
+
+#define vkm_clamp(a, b) _Generic((a),\
+  int8_t: vkm_clampb,\
+  uint8_t: vkm_clampub,\
+  int16_t: vkm_clamps,\
+  uint16_t: vkm_clampus,\
+  int32_t: vkm_clampi,\
+  uint32_t: vkm_clampui,\
+  int64_t: vkm_clampl,\
+  uint64_t: vkm_clampul,\
+  float: vkm_clampf,\
+  double: vkm_clamp,\
+  const int8_t: vkm_clampb,\
+  const uint8_t: vkm_clampub,\
+  const int16_t: vkm_clamps,\
+  const uint16_t: vkm_clampus,\
+  const int32_t: vkm_clampi,\
+  const uint32_t: vkm_clampui,\
+  const int64_t: vkm_clampl,\
+  const uint64_t: vkm_clampul,\
+  const float: vkm_clampf,\
+  const double: vkm_clamp\
+)((a), (b))
+
+#define CVKM_CONSTEXPR_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define CVKM_CONSTEXPR_MAX(a, b) ((a) > (b) ? (a) : (b))
+
+#define vkm_inverse_sqrt(x) _Generic((x),\
+  float: vkm_inverse_sqrtf,\
+  double: vkm_inverse_sqrtd\
+)(x)
+
+#define vkm_pow(x, y) _Generic((x),\
+  int8_t: vkm_powb,\
+  uint8_t: vkm_powub,\
+  int16_t: vkm_pows,\
+  uint16_t: vkm_powus,\
+  int32_t: vkm_powi,\
+  uint32_t: vkm_powui,\
+  int64_t: vkm_powl,\
+  uint64_t: vkm_powul,\
+  float: powf,\
+  double: pow,\
+  const int8_t: vkm_powb,\
+  const uint8_t: vkm_powub,\
+  const int16_t: vkm_pows,\
+  const uint16_t: vkm_powus,\
+  const int32_t: vkm_powi,\
+  const uint32_t: vkm_powui,\
+  const int64_t: vkm_powl,\
+  const uint64_t: vkm_powul,\
+  const float: powf,\
+  const double: pow\
+)((x), (y))
+
 #define CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
   const vkm_##vec_type* a,\
   const vkm_##vec_type* b\
@@ -1207,6 +1373,10 @@ CVKM_VEC4_MISC_OPERATIONS_FOR_UNSIGNED_INTS(ulvec4, uint64_t)
 CVKM_VEC4_MISC_OPERATIONS(vec4, float)
 CVKM_VEC4_MISC_OPERATIONS(dvec4, double)
 
+static float vkm_quat_sqr_magnitude(const vkm_quat* quaternion) {
+  return vkm_vec4_sqr_magnitude((const vkm_vec4*)quaternion);
+}
+
 static float vkm_quat_magnitude(const vkm_quat* quaternion) {
   return vkm_vec4_magnitude((const vkm_vec4*)quaternion);
 }
@@ -1347,7 +1517,9 @@ static float vkm_quat_magnitude(const vkm_quat* quaternion) {
   vkm_vec4*: vkm_vec4_sqr_magnitude,\
   const vkm_vec4*: vkm_vec4_sqr_magnitude,\
   vkm_dvec4*: vkm_dvec4_sqr_magnitude,\
-  const vkm_dvec4*: vkm_dvec4_sqr_magnitude\
+  const vkm_dvec4*: vkm_dvec4_sqr_magnitude,\
+  vkm_quat*: vkm_quat_sqr_magnitude,\
+  const vkm_quat*: vkm_quat_sqr_magnitude\
 )(vec)
 
 #define vkm_magnitude(vec) _Generic((vec),\
@@ -1580,7 +1752,37 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   vkm_lvec4*: vkm_lvec4_eq,\
   vkm_ulvec4*: vkm_ulvec4_eq,\
   vkm_vec4*: vkm_vec4_eq,\
-  vkm_dvec4*: vkm_dvec4_eq\
+  vkm_dvec4*: vkm_dvec4_eq,\
+  const vkm_bvec2*: vkm_bvec2_eq,\
+  const vkm_ubvec2*: vkm_ubvec2_eq,\
+  const vkm_svec2*: vkm_svec2_eq,\
+  const vkm_usvec2*: vkm_usvec2_eq,\
+  const vkm_ivec2*: vkm_ivec2_eq,\
+  const vkm_uvec2*: vkm_uvec2_eq,\
+  const vkm_lvec2*: vkm_lvec2_eq,\
+  const vkm_ulvec2*: vkm_ulvec2_eq,\
+  const vkm_vec2*: vkm_vec2_eq,\
+  const vkm_dvec2*: vkm_dvec2_eq,\
+  const vkm_bvec3*: vkm_bvec3_eq,\
+  const vkm_ubvec3*: vkm_ubvec3_eq,\
+  const vkm_svec3*: vkm_svec3_eq,\
+  const vkm_usvec3*: vkm_usvec3_eq,\
+  const vkm_ivec3*: vkm_ivec3_eq,\
+  const vkm_uvec3*: vkm_uvec3_eq,\
+  const vkm_lvec3*: vkm_lvec3_eq,\
+  const vkm_ulvec3*: vkm_ulvec3_eq,\
+  const vkm_vec3*: vkm_vec3_eq,\
+  const vkm_dvec3*: vkm_dvec3_eq,\
+  const vkm_bvec4*: vkm_bvec4_eq,\
+  const vkm_ubvec4*: vkm_ubvec4_eq,\
+  const vkm_svec4*: vkm_svec4_eq,\
+  const vkm_usvec4*: vkm_usvec4_eq,\
+  const vkm_ivec4*: vkm_ivec4_eq,\
+  const vkm_uvec4*: vkm_uvec4_eq,\
+  const vkm_lvec4*: vkm_lvec4_eq,\
+  const vkm_ulvec4*: vkm_ulvec4_eq,\
+  const vkm_vec4*: vkm_vec4_eq,\
+  const vkm_dvec4*: vkm_dvec4_eq\
 )((a), (b))
 
 #define vkm_lt(a, b) _Generic((a),\
@@ -1613,7 +1815,37 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   vkm_lvec4*: vkm_lvec4_lt,\
   vkm_ulvec4*: vkm_ulvec4_lt,\
   vkm_vec4*: vkm_vec4_lt,\
-  vkm_dvec4*: vkm_dvec4_lt\
+  vkm_dvec4*: vkm_dvec4_lt,\
+  const vkm_bvec2*: vkm_bvec2_lt,\
+  const vkm_ubvec2*: vkm_ubvec2_lt,\
+  const vkm_svec2*: vkm_svec2_lt,\
+  const vkm_usvec2*: vkm_usvec2_lt,\
+  const vkm_ivec2*: vkm_ivec2_lt,\
+  const vkm_uvec2*: vkm_uvec2_lt,\
+  const vkm_lvec2*: vkm_lvec2_lt,\
+  const vkm_ulvec2*: vkm_ulvec2_lt,\
+  const vkm_vec2*: vkm_vec2_lt,\
+  const vkm_dvec2*: vkm_dvec2_lt,\
+  const vkm_bvec3*: vkm_bvec3_lt,\
+  const vkm_ubvec3*: vkm_ubvec3_lt,\
+  const vkm_svec3*: vkm_svec3_lt,\
+  const vkm_usvec3*: vkm_usvec3_lt,\
+  const vkm_ivec3*: vkm_ivec3_lt,\
+  const vkm_uvec3*: vkm_uvec3_lt,\
+  const vkm_lvec3*: vkm_lvec3_lt,\
+  const vkm_ulvec3*: vkm_ulvec3_lt,\
+  const vkm_vec3*: vkm_vec3_lt,\
+  const vkm_dvec3*: vkm_dvec3_lt,\
+  const vkm_bvec4*: vkm_bvec4_lt,\
+  const vkm_ubvec4*: vkm_ubvec4_lt,\
+  const vkm_svec4*: vkm_svec4_lt,\
+  const vkm_usvec4*: vkm_usvec4_lt,\
+  const vkm_ivec4*: vkm_ivec4_lt,\
+  const vkm_uvec4*: vkm_uvec4_lt,\
+  const vkm_lvec4*: vkm_lvec4_lt,\
+  const vkm_ulvec4*: vkm_ulvec4_lt,\
+  const vkm_vec4*: vkm_vec4_lt,\
+  const vkm_dvec4*: vkm_dvec4_lt\
 )((a), (b))
 
 #define vkm_gt(a, b) _Generic((a),\
@@ -1646,7 +1878,37 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   vkm_lvec4*: vkm_lvec4_gt,\
   vkm_ulvec4*: vkm_ulvec4_gt,\
   vkm_vec4*: vkm_vec4_gt,\
-  vkm_dvec4*: vkm_dvec4_gt\
+  vkm_dvec4*: vkm_dvec4_gt,\
+  const vkm_bvec2*: vkm_bvec2_gt,\
+  const vkm_ubvec2*: vkm_ubvec2_gt,\
+  const vkm_svec2*: vkm_svec2_gt,\
+  const vkm_usvec2*: vkm_usvec2_gt,\
+  const vkm_ivec2*: vkm_ivec2_gt,\
+  const vkm_uvec2*: vkm_uvec2_gt,\
+  const vkm_lvec2*: vkm_lvec2_gt,\
+  const vkm_ulvec2*: vkm_ulvec2_gt,\
+  const vkm_vec2*: vkm_vec2_gt,\
+  const vkm_dvec2*: vkm_dvec2_gt,\
+  const vkm_bvec3*: vkm_bvec3_gt,\
+  const vkm_ubvec3*: vkm_ubvec3_gt,\
+  const vkm_svec3*: vkm_svec3_gt,\
+  const vkm_usvec3*: vkm_usvec3_gt,\
+  const vkm_ivec3*: vkm_ivec3_gt,\
+  const vkm_uvec3*: vkm_uvec3_gt,\
+  const vkm_lvec3*: vkm_lvec3_gt,\
+  const vkm_ulvec3*: vkm_ulvec3_gt,\
+  const vkm_vec3*: vkm_vec3_gt,\
+  const vkm_dvec3*: vkm_dvec3_gt,\
+  const vkm_bvec4*: vkm_bvec4_gt,\
+  const vkm_ubvec4*: vkm_ubvec4_gt,\
+  const vkm_svec4*: vkm_svec4_gt,\
+  const vkm_usvec4*: vkm_usvec4_gt,\
+  const vkm_ivec4*: vkm_ivec4_gt,\
+  const vkm_uvec4*: vkm_uvec4_gt,\
+  const vkm_lvec4*: vkm_lvec4_gt,\
+  const vkm_ulvec4*: vkm_ulvec4_gt,\
+  const vkm_vec4*: vkm_vec4_gt,\
+  const vkm_dvec4*: vkm_dvec4_gt\
 )((a), (b))
 
 #define vkm_le(a, b) _Generic((a),\
@@ -1679,7 +1941,37 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   vkm_lvec4*: vkm_lvec4_le,\
   vkm_ulvec4*: vkm_ulvec4_le,\
   vkm_vec4*: vkm_vec4_le,\
-  vkm_dvec4*: vkm_dvec4_le\
+  vkm_dvec4*: vkm_dvec4_le,\
+  const vkm_bvec2*: vkm_bvec2_le,\
+  const vkm_ubvec2*: vkm_ubvec2_le,\
+  const vkm_svec2*: vkm_svec2_le,\
+  const vkm_usvec2*: vkm_usvec2_le,\
+  const vkm_ivec2*: vkm_ivec2_le,\
+  const vkm_uvec2*: vkm_uvec2_le,\
+  const vkm_lvec2*: vkm_lvec2_le,\
+  const vkm_ulvec2*: vkm_ulvec2_le,\
+  const vkm_vec2*: vkm_vec2_le,\
+  const vkm_dvec2*: vkm_dvec2_le,\
+  const vkm_bvec3*: vkm_bvec3_le,\
+  const vkm_ubvec3*: vkm_ubvec3_le,\
+  const vkm_svec3*: vkm_svec3_le,\
+  const vkm_usvec3*: vkm_usvec3_le,\
+  const vkm_ivec3*: vkm_ivec3_le,\
+  const vkm_uvec3*: vkm_uvec3_le,\
+  const vkm_lvec3*: vkm_lvec3_le,\
+  const vkm_ulvec3*: vkm_ulvec3_le,\
+  const vkm_vec3*: vkm_vec3_le,\
+  const vkm_dvec3*: vkm_dvec3_le,\
+  const vkm_bvec4*: vkm_bvec4_le,\
+  const vkm_ubvec4*: vkm_ubvec4_le,\
+  const vkm_svec4*: vkm_svec4_le,\
+  const vkm_usvec4*: vkm_usvec4_le,\
+  const vkm_ivec4*: vkm_ivec4_le,\
+  const vkm_uvec4*: vkm_uvec4_le,\
+  const vkm_lvec4*: vkm_lvec4_le,\
+  const vkm_ulvec4*: vkm_ulvec4_le,\
+  const vkm_vec4*: vkm_vec4_le,\
+  const vkm_dvec4*: vkm_dvec4_le\
 )((a), (b))
 
 #define vkm_ge(a, b) _Generic((a),\
@@ -1712,7 +2004,37 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   vkm_lvec4*: vkm_lvec4_ge,\
   vkm_ulvec4*: vkm_ulvec4_ge,\
   vkm_vec4*: vkm_vec4_ge,\
-  vkm_dvec4*: vkm_dvec4_ge\
+  vkm_dvec4*: vkm_dvec4_ge,\
+  const vkm_bvec2*: vkm_bvec2_ge,\
+  const vkm_ubvec2*: vkm_ubvec2_ge,\
+  const vkm_svec2*: vkm_svec2_ge,\
+  const vkm_usvec2*: vkm_usvec2_ge,\
+  const vkm_ivec2*: vkm_ivec2_ge,\
+  const vkm_uvec2*: vkm_uvec2_ge,\
+  const vkm_lvec2*: vkm_lvec2_ge,\
+  const vkm_ulvec2*: vkm_ulvec2_ge,\
+  const vkm_vec2*: vkm_vec2_ge,\
+  const vkm_dvec2*: vkm_dvec2_ge,\
+  const vkm_bvec3*: vkm_bvec3_ge,\
+  const vkm_ubvec3*: vkm_ubvec3_ge,\
+  const vkm_svec3*: vkm_svec3_ge,\
+  const vkm_usvec3*: vkm_usvec3_ge,\
+  const vkm_ivec3*: vkm_ivec3_ge,\
+  const vkm_uvec3*: vkm_uvec3_ge,\
+  const vkm_lvec3*: vkm_lvec3_ge,\
+  const vkm_ulvec3*: vkm_ulvec3_ge,\
+  const vkm_vec3*: vkm_vec3_ge,\
+  const vkm_dvec3*: vkm_dvec3_ge,\
+  const vkm_bvec4*: vkm_bvec4_ge,\
+  const vkm_ubvec4*: vkm_ubvec4_ge,\
+  const vkm_svec4*: vkm_svec4_ge,\
+  const vkm_usvec4*: vkm_usvec4_ge,\
+  const vkm_ivec4*: vkm_ivec4_ge,\
+  const vkm_uvec4*: vkm_uvec4_ge,\
+  const vkm_lvec4*: vkm_lvec4_ge,\
+  const vkm_ulvec4*: vkm_ulvec4_ge,\
+  const vkm_vec4*: vkm_vec4_ge,\
+  const vkm_dvec4*: vkm_dvec4_ge\
 )((a), (b))
 
 static void vkm_orthogonal_lh_zo(
@@ -1978,7 +2300,21 @@ static void vkm_mat4_mul_rotation(const vkm_mat4* a, const vkm_mat4* b, vkm_mat4
   result->m33 = a_copy.m33;
 }
 
-static void vkm_make_rotation(const float angle, const vkm_vec3* axis, vkm_mat4* result) {
+static void vkm_quat_make_rotation(const float angle, const vkm_vec3* axis, vkm_versor* result) {
+  vkm_vec3 normalized_axis;
+  vkm_normalize(axis, &normalized_axis);
+
+  const float half_angle = angle * 0.5f;
+  const float sine = sinf(half_angle);
+  *result = (vkm_versor){ {
+    axis->x * sine,
+    axis->y * sine,
+    axis->z * sine,
+    vkm_cos(half_angle),
+  } };
+}
+
+static void vkm_mat4_make_rotation(const float angle, const vkm_vec3* axis, vkm_mat4* result) {
   vkm_vec3 axis_normalized = *axis;
   vkm_normalize(axis, &axis_normalized);
   const float cosine = cosf(angle);
@@ -2000,6 +2336,11 @@ static void vkm_make_rotation(const float angle, const vkm_vec3* axis, vkm_mat4*
   result->m33 = 1.0f;
   // @formatter:on
 }
+
+#define vkm_make_rotation(angle, axis, result) _Generic((result),\
+  vkm_versor*: vkm_quat_make_rotation,\
+  vkm_mat4*: vkm_mat4_make_rotation\
+)((angle), (axis), (result))
 
 static void vkm_translate_vec2(vkm_mat4* matrix, const vkm_vec2* translation) {
   vkm_muladd(matrix->columns, translation->x, matrix->columns + 3);
@@ -2028,12 +2369,12 @@ static void vkm_rotate(vkm_mat4* matrix, const float angle, const vkm_vec3* axis
 static void vkm_scale(vkm_mat4* matrix, const vkm_vec3* vector) {
   vkm_mul(matrix->columns, vector->x, matrix->columns);
   vkm_mul(matrix->columns + 1, vector->y, matrix->columns + 1);
-  vkm_mul(matrix->columns + 2, vector->y, matrix->columns + 2);
+  vkm_mul(matrix->columns + 2, vector->z, matrix->columns + 2);
 }
 
 static void vkm_quat_to_mat4(const vkm_versor* versor, vkm_mat4* result) {
-  float scale_factor = vkm_magnitude(versor);
-  scale_factor = scale_factor > 0.0f ? 2.0f / scale_factor : 0.0f;
+  const float sqr_magnitude = vkm_sqr_magnitude(versor);
+  const float scale_factor = sqr_magnitude > 0.0f ? 2.0f / sqr_magnitude : 0.0f;
 
   const float xx = scale_factor * versor->x * versor->x;
   const float yy = scale_factor * versor->y * versor->y;
@@ -2059,7 +2400,8 @@ static void vkm_quat_to_mat4(const vkm_versor* versor, vkm_mat4* result) {
   result->m21 = yz - wx;
   result->m02 = xz - wy;
 
-  result->m03 = result->m13 = result->m23 = result->m30 = result->m31 = result->m32 = result->m33 = 1.0f;
+  result->m03 = result->m13 = result->m23 = result->m30 = result->m31 = result->m32 = 0.0f;
+  result->m33 = 1.0f;
 }
 
 static void vkm_mat4_to_euler(const vkm_mat4* matrix, vkm_vec3* result) {
@@ -2123,7 +2465,7 @@ static void vkm_euler_to_quat_lh(const vkm_vec3* euler, vkm_quat* result) {
   } };
 }
 
-static void vkm_euler_to_quat_rh(const vkm_vec3* euler, vkm_quat* result) {
+static void vkm_euler_to_quat_rh(const vkm_vec3* euler, vkm_versor* result) {
   const float x_sine = vkm_sin(euler->x * 0.5f);
   const float x_cosine = vkm_cos(euler->x * 0.5f);
   const float y_sine = vkm_sin(euler->y * 0.5f);
@@ -2139,11 +2481,96 @@ static void vkm_euler_to_quat_rh(const vkm_vec3* euler, vkm_quat* result) {
   } };
 }
 
+static void vkm_mat3_to_quat(const vkm_mat3* matrix, vkm_quat* result) {
+  const float trace = matrix->m00 + matrix->m11 + matrix->m22;
+  if (trace >= 0.0f) {
+    const float root = vkm_sqrt(1.0f + trace);
+    const float inverse_root = 0.5f / root;
+
+    *result = (vkm_quat){ {
+      inverse_root * (matrix->m12 - matrix->m21),
+      inverse_root * (matrix->m20 - matrix->m02),
+      inverse_root * (matrix->m01 - matrix->m10),
+      root * 0.5f,
+    } };
+  } else if (matrix->m00 >= matrix->m11 && matrix->m00 >= matrix->m22) {
+    const float root = vkm_sqrt(1.0f - matrix->m11 - matrix->m22 + matrix->m00);
+    const float inverse_root = 0.5f / root;
+
+    *result = (vkm_quat){ {
+      root * 0.5f,
+      inverse_root * (matrix->m01 + matrix->m10),
+      inverse_root * (matrix->m02 + matrix->m20),
+      inverse_root * (matrix->m12 - matrix->m21),
+    } };
+  } else if (matrix->m11 >= matrix->m22) {
+    const float root = vkm_sqrt(1.0f - matrix->m00 - matrix->m22 + matrix->m11);
+    const float inverse_root = 0.5f / root;
+    *result = (vkm_quat){ {
+      inverse_root * (matrix->m01 + matrix->m10),
+      root * 0.5f,
+      inverse_root * (matrix->m12 + matrix->m21),
+      inverse_root * (matrix->m20 - matrix->m02),
+    } };
+  } else {
+    const float root = vkm_sqrt(1.0f - matrix->m00 - matrix->m11 + matrix->m22);
+    const float inverse_root = 0.5f / root;
+
+    *result = (vkm_quat){ {
+      inverse_root * (matrix->m02 + matrix->m20),
+      inverse_root * (matrix->m12 + matrix->m21),
+      root * 0.5f,
+      inverse_root * (matrix->m01 - matrix->m10),
+    } };
+  }
+}
+
+// Direction must be normalized.
+static void vkm_quat_look_at_lh(const vkm_vec3* direction, const vkm_vec3* up, vkm_versor* result) {
+  vkm_mat3 matrix = CVKM_MAT3_IDENTITY;
+
+  matrix.columns[2] = *direction;
+
+  vkm_vec3 right;
+  vkm_cross(up, matrix.columns + 2, &right);
+
+  vkm_mul(&right, vkm_inverse_sqrt(vkm_max(1e-30f, vkm_sqr_magnitude(&right))), matrix.columns);
+  vkm_cross(matrix.columns + 2, matrix.columns, matrix.columns + 1);
+
+  vkm_mat3_to_quat(&matrix, result);
+}
+
+// Direction must be normalized.
+static void vkm_quat_look_at_rh(const vkm_vec3* direction, const vkm_vec3* up, vkm_versor* result) {
+  vkm_mat3 matrix = CVKM_MAT3_IDENTITY;
+
+  vkm_invert(direction, matrix.columns + 2);
+
+  vkm_vec3 right;
+  vkm_cross(up, matrix.columns + 2, &right);
+
+  vkm_mul(&right, vkm_inverse_sqrt(vkm_max(1e-30f, vkm_sqr_magnitude(&right))), matrix.columns);
+  vkm_cross(matrix.columns + 2, matrix.columns, matrix.columns + 1);
+
+  vkm_mat3_to_quat(&matrix, result);
+}
+
 #ifdef CVKM_LH
 #define vkm_euler_to_quat vkm_euler_to_quat_lh
+#define vkm_quat_look_at vkm_quat_look_at_lh
 #else
 #define vkm_euler_to_quat vkm_euler_to_quat_rh
+#define vkm_quat_look_at vkm_quat_look_at_rh
 #endif
+
+static void vkm_quat_conjugate(const vkm_quat* quaternion, vkm_quat* result) {
+  *result = (vkm_quat){ {
+    -quaternion->x,
+    -quaternion->y,
+    -quaternion->z,
+    quaternion->w,
+  } };
+}
 
 typedef vkm_vec2 Position2D;
 typedef vkm_vec3 Position3D;
