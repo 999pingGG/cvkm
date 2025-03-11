@@ -338,15 +338,6 @@ CVKM_DEFINE_VEC4(ul, uint64_t);
 CVKM_DEFINE_VEC4(, float);
 CVKM_DEFINE_VEC4(d, double);
 
-typedef union vkm_quat {
-  struct {
-    float x, y, z, w;
-  };
-  float raw[4];
-} vkm_quat;
-
-typedef vkm_quat vkm_versor;
-
 #define CVKM_BVEC4_ZERO   ((vkm_bvec4)  CVKM_VEC4_ZERO_INIT)
 #define CVKM_UBVEC4_ZERO  ((vkm_ubvec4) CVKM_VEC4_ZERO_INIT)
 #define CVKM_SVEC4_ZERO   ((vkm_svec4)  CVKM_VEC4_ZERO_INIT)
@@ -369,7 +360,26 @@ typedef vkm_quat vkm_versor;
 #define CVKM_VEC4_ONE     ((vkm_vec4)   CVKM_VEC4_ONE_INIT)
 #define CVKM_DVEC4_ONE    ((vkm_dvec4)  CVKM_VEC4_ONE_INIT)
 
+typedef union vkm_quat {
+  struct {
+    float x, y, z, w;
+  };
+  float raw[4];
+} vkm_quat;
+
+typedef vkm_quat vkm_versor;
+
 #define CVKM_QUAT_IDENTITY ((vkm_quat){ { 0.0f, 0.0f, 0.0f, 1.0f } })
+
+typedef union vkm_mat3 {
+  vkm_vec3 columns[3];
+  struct {
+    float m00, m01, m02;
+    float m10, m11, m12;
+    float m20, m21, m22;
+  };
+  float raw[9];
+} vkm_mat3;
 
 typedef union vkm_mat4 {
   vkm_vec4 columns[4];
@@ -381,6 +391,12 @@ typedef union vkm_mat4 {
   };
   float raw[16];
 } vkm_mat4;
+
+#define CVKM_MAT3_IDENTITY (vkm_mat3){ .raw = {\
+  1.0f, 0.0f, 0.0f,\
+  0.0f, 1.0f, 0.0f,\
+  0.0f, 0.0f, 1.0f,\
+} }
 
 #define CVKM_MAT4_IDENTITY (vkm_mat4){ .raw = {\
   1.0f, 0.0f, 0.0f, 0.0f,\
@@ -2176,6 +2192,7 @@ extern ECS_COMPONENT_DECLARE(vkm_lvec4);
 extern ECS_COMPONENT_DECLARE(vkm_ulvec4);
 extern ECS_COMPONENT_DECLARE(vkm_vec4);
 extern ECS_COMPONENT_DECLARE(vkm_dvec4);
+extern ECS_COMPONENT_DECLARE(vkm_mat3);
 extern ECS_COMPONENT_DECLARE(vkm_mat4);
 extern ECS_COMPONENT_DECLARE(vkm_quat);
 extern ECS_COMPONENT_DECLARE(vkm_versor);
@@ -2228,6 +2245,7 @@ ECS_COMPONENT_DECLARE(vkm_lvec4);
 ECS_COMPONENT_DECLARE(vkm_ulvec4);
 ECS_COMPONENT_DECLARE(vkm_vec4);
 ECS_COMPONENT_DECLARE(vkm_dvec4);
+ECS_COMPONENT_DECLARE(vkm_mat3);
 ECS_COMPONENT_DECLARE(vkm_mat4);
 ECS_COMPONENT_DECLARE(vkm_quat);
 ECS_COMPONENT_DECLARE(vkm_versor);
@@ -2297,6 +2315,10 @@ CVKM_SPAWN_ZERO_CTOR(Velocity3D)
 CVKM_SPAWN_ZERO_CTOR(Velocity4D)
 CVKM_SPAWN_ONE_CTOR(Mass)
 CVKM_SPAWN_ONE_CTOR(GravityScale)
+
+ECS_CTOR(vkm_mat3, ptr, {
+  *ptr = CVKM_MAT3_IDENTITY;
+})
 
 ECS_CTOR(vkm_mat4, ptr, {
   *ptr = CVKM_MAT4_IDENTITY;
@@ -2437,6 +2459,26 @@ void cvkmImport(ecs_world_t* world) {
   CVKM_VEC4_COMPONENT(ulvec4, vkm_ulvec4, ecs_u64_t, 0);
   CVKM_VEC4_COMPONENT(vec4, vkm_vec4, ecs_f32_t, 0);
   CVKM_VEC4_COMPONENT(dvec4, vkm_dvec4, ecs_f64_t, 0);
+  ECS_COMPONENT_DEFINE(world, vkm_mat3);
+  ecs_struct(
+    world,
+    {
+      .entity = ecs_id(vkm_mat3),
+      .members = {
+        CVKM_MEMBER(m00, ecs_f32_t, vkm_mat3, 0),
+        CVKM_MEMBER(m01, ecs_f32_t, vkm_mat3, 0),
+        CVKM_MEMBER(m02, ecs_f32_t, vkm_mat3, 0),
+        CVKM_MEMBER(m10, ecs_f32_t, vkm_mat3, 0),
+        CVKM_MEMBER(m11, ecs_f32_t, vkm_mat3, 0),
+        CVKM_MEMBER(m12, ecs_f32_t, vkm_mat3, 0),
+        CVKM_MEMBER(m20, ecs_f32_t, vkm_mat3, 0),
+        CVKM_MEMBER(m21, ecs_f32_t, vkm_mat3, 0),
+        CVKM_MEMBER(m22, ecs_f32_t, vkm_mat3, 0),
+      },
+    }
+  );
+  ecs_set_name(world, ecs_id(vkm_mat3), "mat3");
+  ecs_set_symbol(world, ecs_id(vkm_mat3), "mat3");
   CVKM_MAT4_COMPONENT(mat4, vkm_mat4, ecs_f32_t);
   CVKM_VEC4_COMPONENT(quat, vkm_quat, ecs_f32_t, 0);
   ECS_COMPONENT_DEFINE(world, vkm_versor);
@@ -2492,6 +2534,7 @@ void cvkmImport(ecs_world_t* world) {
   ecs_set_hooks(world, vkm_ulvec4, { .ctor = ecs_ctor(vkm_ulvec4) });
   ecs_set_hooks(world, vkm_vec4, { .ctor = ecs_ctor(vkm_vec4) });
   ecs_set_hooks(world, vkm_dvec4, { .ctor = ecs_ctor(vkm_dvec4) });
+  ecs_set_hooks(world, vkm_mat3, { .ctor = ecs_ctor(vkm_mat3) });
   ecs_set_hooks(world, vkm_mat4, { .ctor = ecs_ctor(vkm_mat4) });
   ecs_set_hooks(world, vkm_quat, { .ctor = ecs_ctor(vkm_quat) });
   ecs_set_hooks(world, vkm_versor, { .ctor = ecs_ctor(vkm_versor) });
