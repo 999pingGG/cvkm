@@ -2580,12 +2580,24 @@ typedef vkm_dvec3 DoublePosition3D;
 typedef vkm_dvec4 DoublePosition4D;
 typedef float Rotation2D;
 typedef vkm_versor Rotation3D;
+typedef vkm_vec2 Scale2D;
+typedef vkm_vec3 Scale3D;
+typedef vkm_vec4 Scale4D;
 typedef vkm_mat4 Transform;
 typedef vkm_vec2 Velocity2D;
 typedef vkm_vec3 Velocity3D;
 typedef vkm_vec4 Velocity4D;
+typedef vkm_vec2 Acceleration2D;
+typedef vkm_vec3 Acceleration3D;
+typedef vkm_vec4 Acceleration4D;
+typedef vkm_vec2 Force2D;
+typedef vkm_vec3 Force3D;
+typedef vkm_vec4 Force4D;
 typedef float Mass;
 typedef float Damping;
+typedef vkm_vec2 Gravity2D;
+typedef vkm_vec3 Gravity3D;
+typedef vkm_vec4 Gravity4D;
 typedef float GravityScale;
 
 #ifdef CVKM_ENABLE_FLECS
@@ -2631,12 +2643,24 @@ extern ECS_COMPONENT_DECLARE(DoublePosition3D);
 extern ECS_COMPONENT_DECLARE(DoublePosition4D);
 extern ECS_COMPONENT_DECLARE(Rotation2D);
 extern ECS_COMPONENT_DECLARE(Rotation3D);
+extern ECS_COMPONENT_DECLARE(Scale2D);
+extern ECS_COMPONENT_DECLARE(Scale3D);
+extern ECS_COMPONENT_DECLARE(Scale4D);
 extern ECS_COMPONENT_DECLARE(Transform);
 extern ECS_COMPONENT_DECLARE(Velocity2D);
 extern ECS_COMPONENT_DECLARE(Velocity3D);
 extern ECS_COMPONENT_DECLARE(Velocity4D);
+extern ECS_COMPONENT_DECLARE(Acceleration2D);
+extern ECS_COMPONENT_DECLARE(Acceleration3D);
+extern ECS_COMPONENT_DECLARE(Acceleration4D);
+extern ECS_COMPONENT_DECLARE(Force2D);
+extern ECS_COMPONENT_DECLARE(Force3D);
+extern ECS_COMPONENT_DECLARE(Force4D);
 extern ECS_COMPONENT_DECLARE(Mass);
 extern ECS_COMPONENT_DECLARE(Damping);
+extern ECS_COMPONENT_DECLARE(Gravity2D);
+extern ECS_COMPONENT_DECLARE(Gravity3D);
+extern ECS_COMPONENT_DECLARE(Gravity4D);
 extern ECS_COMPONENT_DECLARE(GravityScale);
 
 void cvkmImport(ecs_world_t* world);
@@ -2684,12 +2708,24 @@ ECS_COMPONENT_DECLARE(DoublePosition3D);
 ECS_COMPONENT_DECLARE(DoublePosition4D);
 ECS_COMPONENT_DECLARE(Rotation2D);
 ECS_COMPONENT_DECLARE(Rotation3D);
+ECS_COMPONENT_DECLARE(Scale2D);
+ECS_COMPONENT_DECLARE(Scale3D);
+ECS_COMPONENT_DECLARE(Scale4D);
 ECS_COMPONENT_DECLARE(Transform);
 ECS_COMPONENT_DECLARE(Velocity2D);
 ECS_COMPONENT_DECLARE(Velocity3D);
 ECS_COMPONENT_DECLARE(Velocity4D);
+ECS_COMPONENT_DECLARE(Acceleration2D);
+ECS_COMPONENT_DECLARE(Acceleration3D);
+ECS_COMPONENT_DECLARE(Acceleration4D);
+ECS_COMPONENT_DECLARE(Force2D);
+ECS_COMPONENT_DECLARE(Force3D);
+ECS_COMPONENT_DECLARE(Force4D);
 ECS_COMPONENT_DECLARE(Mass);
 ECS_COMPONENT_DECLARE(Damping);
+ECS_COMPONENT_DECLARE(Gravity2D);
+ECS_COMPONENT_DECLARE(Gravity3D);
+ECS_COMPONENT_DECLARE(Gravity4D);
 ECS_COMPONENT_DECLARE(GravityScale);
 
 #define CVKM_SPAWN_ZERO_CTOR(type) static ECS_CTOR(type, ptr, {\
@@ -2736,6 +2772,12 @@ CVKM_SPAWN_ZERO_CTOR(Position4D)
 CVKM_SPAWN_ZERO_CTOR(DoublePosition2D)
 CVKM_SPAWN_ZERO_CTOR(DoublePosition3D)
 CVKM_SPAWN_ZERO_CTOR(DoublePosition4D)
+CVKM_SPAWN_ZERO_CTOR(Acceleration2D)
+CVKM_SPAWN_ZERO_CTOR(Acceleration3D)
+CVKM_SPAWN_ZERO_CTOR(Acceleration4D)
+CVKM_SPAWN_ZERO_CTOR(Force2D)
+CVKM_SPAWN_ZERO_CTOR(Force3D)
+CVKM_SPAWN_ZERO_CTOR(Force4D)
 CVKM_SPAWN_ZERO_CTOR(Rotation2D)
 CVKM_SPAWN_ZERO_CTOR(Velocity2D)
 CVKM_SPAWN_ZERO_CTOR(Velocity3D)
@@ -2763,12 +2805,36 @@ ECS_CTOR(Rotation3D, ptr, {
   *ptr = CVKM_QUAT_IDENTITY;
 })
 
+ECS_CTOR(Scale2D, ptr, {
+  *ptr = (Scale2D){ { 1.0f, 1.0f } };
+})
+
+ECS_CTOR(Scale3D, ptr, {
+  *ptr = (Scale3D){ { 1.0f, 1.0f, 1.0f } };
+})
+
+ECS_CTOR(Scale4D, ptr, {
+  *ptr = (Scale4D){ { 1.0f, 1.0f, 1.0f, 1.0f } };
+})
+
 ECS_CTOR(Transform, ptr, {
   *ptr = CVKM_MAT4_IDENTITY;
 })
 
 ECS_CTOR(Damping, ptr, {
   *ptr = 0.995f;
+})
+
+ECS_CTOR(Gravity2D, ptr, {
+  *ptr = (vkm_vec2){ { 0.0f, -9.80665f } };
+})
+
+ECS_CTOR(Gravity3D, ptr, {
+  *ptr = (vkm_vec3){ { 0.0f, -9.80665f, 0.0f } };
+})
+
+ECS_CTOR(Gravity4D, ptr, {
+  *ptr = (vkm_vec4){ { 0.0f, -9.80665f, 0.0f, 0.0f } };
 })
 
 #define CVKM_MEMBER(member, member_type, struct_type, unit_) {\
@@ -2912,22 +2978,40 @@ void cvkmImport(ecs_world_t* world) {
   ecs_add_pair(world, ecs_id(vkm_versor), EcsIsA, ecs_id(vkm_quat));
   CVKM_VEC2_COMPONENT(Position2D, Position2D, ecs_f32_t, EcsMeters);
   CVKM_VEC3_COMPONENT(Position3D, Position3D, ecs_f32_t, EcsMeters);
-  CVKM_VEC3_COMPONENT(Position4D, Position4D, ecs_f32_t, EcsMeters);
+  CVKM_VEC4_COMPONENT(Position4D, Position4D, ecs_f32_t, EcsMeters);
   CVKM_VEC2_COMPONENT(DoublePosition2D, DoublePosition2D, ecs_f64_t, EcsMeters);
   CVKM_VEC3_COMPONENT(DoublePosition3D, DoublePosition3D, ecs_f64_t, EcsMeters);
-  CVKM_VEC3_COMPONENT(DoublePosition4D, DoublePosition4D, ecs_f64_t, EcsMeters);
+  CVKM_VEC4_COMPONENT(DoublePosition4D, DoublePosition4D, ecs_f64_t, EcsMeters);
   ECS_COMPONENT_DEFINE(world, Rotation2D);
   ecs_add_pair(world, ecs_id(Rotation2D), EcsIsA, EcsRadians);
   ECS_COMPONENT_DEFINE(world, Rotation3D);
   ecs_add_pair(world, ecs_id(Rotation3D), EcsIsA, ecs_id(vkm_versor));
+  ECS_COMPONENT_DEFINE(world, Scale2D);
+  ecs_add_pair(world, ecs_id(Scale2D), EcsIsA, ecs_id(vkm_vec2));
+  ECS_COMPONENT_DEFINE(world, Scale3D);
+  ecs_add_pair(world, ecs_id(Scale3D), EcsIsA, ecs_id(vkm_vec3));
+  ECS_COMPONENT_DEFINE(world, Scale4D);
+  ecs_add_pair(world, ecs_id(Scale4D), EcsIsA, ecs_id(vkm_vec4));
   CVKM_MAT4_COMPONENT(Transform, Transform, ecs_f32_t);
   CVKM_VEC2_COMPONENT(Velocity2D, Velocity2D, ecs_f32_t, EcsMetersPerSecond);
-  CVKM_VEC2_COMPONENT(Velocity3D, Velocity3D, ecs_f32_t, EcsMetersPerSecond);
-  CVKM_VEC2_COMPONENT(Velocity4D, Velocity4D, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC3_COMPONENT(Velocity3D, Velocity3D, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC4_COMPONENT(Velocity4D, Velocity4D, ecs_f32_t, EcsMetersPerSecond);
+  CVKM_VEC2_COMPONENT(Acceleration2D, Acceleration2D, ecs_f32_t, 0);
+  CVKM_VEC3_COMPONENT(Acceleration3D, Acceleration3D, ecs_f32_t, 0);
+  CVKM_VEC4_COMPONENT(Acceleration4D, Acceleration4D, ecs_f32_t, 0);
+  CVKM_VEC2_COMPONENT(Force2D, Force2D, ecs_f32_t, EcsNewton);
+  CVKM_VEC3_COMPONENT(Force3D, Force3D, ecs_f32_t, EcsNewton);
+  CVKM_VEC4_COMPONENT(Force4D, Force4D, ecs_f32_t, EcsNewton);
   ECS_COMPONENT_DEFINE(world, Mass);
   ecs_add_pair(world, ecs_id(Mass), EcsIsA, EcsKiloGrams);
   ECS_COMPONENT_DEFINE(world, Damping);
   ecs_primitive(world, { .entity = ecs_id(Damping), .kind = EcsF32 });
+  ECS_COMPONENT_DEFINE(world, Gravity2D);
+  ecs_add_pair(world, ecs_id(Gravity2D), EcsIsA, ecs_id(Acceleration2D));
+  ECS_COMPONENT_DEFINE(world, Gravity3D);
+  ecs_add_pair(world, ecs_id(Gravity3D), EcsIsA, ecs_id(Acceleration3D));
+  ECS_COMPONENT_DEFINE(world, Gravity4D);
+  ecs_add_pair(world, ecs_id(Gravity4D), EcsIsA, ecs_id(Acceleration4D));
   ECS_COMPONENT_DEFINE(world, GravityScale);
   ecs_primitive(world, { .entity = ecs_id(GravityScale), .kind = EcsF32 });
 
@@ -2973,12 +3057,24 @@ void cvkmImport(ecs_world_t* world) {
   ecs_set_hooks(world, DoublePosition4D, { .ctor = ecs_ctor(DoublePosition4D) });
   ecs_set_hooks(world, Rotation2D, { .ctor = ecs_ctor(Rotation2D) });
   ecs_set_hooks(world, Rotation3D, { .ctor = ecs_ctor(Rotation3D) });
+  ecs_set_hooks(world, Scale2D, { .ctor = ecs_ctor(Scale2D) });
+  ecs_set_hooks(world, Scale3D, { .ctor = ecs_ctor(Scale3D) });
+  ecs_set_hooks(world, Scale4D, { .ctor = ecs_ctor(Scale4D) });
   ecs_set_hooks(world, Transform, { .ctor = ecs_ctor(Transform) });
   ecs_set_hooks(world, Velocity2D, { .ctor = ecs_ctor(Velocity2D) });
   ecs_set_hooks(world, Velocity3D, { .ctor = ecs_ctor(Velocity3D) });
   ecs_set_hooks(world, Velocity4D, { .ctor = ecs_ctor(Velocity4D) });
+  ecs_set_hooks(world, Acceleration2D, { .ctor = ecs_ctor(Acceleration2D) });
+  ecs_set_hooks(world, Acceleration3D, { .ctor = ecs_ctor(Acceleration3D) });
+  ecs_set_hooks(world, Acceleration4D, { .ctor = ecs_ctor(Acceleration4D) });
+  ecs_set_hooks(world, Force2D, { .ctor = ecs_ctor(Force2D) });
+  ecs_set_hooks(world, Force3D, { .ctor = ecs_ctor(Force3D) });
+  ecs_set_hooks(world, Force4D, { .ctor = ecs_ctor(Force4D) });
   ecs_set_hooks(world, Mass, { .ctor = ecs_ctor(Mass) });
   ecs_set_hooks(world, Damping, { .ctor = ecs_ctor(Damping) });
+  ecs_set_hooks(world, Gravity2D, { .ctor = ecs_ctor(Gravity2D) });
+  ecs_set_hooks(world, Gravity3D, { .ctor = ecs_ctor(Gravity3D) });
+  ecs_set_hooks(world, Gravity4D, { .ctor = ecs_ctor(Gravity4D) });
   ecs_set_hooks(world, GravityScale, { .ctor = ecs_ctor(GravityScale) });
 }
 
