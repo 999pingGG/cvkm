@@ -1152,7 +1152,7 @@ CVKM_CLAMP_OPERATION(double, )
   const double: vkm_max\
 )((a), (b))
 
-#define vkm_clamp(a, b) _Generic((a),\
+#define vkm_clamp(value, min, max) _Generic((value),\
   int8_t: vkm_clampb,\
   uint8_t: vkm_clampub,\
   int16_t: vkm_clamps,\
@@ -1173,7 +1173,7 @@ CVKM_CLAMP_OPERATION(double, )
   const uint64_t: vkm_clampul,\
   const float: vkm_clampf,\
   const double: vkm_clamp\
-)((a), (b))
+)((value), (min), (max))
 
 #define CVKM_CONSTEXPR_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define CVKM_CONSTEXPR_MAX(a, b) ((a) > (b) ? (a) : (b))
