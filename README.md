@@ -3,9 +3,10 @@ A header-only math library for C. Just like cglm means "C GL math", cvkm means "
 functions are generic, meaning that you can use a single function which can operate on several different types! I hope
 it will be useful for graphics and physics programming. Compiles absolutely warning-free.
 
-## Warning
+## ⚠️ Warning ⚠️
 **Not production ready!**
-- This library is a work in WIP (pun intended), developed mainly as a way to reuse code across my projects.
+- This library is a work in WIP (pun intended), developed mainly as a way to reuse code across my projects,
+shared here in case someone finds it useful.
 - I will likely only implement functionality useful for a videogame made in my own way.
 - If you want to contribute something and make this library more generally useful, by all means do so! I will be very grateful.
 
