@@ -2672,6 +2672,8 @@ extern ECS_COMPONENT_DECLARE(GravityScale);
 void cvkmImport(ecs_world_t* world);
 
 #ifdef CVKM_FLECS_IMPLEMENTATION
+#include <stddef.h>
+
 ECS_COMPONENT_DECLARE(vkm_bvec2);
 ECS_COMPONENT_DECLARE(vkm_ubvec2);
 ECS_COMPONENT_DECLARE(vkm_svec2);
