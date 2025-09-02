@@ -2586,6 +2586,7 @@ typedef vkm_dvec3 DoublePosition3D;
 typedef vkm_dvec4 DoublePosition4D;
 typedef float Rotation2D;
 typedef vkm_versor Rotation3D;
+typedef float Scale;
 typedef vkm_vec2 Scale2D;
 typedef vkm_vec3 Scale3D;
 typedef vkm_vec4 Scale4D;
@@ -2649,6 +2650,7 @@ extern ECS_COMPONENT_DECLARE(DoublePosition3D);
 extern ECS_COMPONENT_DECLARE(DoublePosition4D);
 extern ECS_COMPONENT_DECLARE(Rotation2D);
 extern ECS_COMPONENT_DECLARE(Rotation3D);
+extern ECS_COMPONENT_DECLARE(Scale);
 extern ECS_COMPONENT_DECLARE(Scale2D);
 extern ECS_COMPONENT_DECLARE(Scale3D);
 extern ECS_COMPONENT_DECLARE(Scale4D);
@@ -2716,6 +2718,7 @@ ECS_COMPONENT_DECLARE(DoublePosition3D);
 ECS_COMPONENT_DECLARE(DoublePosition4D);
 ECS_COMPONENT_DECLARE(Rotation2D);
 ECS_COMPONENT_DECLARE(Rotation3D);
+ECS_COMPONENT_DECLARE(Scale);
 ECS_COMPONENT_DECLARE(Scale2D);
 ECS_COMPONENT_DECLARE(Scale3D);
 ECS_COMPONENT_DECLARE(Scale4D);
@@ -2811,6 +2814,10 @@ ECS_CTOR(vkm_versor, ptr, {
 
 ECS_CTOR(Rotation3D, ptr, {
   *ptr = CVKM_QUAT_IDENTITY;
+})
+
+ECS_CTOR(Scale, ptr, {
+  *ptr = 1.0f;
 })
 
 ECS_CTOR(Scale2D, ptr, {
@@ -2994,6 +3001,8 @@ void cvkmImport(ecs_world_t* world) {
   ecs_add_pair(world, ecs_id(Rotation2D), EcsIsA, EcsRadians);
   ECS_COMPONENT_DEFINE(world, Rotation3D);
   ecs_add_pair(world, ecs_id(Rotation3D), EcsIsA, ecs_id(vkm_versor));
+  ECS_COMPONENT_DEFINE(world, Scale);
+  ecs_add_pair(world, ecs_id(Scale), EcsIsA, EcsF32);
   ECS_COMPONENT_DEFINE(world, Scale2D);
   ecs_add_pair(world, ecs_id(Scale2D), EcsIsA, ecs_id(vkm_vec2));
   ECS_COMPONENT_DEFINE(world, Scale3D);
@@ -3065,6 +3074,7 @@ void cvkmImport(ecs_world_t* world) {
   ecs_set_hooks(world, DoublePosition4D, { .ctor = ecs_ctor(DoublePosition4D) });
   ecs_set_hooks(world, Rotation2D, { .ctor = ecs_ctor(Rotation2D) });
   ecs_set_hooks(world, Rotation3D, { .ctor = ecs_ctor(Rotation3D) });
+  ecs_set_hooks(world, Scale, { .ctor = ecs_ctor(Scale) });
   ecs_set_hooks(world, Scale2D, { .ctor = ecs_ctor(Scale2D) });
   ecs_set_hooks(world, Scale3D, { .ctor = ecs_ctor(Scale3D) });
   ecs_set_hooks(world, Scale4D, { .ctor = ecs_ctor(Scale4D) });
