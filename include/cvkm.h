@@ -44,8 +44,8 @@
 #define CVKM_2_SQRTPI   1.1283791670955125739   // 2/sqrt(pi)
 #define CVKM_SQRT2      1.4142135623730950488   // sqrt(2)
 #define CVKM_SQRT1_2    0.707106781186547524401 // 1/sqrt(2)
-#define CVKM_DEG_2_RAD  0.01745329251994329576  // pi/180
-#define CVKM_RAD_2_DEG  57.29577951308232087679 // 180/pi
+#define CVKM_DEG2RAD    0.01745329251994329576  // pi/180
+#define CVKM_RAD2DEG    57.29577951308232087679 // 180/pi
 
 #define CVKM_E_F          ((float)CVKM_E)
 #define CVKM_LOG2E_F      ((float)CVKM_LOG2E)
@@ -60,8 +60,8 @@
 #define CVKM_2_SQRTPI_F   ((float)CVKM_2_SQRTPI)
 #define CVKM_SQRT2_F      ((float)CVKM_SQRT2)
 #define CVKM_SQRT1_2_F    ((float)CVKM_SQRT1_2)
-#define CVKM_DEG_2_RAD_F  ((float)CVKM_DEG_2_RAD)
-#define CVKM_RAD_2_DEG_F  ((float)CVKM_RAD_2_DEG)
+#define CVKM_DEG2RAD_F    ((float)CVKM_DEG2RAD)
+#define CVKM_RAD2DEG_F    ((float)CVKM_RAD2DEG)
 
 #ifdef __clang__
 // This is left ignored because in some macros using _Generic we list both const and non-const types. Some compilers
@@ -2146,10 +2146,10 @@ static void vkm_orthogonal_rh_no(
 #endif
 
 static void vkm_perspective_lh_zo(
-  float field_of_view,
-  float aspect_ratio,
-  float near_plane,
-  float far_plane,
+  const float field_of_view,
+  const float aspect_ratio,
+  const float near_plane,
+  const float far_plane,
   vkm_mat4* result
 ) {
   const float focal_length = 1.0f / vkm_tan(field_of_view * 0.5f);
@@ -2165,10 +2165,10 @@ static void vkm_perspective_lh_zo(
 }
 
 static void vkm_perspective_lh_no(
-  float field_of_view,
-  float aspect_ratio,
-  float near_plane,
-  float far_plane,
+  const float field_of_view,
+  const float aspect_ratio,
+  const float near_plane,
+  const float far_plane,
   vkm_mat4* result
 ) {
   const float focal_length = 1.0f / vkm_tan(field_of_view * 0.5f);
@@ -2532,7 +2532,7 @@ static void vkm_mat3_to_quat(const vkm_mat3* matrix, vkm_quat* result) {
 }
 
 // Direction must be normalized.
-static void vkm_quat_look_at_lh(const vkm_vec3* direction, const vkm_vec3* up, vkm_versor* result) {
+static void vkm_look_rotation_lh(const vkm_vec3* direction, const vkm_vec3* up, vkm_versor* result) {
   vkm_mat3 matrix = CVKM_MAT3_IDENTITY;
 
   matrix.columns[2] = *direction;
@@ -2547,7 +2547,7 @@ static void vkm_quat_look_at_lh(const vkm_vec3* direction, const vkm_vec3* up, v
 }
 
 // Direction must be normalized.
-static void vkm_quat_look_at_rh(const vkm_vec3* direction, const vkm_vec3* up, vkm_versor* result) {
+static void vkm_look_rotation_rh(const vkm_vec3* direction, const vkm_vec3* up, vkm_versor* result) {
   vkm_mat3 matrix = CVKM_MAT3_IDENTITY;
 
   vkm_invert(direction, matrix.columns + 2);
@@ -2561,12 +2561,66 @@ static void vkm_quat_look_at_rh(const vkm_vec3* direction, const vkm_vec3* up, v
   vkm_mat3_to_quat(&matrix, result);
 }
 
+static void vkm_look_at_lh(const vkm_vec3* eye, const vkm_vec3* center, const vkm_vec3* up, vkm_mat4* result) {
+  vkm_vec3 f, u, s;
+
+  vkm_vec3_sub(center, eye, &f);
+  vkm_vec3_normalize(&f, &f);
+
+  vkm_vec3_cross(up, &f, &s);
+  vkm_vec3_normalize(&s, &s);
+  vkm_vec3_cross(&f, &s, &u);
+
+  result->m00 = s.x;
+  result->m01 = u.x;
+  result->m02 = f.x;
+  result->m10 = s.y;
+  result->m11 = u.y;
+  result->m12 = f.y;
+  result->m20 = s.z;
+  result->m21 = u.z;
+  result->m22 = f.z;
+  result->m30 =-vkm_vec3_dot(&s, eye);
+  result->m31 =-vkm_vec3_dot(&u, eye);
+  result->m32 =-vkm_vec3_dot(&f, eye);
+  result->m03 = result->m13 = result->m23 = 0.0f;
+  result->m33 = 1.0f;
+}
+
+static void vkm_look_at_rh(const vkm_vec3* eye, const vkm_vec3* center, const vkm_vec3* up, vkm_mat4* result) {
+  vkm_vec3 f, u, s;
+
+  vkm_vec3_sub(center, eye, &f);
+  vkm_vec3_normalize(&f, &f);
+
+  vkm_vec3_cross(&f, up, &s);
+  vkm_vec3_normalize(&s, &s);
+  vkm_vec3_cross(&s, &f, &u);
+
+  result->m00 = s.x;
+  result->m01 = u.x;
+  result->m02 =-f.x;
+  result->m10 = s.y;
+  result->m11 = u.y;
+  result->m12 =-f.y;
+  result->m20 = s.z;
+  result->m21 = u.z;
+  result->m22 =-f.z;
+  result->m30 =-vkm_vec3_dot(&s, eye);
+  result->m31 =-vkm_vec3_dot(&u, eye);
+  result->m32 = vkm_vec3_dot(&f, eye);
+  result->m03 = result->m13 = result->m23 = 0.0f;
+  result->m33 = 1.0f;
+}
+
 #ifdef CVKM_LH
 #define vkm_euler_to_quat vkm_euler_to_quat_lh
-#define vkm_quat_look_at vkm_quat_look_at_lh
+#define vkm_look_rotation vkm_look_rotation_lh
+#define vkm_look_at vkm_look_at_lh
 #else
 #define vkm_euler_to_quat vkm_euler_to_quat_rh
-#define vkm_quat_look_at vkm_quat_look_at_rh
+#define vkm_look_rotation vkm_look_rotation_rh
+#define vkm_look_at vkm_look_at_rh
 #endif
 
 static void vkm_quat_conjugate(const vkm_quat* quaternion, vkm_quat* result) {
@@ -2577,6 +2631,15 @@ static void vkm_quat_conjugate(const vkm_quat* quaternion, vkm_quat* result) {
     quaternion->w,
   } };
 }
+
+#define vkm_deg2rad(angle) _Generic((angle),\
+  float: (angle) * CVKM_DEG2RAD_F,\
+  double: (angle) * CVKM_DEG2RAD\
+)
+#define vkm_rad2deg(angle) _Generic((angle),\
+  float: (angle) * CVKM_RAD2DEG_F,\
+  double: (angle) * CVKM_RAD2DEG\
+)
 
 typedef vkm_vec2 Position2D;
 typedef vkm_vec3 Position3D;
