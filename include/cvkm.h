@@ -392,18 +392,22 @@ typedef union vkm_mat4 {
   float raw[16];
 } vkm_mat4;
 
-#define CVKM_MAT3_IDENTITY (vkm_mat3){ .raw = {\
-  1.0f, 0.0f, 0.0f,\
-  0.0f, 1.0f, 0.0f,\
-  0.0f, 0.0f, 1.0f,\
+#define CVKM_MAT3_IDENTITY_INIT { {\
+  { { 1.0f, 0.0f, 0.0f } },\
+  { { 0.0f, 1.0f, 0.0f } },\
+  { { 0.0f, 0.0f, 1.0f } },\
 } }
 
-#define CVKM_MAT4_IDENTITY (vkm_mat4){ .raw = {\
-  1.0f, 0.0f, 0.0f, 0.0f,\
-  0.0f, 1.0f, 0.0f, 0.0f,\
-  0.0f, 0.0f, 1.0f, 0.0f,\
-  0.0f, 0.0f, 0.0f, 1.0f,\
+#define CVKM_MAT3_IDENTITY (vkm_mat3)CVKM_MAT3_IDENTITY_INIT
+
+#define CVKM_MAT4_IDENTITY_INIT { {\
+  { { 1.0f, 0.0f, 0.0f, 0.0f } },\
+  { { 0.0f, 1.0f, 0.0f, 0.0f } },\
+  { { 0.0f, 0.0f, 1.0f, 0.0f } },\
+  { { 0.0f, 0.0f, 0.0f, 1.0f } },\
 } }
+
+#define CVKM_MAT4_IDENTITY (vkm_mat4)CVKM_MAT4_IDENTITY_INIT
 
 #define CVKM_VEC2_OPERATION(type, operation, operator) static void vkm_##type##_##operation(\
   const vkm_##type* a,\
