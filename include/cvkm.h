@@ -1391,6 +1391,37 @@ static float vkm_quat_magnitude(const vkm_quat* quaternion) {
   return vkm_vec4_magnitude((const vkm_vec4*)quaternion);
 }
 
+static void vkm_mat4_invert(const vkm_mat4* mat, vkm_mat4* result) {
+  const float
+    sub1  = mat->m22 * mat->m33 - mat->m23 * mat->m32,  sub2  = mat->m02 * mat->m13 - mat->m03 * mat->m12,  sub3  = mat->m20 * mat->m33 - mat->m23 * mat->m30,
+    sub4  = mat->m00 * mat->m13 - mat->m03 * mat->m10,  sub5  = mat->m21 * mat->m33 - mat->m23 * mat->m31,  sub6  = mat->m01 * mat->m13 - mat->m03 * mat->m11,
+    sub7  = mat->m20 * mat->m31 - mat->m21 * mat->m30,  sub8  = mat->m00 * mat->m11 - mat->m01 * mat->m10,  sub9  = mat->m21 * mat->m32 - mat->m22 * mat->m31,
+    sub10 = mat->m01 * mat->m12 - mat->m02 * mat->m11,  sub11 = mat->m20 * mat->m32 - mat->m22 * mat->m30,  sub12 = mat->m00 * mat->m12 - mat->m02 * mat->m10,
+
+    inverse_determinant = 1.0f / (sub8 * sub1 + sub4 * sub9 + sub10 * sub3 + sub2 * sub7 - sub12 * sub5 - sub6 * sub11),
+    negative_determinant = -inverse_determinant;
+
+  result->m00 = (mat->m11 * sub1  - mat->m12 * sub5  + mat->m13 * sub9)  * inverse_determinant;
+  result->m01 = (mat->m01 * sub1  - mat->m02 * sub5  + mat->m03 * sub9)  * negative_determinant;
+  result->m02 = (mat->m31 * sub2  - mat->m32 * sub6  + mat->m33 * sub10) * inverse_determinant;
+  result->m03 = (mat->m21 * sub2  - mat->m22 * sub6  + mat->m23 * sub10) * negative_determinant;
+
+  result->m10 = (mat->m10 * sub1  - mat->m12 * sub3  + mat->m13 * sub11) * negative_determinant;
+  result->m11 = (mat->m00 * sub1  - mat->m02 * sub3  + mat->m03 * sub11) * inverse_determinant;
+  result->m12 = (mat->m30 * sub2  - mat->m32 * sub4  + mat->m33 * sub12) * negative_determinant;
+  result->m13 = (mat->m20 * sub2  - mat->m22 * sub4  + mat->m23 * sub12) * inverse_determinant;
+
+  result->m20 = (mat->m10 * sub5  - mat->m11 * sub3  + mat->m13 * sub7)  * inverse_determinant;
+  result->m21 = (mat->m00 * sub5  - mat->m01 * sub3  + mat->m03 * sub7)  * negative_determinant;
+  result->m22 = (mat->m30 * sub6  - mat->m31 * sub4  + mat->m33 * sub8)  * inverse_determinant;
+  result->m23 = (mat->m20 * sub6  - mat->m21 * sub4  + mat->m23 * sub8)  * negative_determinant;
+
+  result->m30 = (mat->m10 * sub9  - mat->m11 * sub11 + mat->m12 * sub7)  * negative_determinant;
+  result->m31 = (mat->m00 * sub9  - mat->m01 * sub11 + mat->m02 * sub7)  * inverse_determinant;
+  result->m32 = (mat->m30 * sub10 - mat->m31 * sub12 + mat->m32 * sub8)  * negative_determinant;
+  result->m33 = (mat->m20 * sub10 - mat->m21 * sub12 + mat->m22 * sub8)  * inverse_determinant;
+}
+
 #define vkm_dot(a, b) _Generic((a),\
   vkm_bvec2*: vkm_bvec2_dot,\
   const vkm_bvec2*: vkm_bvec2_dot,\
@@ -1657,7 +1688,8 @@ static float vkm_quat_magnitude(const vkm_quat* quaternion) {
   vkm_ivec4*: vkm_ivec4_invert,\
   vkm_lvec4*: vkm_lvec4_invert,\
   vkm_vec4*: vkm_vec4_invert,\
-  vkm_dvec4*: vkm_dvec4_invert\
+  vkm_dvec4*: vkm_dvec4_invert,\
+  vkm_mat4*: vkm_mat4_invert \
 )((vec), (result))
 
 #define CVKM_VEC2_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
