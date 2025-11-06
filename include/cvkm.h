@@ -2268,30 +2268,31 @@ static void vkm_perspective_rh_no(
 #endif
 
 static void vkm_mat4_mul(const vkm_mat4* a, const vkm_mat4* b, vkm_mat4* result) {
-  result->m00 = a->m00 * b->m00 + a->m10 * b->m01 + a->m20 * b->m02 + a->m30 * b->m03;
-  result->m01 = a->m01 * b->m00 + a->m11 * b->m01 + a->m21 * b->m02 + a->m31 * b->m03;
-  result->m02 = a->m02 * b->m00 + a->m12 * b->m01 + a->m22 * b->m02 + a->m32 * b->m03;
-  result->m03 = a->m03 * b->m00 + a->m13 * b->m01 + a->m23 * b->m02 + a->m33 * b->m03;
+  const vkm_mat4 a_copy = *a, b_copy = *b;
 
-  result->m10 = a->m00 * b->m10 + a->m10 * b->m11 + a->m20 * b->m12 + a->m30 * b->m13;
-  result->m11 = a->m01 * b->m10 + a->m11 * b->m11 + a->m21 * b->m12 + a->m31 * b->m13;
-  result->m12 = a->m02 * b->m10 + a->m12 * b->m11 + a->m22 * b->m12 + a->m32 * b->m13;
-  result->m13 = a->m03 * b->m10 + a->m13 * b->m11 + a->m23 * b->m12 + a->m33 * b->m13;
+  result->m00 = a_copy.m00 * b_copy.m00 + a_copy.m10 * b_copy.m01 + a_copy.m20 * b_copy.m02 + a_copy.m30 * b_copy.m03;
+  result->m01 = a_copy.m01 * b_copy.m00 + a_copy.m11 * b_copy.m01 + a_copy.m21 * b_copy.m02 + a_copy.m31 * b_copy.m03;
+  result->m02 = a_copy.m02 * b_copy.m00 + a_copy.m12 * b_copy.m01 + a_copy.m22 * b_copy.m02 + a_copy.m32 * b_copy.m03;
+  result->m03 = a_copy.m03 * b_copy.m00 + a_copy.m13 * b_copy.m01 + a_copy.m23 * b_copy.m02 + a_copy.m33 * b_copy.m03;
 
-  result->m20 = a->m00 * b->m20 + a->m10 * b->m21 + a->m20 * b->m22 + a->m30 * b->m23;
-  result->m21 = a->m01 * b->m20 + a->m11 * b->m21 + a->m21 * b->m22 + a->m31 * b->m23;
-  result->m22 = a->m02 * b->m20 + a->m12 * b->m21 + a->m22 * b->m22 + a->m32 * b->m23;
-  result->m23 = a->m03 * b->m20 + a->m13 * b->m21 + a->m23 * b->m22 + a->m33 * b->m23;
+  result->m10 = a_copy.m00 * b_copy.m10 + a_copy.m10 * b_copy.m11 + a_copy.m20 * b_copy.m12 + a_copy.m30 * b_copy.m13;
+  result->m11 = a_copy.m01 * b_copy.m10 + a_copy.m11 * b_copy.m11 + a_copy.m21 * b_copy.m12 + a_copy.m31 * b_copy.m13;
+  result->m12 = a_copy.m02 * b_copy.m10 + a_copy.m12 * b_copy.m11 + a_copy.m22 * b_copy.m12 + a_copy.m32 * b_copy.m13;
+  result->m13 = a_copy.m03 * b_copy.m10 + a_copy.m13 * b_copy.m11 + a_copy.m23 * b_copy.m12 + a_copy.m33 * b_copy.m13;
 
-  result->m30 = a->m00 * b->m30 + a->m10 * b->m31 + a->m20 * b->m32 + a->m30 * b->m33;
-  result->m31 = a->m01 * b->m30 + a->m11 * b->m31 + a->m21 * b->m32 + a->m31 * b->m33;
-  result->m32 = a->m02 * b->m30 + a->m12 * b->m31 + a->m22 * b->m32 + a->m32 * b->m33;
-  result->m33 = a->m03 * b->m30 + a->m13 * b->m31 + a->m23 * b->m32 + a->m33 * b->m33;
+  result->m20 = a_copy.m00 * b_copy.m20 + a_copy.m10 * b_copy.m21 + a_copy.m20 * b_copy.m22 + a_copy.m30 * b_copy.m23;
+  result->m21 = a_copy.m01 * b_copy.m20 + a_copy.m11 * b_copy.m21 + a_copy.m21 * b_copy.m22 + a_copy.m31 * b_copy.m23;
+  result->m22 = a_copy.m02 * b_copy.m20 + a_copy.m12 * b_copy.m21 + a_copy.m22 * b_copy.m22 + a_copy.m32 * b_copy.m23;
+  result->m23 = a_copy.m03 * b_copy.m20 + a_copy.m13 * b_copy.m21 + a_copy.m23 * b_copy.m22 + a_copy.m33 * b_copy.m23;
+
+  result->m30 = a_copy.m00 * b_copy.m30 + a_copy.m10 * b_copy.m31 + a_copy.m20 * b_copy.m32 + a_copy.m30 * b_copy.m33;
+  result->m31 = a_copy.m01 * b_copy.m30 + a_copy.m11 * b_copy.m31 + a_copy.m21 * b_copy.m32 + a_copy.m31 * b_copy.m33;
+  result->m32 = a_copy.m02 * b_copy.m30 + a_copy.m12 * b_copy.m31 + a_copy.m22 * b_copy.m32 + a_copy.m32 * b_copy.m33;
+  result->m33 = a_copy.m03 * b_copy.m30 + a_copy.m13 * b_copy.m31 + a_copy.m23 * b_copy.m32 + a_copy.m33 * b_copy.m33;
 }
 
 static void vkm_mat4_mul_transform(const vkm_mat4* a, const vkm_mat4* b, vkm_mat4* result) {
-  const vkm_mat4 a_copy = *a;
-  const vkm_mat4 b_copy = *b;
+  const vkm_mat4 a_copy = *a, b_copy = *b;
 
   result->m00 = a_copy.m00 * b_copy.m00 + a_copy.m10 * b_copy.m01 + a_copy.m20 * b_copy.m02;
   result->m01 = a_copy.m01 * b_copy.m00 + a_copy.m11 * b_copy.m01 + a_copy.m21 * b_copy.m02;
@@ -2395,12 +2396,12 @@ static void vkm_translate_vec3(vkm_mat4* matrix, const vkm_vec3* translation) {
   vkm_muladd(matrix->columns + 2, translation->z, matrix->columns + 3);
 }
 
-#define vkm_translate(matrix, vector) _Generic((vector),\
+#define vkm_translate(matrix, ...) _Generic((__VA_ARGS__),\
   vkm_vec2*: vkm_translate_vec2,\
   const vkm_vec2*: vkm_translate_vec2,\
   vkm_vec3*: vkm_translate_vec3,\
   const vkm_vec3*: vkm_translate_vec3\
-)((matrix), (vector))
+)((matrix), (__VA_ARGS__))
 
 static void vkm_rotate(vkm_mat4* matrix, const float angle, const vkm_vec3* axis) {
   vkm_mat4 rotation;
