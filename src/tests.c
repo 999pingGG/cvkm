@@ -266,7 +266,10 @@ static void Simulate(ecs_iter_t* it) {
     vkm_mul(velocity, it->delta_time, &delta);
     vkm_add(position, &delta, position);
 
-    vkm_add(velocity, (&(vkm_vec2){ { 0.0f, -9.81f * it->delta_time } }), velocity);
+    // Can't do it this way due to a false warning thrown by MSVC...
+    //vkm_add(velocity, (&(vkm_vec2){ { 0.0f, -9.81f * it->delta_time } }), velocity);
+    const vkm_vec2 operand = { { 0.0f, -9.81f * it->delta_time } };
+    vkm_add(velocity, &operand, velocity);
 
     if (damping) {
       vkm_mul(velocity, *damping, velocity);

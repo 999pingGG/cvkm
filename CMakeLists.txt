@@ -25,6 +25,7 @@ endif()
 set(CVKM_DISABLE_WARNINGS_LIST
   libs/flecs/flecs.c
   libs/flecs/flecs.h
+  libs/munit/munit.c
 )
 
 if(MSVC)

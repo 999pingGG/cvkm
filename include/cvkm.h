@@ -615,7 +615,9 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
 
 #define CVKM_BASIC_OPERATIONS(vec_type, scalar_type, operation, b) vkm_##vec_type*: _Generic((b),\
   vkm_##vec_type*: vkm_##vec_type##_##operation,\
+  const vkm_##vec_type*: vkm_##vec_type##_##operation,\
   scalar_type: vkm_##vec_type##_##operation##_scalar,\
+  const scalar_type: vkm_##vec_type##_##operation##_scalar,\
   default: ((void)0)\
 )
 
@@ -755,7 +757,9 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
 
 #define CVKM_MULADD_OPERATIONS(vector_type, scalar_type, b) vkm_##vector_type*: _Generic((b),\
   vkm_##vector_type*: vkm_##vector_type##_muladd,\
+  const vkm_##vector_type*: vkm_##vector_type##_muladd,\
   scalar_type: vkm_##vector_type##_muladd_scalar,\
+  const scalar_type: vkm_##vector_type##_muladd_scalar,\
   default: ((void)0)\
 )
 
