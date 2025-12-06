@@ -70,7 +70,7 @@
 #pragma GCC diagnostic ignored "-Wunreachable-code-generic-assoc"
 #endif
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
@@ -3200,7 +3200,7 @@ void cvkmImport(ecs_world_t* world) {
 #endif
 #endif
 
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) || defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
 #endif
