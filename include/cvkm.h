@@ -117,6 +117,10 @@
   type raw[4];\
 } vkm_##prefix##vec4
 
+#define CVKM_DEFINE_RECT(prefix, type) typedef struct vkm_##prefix##rect {\
+  type x, y, width, height;\
+} vkm_##prefix##rect
+
 CVKM_DEFINE_VEC2(b, int8_t);
 CVKM_DEFINE_VEC2(ub, uint8_t);
 CVKM_DEFINE_VEC2(s, int16_t);
@@ -359,6 +363,17 @@ CVKM_DEFINE_VEC4(d, double);
 #define CVKM_ULVEC4_ONE   ((vkm_ulvec4) CVKM_VEC4_ONE_INIT)
 #define CVKM_VEC4_ONE     ((vkm_vec4)   CVKM_VEC4_ONE_INIT)
 #define CVKM_DVEC4_ONE    ((vkm_dvec4)  CVKM_VEC4_ONE_INIT)
+
+CVKM_DEFINE_RECT(b, int8_t);
+CVKM_DEFINE_RECT(ub, uint8_t);
+CVKM_DEFINE_RECT(s, int16_t);
+CVKM_DEFINE_RECT(us, uint16_t);
+CVKM_DEFINE_RECT(i, int32_t);
+CVKM_DEFINE_RECT(u, uint32_t);
+CVKM_DEFINE_RECT(l, int64_t);
+CVKM_DEFINE_RECT(ul, uint64_t);
+CVKM_DEFINE_RECT(, float);
+CVKM_DEFINE_RECT(d, double);
 
 typedef union vkm_quat {
   struct {
@@ -812,6 +827,10 @@ static double vkm_inverse_sqrtd(const double x) {
   return vkm_min##suffix(vkm_max##suffix(value, min), max);\
 }\
 
+#define CVKM_INTEGER_ABS_OPERATION(type, bits, suffix) static type vkm_abs##suffix(const type x) {\
+  return ((x >> bits) ^ x) - 1;\
+}
+
 CVKM_SCALAR_OPERATION(sin, int8_t, b)
 CVKM_SCALAR_OPERATION(sin, uint8_t, ub)
 CVKM_SCALAR_OPERATION(sin, int16_t, s)
@@ -925,6 +944,13 @@ CVKM_CLAMP_OPERATION(int64_t, l)
 CVKM_CLAMP_OPERATION(uint64_t, ul)
 CVKM_CLAMP_OPERATION(float, f)
 CVKM_CLAMP_OPERATION(double, )
+
+CVKM_INTEGER_ABS_OPERATION(int8_t, 7, b)
+CVKM_INTEGER_ABS_OPERATION(int16_t, 15, s)
+CVKM_INTEGER_ABS_OPERATION(int32_t, 31, i)
+CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
+#define cvkm_absf fabsf
+#define cvkm_abs fabs
 
 #define vkm_sin(x) _Generic((x),\
   int8_t: vkm_sinb,\
@@ -1179,6 +1205,21 @@ CVKM_CLAMP_OPERATION(double, )
   const double: vkm_clamp\
 )((value), (min), (max))
 
+#define vkm_abs(value) _Generic((value),\
+  int8_t: vkm_absb,\
+  int16_t: vkm_abss,\
+  int32_t: vkm_absi,\
+  int64_t: vkm_absl,\
+  float: fabsf,\
+  double: fabs,\
+  const int8_t: vkm_absb,\
+  const int16_t: vkm_abss,\
+  const int32_t: vkm_absi,\
+  const int64_t: vkm_absl,\
+  const float: fabsf,\
+  const double: fabs\
+)(value)
+
 #define CVKM_CONSTEXPR_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define CVKM_CONSTEXPR_MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -1420,6 +1461,23 @@ static void vkm_mat4_invert(const vkm_mat4* mat, vkm_mat4* result) {
   result->m31 = (mat->m00 * sub9  - mat->m01 * sub11 + mat->m02 * sub7)  * inverse_determinant;
   result->m32 = (mat->m30 * sub10 - mat->m31 * sub12 + mat->m32 * sub8)  * negative_determinant;
   result->m33 = (mat->m20 * sub10 - mat->m21 * sub12 + mat->m22 * sub8)  * inverse_determinant;
+}
+
+static void vkm_mat3_transpose(const vkm_mat3* mat, vkm_mat3* result) {
+  *result = (vkm_mat3){
+    .m00 = mat->m00, .m01 = mat->m10, .m02 = mat->m20,
+    .m10 = mat->m01, .m11 = mat->m11, .m12 = mat->m21,
+    .m20 = mat->m02, .m21 = mat->m12, .m22 = mat->m22,
+  };
+}
+
+static void vkm_mat4_transpose(const vkm_mat4* mat, vkm_mat4* result) {
+  *result = (vkm_mat4){
+    .m00 = mat->m00, .m01 = mat->m10, .m02 = mat->m20, .m03 = mat->m30,
+    .m10 = mat->m01, .m11 = mat->m11, .m12 = mat->m21, .m13 = mat->m31,
+    .m20 = mat->m02, .m21 = mat->m12, .m22 = mat->m22, .m23 = mat->m32,
+    .m30 = mat->m03, .m31 = mat->m13, .m32 = mat->m23, .m33 = mat->m33,
+  };
 }
 
 #define vkm_dot(a, b) _Generic((a),\
@@ -1670,7 +1728,7 @@ static void vkm_mat4_invert(const vkm_mat4* mat, vkm_mat4* result) {
   vkm_dvec4*: vkm_dvec4_clear\
 )(vec)
 
-#define vkm_invert(vec, result) _Generic((result),\
+#define vkm_invert(a, result) _Generic((result),\
   vkm_bvec2*: vkm_bvec2_invert,\
   vkm_svec2*: vkm_svec2_invert,\
   vkm_ivec2*: vkm_ivec2_invert,\
@@ -1689,8 +1747,13 @@ static void vkm_mat4_invert(const vkm_mat4* mat, vkm_mat4* result) {
   vkm_lvec4*: vkm_lvec4_invert,\
   vkm_vec4*: vkm_vec4_invert,\
   vkm_dvec4*: vkm_dvec4_invert,\
-  vkm_mat4*: vkm_mat4_invert \
-)((vec), (result))
+  vkm_mat4*: vkm_mat4_invert\
+)((a), (result))
+
+#define vkm_transpose(mat, result) _Generic((result),\
+  vkm_mat3*: vkm_mat3_transpose,\
+  vkm_mat4*: vkm_mat4_transpose\
+)((mat), (result))
 
 #define CVKM_VEC2_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
 const vkm_##type* a,\
@@ -2524,6 +2587,14 @@ static void vkm_euler_to_quat_rh(const vkm_vec3* euler, vkm_versor* result) {
   } };
 }
 
+static void vkm_mat4_to_mat3(const vkm_mat4* matrix, vkm_mat3* result) {
+  *result = (vkm_mat3){
+    .m00 = matrix->m00, .m01 = matrix->m01, .m02 = matrix->m02,
+    .m10 = matrix->m10, .m11 = matrix->m11, .m12 = matrix->m12,
+    .m20 = matrix->m20, .m21 = matrix->m21, .m22 = matrix->m22,
+  };
+}
+
 static void vkm_mat3_to_quat(const vkm_mat3* matrix, vkm_quat* result) {
   const float trace = matrix->m00 + matrix->m11 + matrix->m22;
   if (trace >= 0.0f) {
@@ -2598,56 +2669,52 @@ static void vkm_look_rotation_rh(const vkm_vec3* direction, const vkm_vec3* up, 
   vkm_mat3_to_quat(&matrix, result);
 }
 
-static void vkm_look_at_lh(const vkm_vec3* eye, const vkm_vec3* center, const vkm_vec3* up, vkm_mat4* result) {
-  vkm_vec3 f, u, s;
+static void vkm_look_at_lh(const vkm_vec3* eye, const vkm_vec3* target, const vkm_vec3* up, vkm_mat4* result) {
+  vkm_vec3 forward, right, true_up;
 
-  vkm_vec3_sub(center, eye, &f);
-  vkm_vec3_normalize(&f, &f);
+  vkm_vec3_sub(target, eye, &forward);
+  vkm_vec3_normalize(&forward, &forward);
 
-  vkm_vec3_cross(up, &f, &s);
-  vkm_vec3_normalize(&s, &s);
-  vkm_vec3_cross(&f, &s, &u);
+  vkm_vec3_cross(up, &forward, &right);
+  vkm_vec3_normalize(&right, &right);
+  vkm_vec3_cross(&forward, &right, &true_up);
 
-  result->m00 = s.x;
-  result->m01 = u.x;
-  result->m02 = f.x;
-  result->m10 = s.y;
-  result->m11 = u.y;
-  result->m12 = f.y;
-  result->m20 = s.z;
-  result->m21 = u.z;
-  result->m22 = f.z;
-  result->m30 =-vkm_vec3_dot(&s, eye);
-  result->m31 =-vkm_vec3_dot(&u, eye);
-  result->m32 =-vkm_vec3_dot(&f, eye);
+  // @formatter:off
+  result->m00 = right.x; result->m01 = true_up.x; result->m02 = forward.x;
+  result->m10 = right.y; result->m11 = true_up.y; result->m12 = forward.y;
+  result->m20 = right.z; result->m21 = true_up.z; result->m22 = forward.z;
+
+  result->m30 =-vkm_vec3_dot(&right, eye);
+  result->m31 =-vkm_vec3_dot(&true_up, eye);
+  result->m32 =-vkm_vec3_dot(&forward, eye);
+
   result->m03 = result->m13 = result->m23 = 0.0f;
   result->m33 = 1.0f;
+  // @formatter:on
 }
 
-static void vkm_look_at_rh(const vkm_vec3* eye, const vkm_vec3* center, const vkm_vec3* up, vkm_mat4* result) {
-  vkm_vec3 f, u, s;
+static void vkm_look_at_rh(const vkm_vec3* eye, const vkm_vec3* target, const vkm_vec3* up, vkm_mat4* result) {
+  vkm_vec3 forward, right, true_up;
 
-  vkm_vec3_sub(center, eye, &f);
-  vkm_vec3_normalize(&f, &f);
+  vkm_vec3_sub(target, eye, &forward);
+  vkm_vec3_normalize(&forward, &forward);
 
-  vkm_vec3_cross(&f, up, &s);
-  vkm_vec3_normalize(&s, &s);
-  vkm_vec3_cross(&s, &f, &u);
+  vkm_vec3_cross(&forward, up, &right);
+  vkm_vec3_normalize(&right, &right);
+  vkm_vec3_cross(&right, &forward, &true_up);
 
-  result->m00 = s.x;
-  result->m01 = u.x;
-  result->m02 =-f.x;
-  result->m10 = s.y;
-  result->m11 = u.y;
-  result->m12 =-f.y;
-  result->m20 = s.z;
-  result->m21 = u.z;
-  result->m22 =-f.z;
-  result->m30 =-vkm_vec3_dot(&s, eye);
-  result->m31 =-vkm_vec3_dot(&u, eye);
-  result->m32 = vkm_vec3_dot(&f, eye);
+  // @formatter:off
+  result->m00 = right.x; result->m01 = true_up.x; result->m02 =-forward.x;
+  result->m10 = right.y; result->m11 = true_up.y; result->m12 =-forward.y;
+  result->m20 = right.z; result->m21 = true_up.z; result->m22 =-forward.z;
+
+  result->m30 =-vkm_vec3_dot(&right, eye);
+  result->m31 =-vkm_vec3_dot(&true_up, eye);
+  result->m32 = vkm_vec3_dot(&forward, eye);
+
   result->m03 = result->m13 = result->m23 = 0.0f;
   result->m33 = 1.0f;
+  // @formatter:on
 }
 
 #ifdef CVKM_LH
