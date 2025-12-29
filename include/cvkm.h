@@ -613,7 +613,7 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   result->w = p_copy.w * q_copy.w - p_copy.x * q_copy.x - p_copy.y * q_copy.y - p_copy.z * q_copy.z;
 }
 
-#define CVKM_BASIC_OPERATIONS(vec_type, scalar_type, operation, b) vkm_##vec_type*: _Generic((b),\
+#define CVKM_BASIC_OPERATIONS(vec_type, scalar_type, operation, b) vkm_##vec_type*: _Generic(b,\
   vkm_##vec_type*: vkm_##vec_type##_##operation,\
   const vkm_##vec_type*: vkm_##vec_type##_##operation,\
   scalar_type: vkm_##vec_type##_##operation##_scalar,\
@@ -621,7 +621,7 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   default: ((void)0)\
 )
 
-#define vkm_add(a, b, result) _Generic((result),\
+#define vkm_add(a, b, result) _Generic(result,\
   CVKM_BASIC_OPERATIONS(bvec2, int8_t, add, b),\
   CVKM_BASIC_OPERATIONS(ubvec2, uint8_t, add, b),\
   CVKM_BASIC_OPERATIONS(svec2, int16_t, add, b),\
@@ -652,9 +652,9 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   CVKM_BASIC_OPERATIONS(ulvec4, uint64_t, add, b),\
   CVKM_BASIC_OPERATIONS(vec4, float, add, b),\
   CVKM_BASIC_OPERATIONS(dvec4, double, add, b)\
-)((a), (b), (result))
+)(a, b, result)
 
-#define vkm_sub(a, b, result) _Generic((result),\
+#define vkm_sub(a, b, result) _Generic(result,\
   CVKM_BASIC_OPERATIONS(bvec2, int8_t, sub, b),\
   CVKM_BASIC_OPERATIONS(ubvec2, uint8_t, sub, b),\
   CVKM_BASIC_OPERATIONS(svec2, int16_t, sub, b),\
@@ -685,9 +685,9 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   CVKM_BASIC_OPERATIONS(ulvec4, uint64_t, sub, b),\
   CVKM_BASIC_OPERATIONS(vec4, float, sub, b),\
   CVKM_BASIC_OPERATIONS(dvec4, double, sub, b)\
-)((a), (b), (result))
+)(a, b, result)
 
-#define vkm_mul(a, b, result) _Generic((result),\
+#define vkm_mul(a, b, result) _Generic(result,\
   CVKM_BASIC_OPERATIONS(bvec2, int8_t, mul, b),\
   CVKM_BASIC_OPERATIONS(ubvec2, uint8_t, mul, b),\
   CVKM_BASIC_OPERATIONS(svec2, int16_t, mul, b),\
@@ -720,9 +720,9 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   CVKM_BASIC_OPERATIONS(dvec4, double, mul, b),\
   vkm_mat4*: vkm_mat4_mul,\
   vkm_quat*: vkm_quat_mul\
-)((a), (b), (result))
+)(a, b, result)
 
-#define vkm_div(a, b, result) _Generic((result),\
+#define vkm_div(a, b, result) _Generic(result,\
   CVKM_BASIC_OPERATIONS(bvec2, int8_t, div, b),\
   CVKM_BASIC_OPERATIONS(ubvec2, uint8_t, div, b),\
   CVKM_BASIC_OPERATIONS(svec2, int16_t, div, b),\
@@ -753,9 +753,9 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   CVKM_BASIC_OPERATIONS(ulvec4, uint64_t, div, b),\
   CVKM_BASIC_OPERATIONS(vec4, float, div, b),\
   CVKM_BASIC_OPERATIONS(dvec4, double, div, b)\
-)((a), (b), (result))
+)(a, b, result)
 
-#define CVKM_MULADD_OPERATIONS(vector_type, scalar_type, b) vkm_##vector_type*: _Generic((b),\
+#define CVKM_MULADD_OPERATIONS(vector_type, scalar_type, b) vkm_##vector_type*: _Generic(b,\
   vkm_##vector_type*: vkm_##vector_type##_muladd,\
   const vkm_##vector_type*: vkm_##vector_type##_muladd,\
   scalar_type: vkm_##vector_type##_muladd_scalar,\
@@ -763,7 +763,7 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   default: ((void)0)\
 )
 
-#define vkm_muladd(a, b, result) _Generic((result),\
+#define vkm_muladd(a, b, result) _Generic(result,\
   CVKM_MULADD_OPERATIONS(bvec2, int8_t, b),\
   CVKM_MULADD_OPERATIONS(ubvec2, uint8_t, b),\
   CVKM_MULADD_OPERATIONS(svec2, int16_t, b),\
@@ -794,7 +794,7 @@ static void vkm_quat_mul(const vkm_quat* p, const vkm_quat* q, vkm_quat* result)
   CVKM_MULADD_OPERATIONS(ulvec4, uint64_t, b),\
   CVKM_MULADD_OPERATIONS(vec4, float, b),\
   CVKM_MULADD_OPERATIONS(dvec4, double, b)\
-)((a), (b), (result))
+)(a, b, result)
 
 #define CVKM_SCALAR_OPERATION(operation, type, suffix) static type vkm_##operation##suffix(const type x) {\
   return (type)operation((double)x);\
@@ -819,8 +819,86 @@ static double vkm_inverse_sqrtd(const double x) {
   return a < b ? a : b;\
 }
 
+#define CVKM_VEC2_MIN_OPERATION(type) static void type##_min(const type* a, const type* b, type* result) {\
+  *result = (type){ {\
+    a->x < b->x ? a->x : b->x,\
+    a->y < b->y ? a->y : b->y,\
+  } };\
+}
+
+#define CVKM_VEC3_MIN_OPERATION(type) static void type##_min(const type* a, const type* b, type* result) {\
+  *result = (type){ {\
+    a->x < b->x ? a->x : b->x,\
+    a->y < b->y ? a->y : b->y,\
+    a->z < b->z ? a->z : b->z,\
+  } };\
+}
+
+#define CVKM_VEC4_MIN_OPERATION(type) static void type##_min(const type* a, const type* b, type* result) {\
+  *result = (type){ {\
+    a->x < b->x ? a->x : b->x,\
+    a->y < b->y ? a->y : b->y,\
+    a->z < b->z ? a->z : b->z,\
+    a->w < b->w ? a->w : b->w,\
+  } };\
+}
+
+#define CVKM_VEC2_SCALAR_MIN_OPERATION(type, scalar_type) static scalar_type type##_scalar_min(const type* vec) {\
+  return vec->x < vec->y ? vec->x : vec->y;\
+}
+
+#define CVKM_VEC3_SCALAR_MIN_OPERATION(type, scalar_type) static scalar_type type##_scalar_min(const type* vec) {\
+  const scalar_type min_xy = vec->x < vec->y ? vec->x : vec->y;\
+  return min_xy < vec->z ? min_xy : vec->z;\
+}
+
+#define CVKM_VEC4_SCALAR_MIN_OPERATION(type, scalar_type) static scalar_type type##_scalar_min(const type* vec) {\
+  const scalar_type min_xy = vec->x < vec->y ? vec->x : vec->y;\
+  const scalar_type min_zw = vec->z < vec->w ? vec->z : vec->w;\
+  return min_xy < min_zw ? min_xy : min_zw;\
+}
+
 #define CVKM_MAX_OPERATION(type, suffix) static type vkm_max##suffix(const type a, const type b) {\
   return a > b ? a : b;\
+}
+
+#define CVKM_VEC2_MAX_OPERATION(type) static void type##_max(const type* a, const type* b, type* result) {\
+  *result = (type){ {\
+    a->x > b->x ? a->x : b->x,\
+    a->y > b->y ? a->y : b->y,\
+  } };\
+}
+
+#define CVKM_VEC3_MAX_OPERATION(type) static void type##_max(const type* a, const type* b, type* result) {\
+  *result = (type){ {\
+    a->x > b->x ? a->x : b->x,\
+    a->y > b->y ? a->y : b->y,\
+    a->z > b->z ? a->z : b->z,\
+  } };\
+}
+
+#define CVKM_VEC4_MAX_OPERATION(type) static void type##_max(const type* a, const type* b, type* result) {\
+  *result = (type){ {\
+    a->x > b->x ? a->x : b->x,\
+    a->y > b->y ? a->y : b->y,\
+    a->z > b->z ? a->z : b->z,\
+    a->w > b->w ? a->w : b->w,\
+  } };\
+}
+
+#define CVKM_VEC2_SCALAR_MAX_OPERATION(type, scalar_type) static scalar_type type##_scalar_max(const type* vec) {\
+  return vec->x > vec->y ? vec->x : vec->y;\
+}
+
+#define CVKM_VEC3_SCALAR_MAX_OPERATION(type, scalar_type) static scalar_type type##_scalar_max(const type* vec) {\
+  const scalar_type max_xy = vec->x > vec->y ? vec->x : vec->y;\
+  return max_xy > vec->z ? max_xy : vec->z;\
+}
+
+#define CVKM_VEC4_SCALAR_MAX_OPERATION(type, scalar_type) static scalar_type type##_scalar_max(const type* vec) {\
+  const scalar_type max_xy = vec->x > vec->y ? vec->x : vec->y;\
+  const scalar_type max_zw = vec->z > vec->w ? vec->z : vec->w;\
+  return max_xy > max_zw ? max_xy : max_zw;\
 }
 
 #define CVKM_CLAMP_OPERATION(type, suffix) static type vkm_clamp##suffix(\
@@ -832,7 +910,7 @@ static double vkm_inverse_sqrtd(const double x) {
 }\
 
 #define CVKM_INTEGER_ABS_OPERATION(type, bits, suffix) static type vkm_abs##suffix(const type x) {\
-  return ((x >> bits) ^ x) - 1;\
+  return ((x >> (bits)) ^ x) - 1;\
 }
 
 CVKM_SCALAR_OPERATION(sin, int8_t, b)
@@ -927,6 +1005,74 @@ CVKM_MIN_OPERATION(uint64_t, ul)
 CVKM_MIN_OPERATION(float, f)
 CVKM_MIN_OPERATION(double,)
 
+CVKM_VEC2_MIN_OPERATION(vkm_bvec2)
+CVKM_VEC2_MIN_OPERATION(vkm_ubvec2)
+CVKM_VEC2_MIN_OPERATION(vkm_svec2)
+CVKM_VEC2_MIN_OPERATION(vkm_usvec2)
+CVKM_VEC2_MIN_OPERATION(vkm_ivec2)
+CVKM_VEC2_MIN_OPERATION(vkm_uvec2)
+CVKM_VEC2_MIN_OPERATION(vkm_lvec2)
+CVKM_VEC2_MIN_OPERATION(vkm_ulvec2)
+CVKM_VEC2_MIN_OPERATION(vkm_vec2)
+CVKM_VEC2_MIN_OPERATION(vkm_dvec2)
+
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_bvec2, int8_t)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_ubvec2, uint8_t)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_svec2, int16_t)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_usvec2, uint16_t)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_ivec2, int32_t)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_uvec2, uint32_t)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_lvec2, int64_t)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_ulvec2, uint64_t)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_vec2, float)
+CVKM_VEC2_SCALAR_MIN_OPERATION(vkm_dvec2, double)
+
+CVKM_VEC3_MIN_OPERATION(vkm_bvec3)
+CVKM_VEC3_MIN_OPERATION(vkm_ubvec3)
+CVKM_VEC3_MIN_OPERATION(vkm_svec3)
+CVKM_VEC3_MIN_OPERATION(vkm_usvec3)
+CVKM_VEC3_MIN_OPERATION(vkm_ivec3)
+CVKM_VEC3_MIN_OPERATION(vkm_uvec3)
+CVKM_VEC3_MIN_OPERATION(vkm_lvec3)
+CVKM_VEC3_MIN_OPERATION(vkm_ulvec3)
+CVKM_VEC3_MIN_OPERATION(vkm_vec3)
+CVKM_VEC3_MIN_OPERATION(vkm_dvec3)
+
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_bvec3, int8_t)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_ubvec3, uint8_t)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_svec3, int16_t)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_usvec3, uint16_t)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_ivec3, int32_t)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_uvec3, uint32_t)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_lvec3, int64_t)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_ulvec3, uint64_t)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_vec3, float)
+CVKM_VEC3_SCALAR_MIN_OPERATION(vkm_dvec3, double)
+
+CVKM_VEC4_MIN_OPERATION(vkm_bvec4)
+CVKM_VEC4_MIN_OPERATION(vkm_ubvec4)
+CVKM_VEC4_MIN_OPERATION(vkm_svec4)
+CVKM_VEC4_MIN_OPERATION(vkm_usvec4)
+CVKM_VEC4_MIN_OPERATION(vkm_ivec4)
+CVKM_VEC4_MIN_OPERATION(vkm_uvec4)
+CVKM_VEC4_MIN_OPERATION(vkm_lvec4)
+CVKM_VEC4_MIN_OPERATION(vkm_ulvec4)
+CVKM_VEC4_MIN_OPERATION(vkm_vec4)
+CVKM_VEC4_MIN_OPERATION(vkm_dvec4)
+CVKM_VEC4_MIN_OPERATION(vkm_quat)
+
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_bvec4, int8_t)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_ubvec4, uint8_t)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_svec4, int16_t)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_usvec4, uint16_t)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_ivec4, int32_t)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_uvec4, uint32_t)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_lvec4, int64_t)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_ulvec4, uint64_t)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_vec4, float)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_dvec4, double)
+CVKM_VEC4_SCALAR_MIN_OPERATION(vkm_quat, float)
+
 CVKM_MAX_OPERATION(int8_t, b)
 CVKM_MAX_OPERATION(uint8_t, ub)
 CVKM_MAX_OPERATION(int16_t, s)
@@ -937,6 +1083,74 @@ CVKM_MAX_OPERATION(int64_t, l)
 CVKM_MAX_OPERATION(uint64_t, ul)
 CVKM_MAX_OPERATION(float, f)
 CVKM_MAX_OPERATION(double,)
+
+CVKM_VEC2_MAX_OPERATION(vkm_bvec2)
+CVKM_VEC2_MAX_OPERATION(vkm_ubvec2)
+CVKM_VEC2_MAX_OPERATION(vkm_svec2)
+CVKM_VEC2_MAX_OPERATION(vkm_usvec2)
+CVKM_VEC2_MAX_OPERATION(vkm_ivec2)
+CVKM_VEC2_MAX_OPERATION(vkm_uvec2)
+CVKM_VEC2_MAX_OPERATION(vkm_lvec2)
+CVKM_VEC2_MAX_OPERATION(vkm_ulvec2)
+CVKM_VEC2_MAX_OPERATION(vkm_vec2)
+CVKM_VEC2_MAX_OPERATION(vkm_dvec2)
+
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_bvec2, int8_t)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_ubvec2, uint8_t)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_svec2, int16_t)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_usvec2, uint16_t)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_ivec2, int32_t)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_uvec2, uint32_t)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_lvec2, int64_t)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_ulvec2, uint64_t)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_vec2, float)
+CVKM_VEC2_SCALAR_MAX_OPERATION(vkm_dvec2, double)
+
+CVKM_VEC3_MAX_OPERATION(vkm_bvec3)
+CVKM_VEC3_MAX_OPERATION(vkm_ubvec3)
+CVKM_VEC3_MAX_OPERATION(vkm_svec3)
+CVKM_VEC3_MAX_OPERATION(vkm_usvec3)
+CVKM_VEC3_MAX_OPERATION(vkm_ivec3)
+CVKM_VEC3_MAX_OPERATION(vkm_uvec3)
+CVKM_VEC3_MAX_OPERATION(vkm_lvec3)
+CVKM_VEC3_MAX_OPERATION(vkm_ulvec3)
+CVKM_VEC3_MAX_OPERATION(vkm_vec3)
+CVKM_VEC3_MAX_OPERATION(vkm_dvec3)
+
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_bvec3, int8_t)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_ubvec3, uint8_t)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_svec3, int16_t)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_usvec3, uint16_t)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_ivec3, int32_t)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_uvec3, uint32_t)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_lvec3, int64_t)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_ulvec3, uint64_t)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_vec3, float)
+CVKM_VEC3_SCALAR_MAX_OPERATION(vkm_dvec3, double)
+
+CVKM_VEC4_MAX_OPERATION(vkm_bvec4)
+CVKM_VEC4_MAX_OPERATION(vkm_ubvec4)
+CVKM_VEC4_MAX_OPERATION(vkm_svec4)
+CVKM_VEC4_MAX_OPERATION(vkm_usvec4)
+CVKM_VEC4_MAX_OPERATION(vkm_ivec4)
+CVKM_VEC4_MAX_OPERATION(vkm_uvec4)
+CVKM_VEC4_MAX_OPERATION(vkm_lvec4)
+CVKM_VEC4_MAX_OPERATION(vkm_ulvec4)
+CVKM_VEC4_MAX_OPERATION(vkm_vec4)
+CVKM_VEC4_MAX_OPERATION(vkm_dvec4)
+CVKM_VEC4_MAX_OPERATION(vkm_quat)
+
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_bvec4, int8_t)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_ubvec4, uint8_t)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_svec4, int16_t)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_usvec4, uint16_t)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_ivec4, int32_t)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_uvec4, uint32_t)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_lvec4, int64_t)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_ulvec4, uint64_t)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_vec4, float)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_dvec4, double)
+CVKM_VEC4_SCALAR_MAX_OPERATION(vkm_quat, float)
 
 CVKM_CLAMP_OPERATION(int8_t, b)
 CVKM_CLAMP_OPERATION(uint8_t, ub)
@@ -956,7 +1170,7 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
 #define cvkm_absf fabsf
 #define cvkm_abs fabs
 
-#define vkm_sin(x) _Generic((x),\
+#define vkm_sin(x) _Generic(x,\
   int8_t: vkm_sinb,\
   uint8_t: vkm_sinub,\
   int16_t: vkm_sins,\
@@ -979,7 +1193,7 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const double: sin\
 )(x)
 
-#define vkm_cos(x) _Generic((x),\
+#define vkm_cos(x) _Generic(x,\
   int8_t: vkm_cosb,\
   uint8_t: vkm_cosub,\
   int16_t: vkm_coss,\
@@ -1002,7 +1216,7 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const double: cos\
 )(x)
 
-#define vkm_tan(x) _Generic((x),\
+#define vkm_tan(x) _Generic(x,\
   int8_t: vkm_tanb,\
   uint8_t: vkm_tanub,\
   int16_t: vkm_tans,\
@@ -1025,7 +1239,7 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const double: tan\
 )(x)
 
-#define vkm_asin(x) _Generic((x),\
+#define vkm_asin(x) _Generic(x,\
   int8_t: vkm_asinb,\
   uint8_t: vkm_asinub,\
   int16_t: vkm_asins,\
@@ -1048,7 +1262,7 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const double: asin\
 )(x)
 
-#define vkm_acos(x) _Generic((x),\
+#define vkm_acos(x) _Generic(x,\
   int8_t: vkm_acosb,\
   uint8_t: vkm_acosub,\
   int16_t: vkm_acoss,\
@@ -1071,7 +1285,7 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const double: acos\
 )(x)
 
-#define vkm_atan(x) _Generic((x),\
+#define vkm_atan(x) _Generic(x,\
   int8_t: vkm_atanb,\
   uint8_t: vkm_atanub,\
   int16_t: vkm_atans,\
@@ -1094,7 +1308,7 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const double: atan\
 )(x)
 
-#define vkm_atan2(a, b) _Generic((a),\
+#define vkm_atan2(a, ...) _Generic(a,\
   int8_t: vkm_atan2b,\
   uint8_t: vkm_atan2ub,\
   int16_t: vkm_atan2s,\
@@ -1115,9 +1329,9 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const uint64_t: vkm_atan2ul,\
   const float: atan2f,\
   const double: atan2\
-)(a, b)
+)(a, __VA_ARGS__)
 
-#define vkm_sqrt(x) _Generic((x),\
+#define vkm_sqrt(x) _Generic(x,\
   int8_t: vkm_sqrtb,\
   uint8_t: vkm_sqrtub,\
   int16_t: vkm_sqrts,\
@@ -1140,7 +1354,7 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const double: sqrt\
 )(x)
 
-#define vkm_min(a, b) _Generic((a),\
+#define vkm_min(a, ...) _Generic(a,\
   int8_t: vkm_minb,\
   uint8_t: vkm_minub,\
   int16_t: vkm_mins,\
@@ -1151,6 +1365,37 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   uint64_t: vkm_minul,\
   float: vkm_minf,\
   double: vkm_min,\
+  vkm_bvec2*: vkm_bvec2_min,\
+  vkm_ubvec2*: vkm_ubvec2_min,\
+  vkm_svec2*: vkm_svec2_min,\
+  vkm_usvec2*: vkm_usvec2_min,\
+  vkm_ivec2*: vkm_ivec2_min,\
+  vkm_uvec2*: vkm_uvec2_min,\
+  vkm_lvec2*: vkm_lvec2_min,\
+  vkm_ulvec2*: vkm_ulvec2_min,\
+  vkm_vec2*: vkm_vec2_min,\
+  vkm_dvec2*: vkm_dvec2_min,\
+  vkm_bvec3*: vkm_bvec3_min,\
+  vkm_ubvec3*: vkm_ubvec3_min,\
+  vkm_svec3*: vkm_svec3_min,\
+  vkm_usvec3*: vkm_usvec3_min,\
+  vkm_ivec3*: vkm_ivec3_min,\
+  vkm_uvec3*: vkm_uvec3_min,\
+  vkm_lvec3*: vkm_lvec3_min,\
+  vkm_ulvec3*: vkm_ulvec3_min,\
+  vkm_vec3*: vkm_vec3_min,\
+  vkm_dvec3*: vkm_dvec3_min,\
+  vkm_bvec4*: vkm_bvec4_min,\
+  vkm_ubvec4*: vkm_ubvec4_min,\
+  vkm_svec4*: vkm_svec4_min,\
+  vkm_usvec4*: vkm_usvec4_min,\
+  vkm_ivec4*: vkm_ivec4_min,\
+  vkm_uvec4*: vkm_uvec4_min,\
+  vkm_lvec4*: vkm_lvec4_min,\
+  vkm_ulvec4*: vkm_ulvec4_min,\
+  vkm_vec4*: vkm_vec4_min,\
+  vkm_dvec4*: vkm_dvec4_min,\
+  vkm_quat*: vkm_quat_min,\
   const int8_t: vkm_minb,\
   const uint8_t: vkm_minub,\
   const int16_t: vkm_mins,\
@@ -1160,10 +1405,106 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const int64_t: vkm_minl,\
   const uint64_t: vkm_minul,\
   const float: vkm_minf,\
-  const double: vkm_min\
-)((a), (b))
+  const double: vkm_min,\
+  const vkm_bvec2*: vkm_bvec2_min,\
+  const vkm_ubvec2*: vkm_ubvec2_min,\
+  const vkm_svec2*: vkm_svec2_min,\
+  const vkm_usvec2*: vkm_usvec2_min,\
+  const vkm_ivec2*: vkm_ivec2_min,\
+  const vkm_uvec2*: vkm_uvec2_min,\
+  const vkm_lvec2*: vkm_lvec2_min,\
+  const vkm_ulvec2*: vkm_ulvec2_min,\
+  const vkm_vec2*: vkm_vec2_min,\
+  const vkm_dvec2*: vkm_dvec2_min,\
+  const vkm_bvec3*: vkm_bvec3_min,\
+  const vkm_ubvec3*: vkm_ubvec3_min,\
+  const vkm_svec3*: vkm_svec3_min,\
+  const vkm_usvec3*: vkm_usvec3_min,\
+  const vkm_ivec3*: vkm_ivec3_min,\
+  const vkm_uvec3*: vkm_uvec3_min,\
+  const vkm_lvec3*: vkm_lvec3_min,\
+  const vkm_ulvec3*: vkm_ulvec3_min,\
+  const vkm_vec3*: vkm_vec3_min,\
+  const vkm_dvec3*: vkm_dvec3_min,\
+  const vkm_bvec4*: vkm_bvec4_min,\
+  const vkm_ubvec4*: vkm_ubvec4_min,\
+  const vkm_svec4*: vkm_svec4_min,\
+  const vkm_usvec4*: vkm_usvec4_min,\
+  const vkm_ivec4*: vkm_ivec4_min,\
+  const vkm_uvec4*: vkm_uvec4_min,\
+  const vkm_lvec4*: vkm_lvec4_min,\
+  const vkm_ulvec4*: vkm_ulvec4_min,\
+  const vkm_vec4*: vkm_vec4_min,\
+  const vkm_dvec4*: vkm_dvec4_min,\
+  const vkm_quat*: vkm_quat_min\
+)(a, __VA_ARGS__)
 
-#define vkm_max(a, b) _Generic((a),\
+#define vkm_scalar_min(a) _Generic(a,\
+  vkm_bvec2*: vkm_bvec2_scalar_min,\
+  vkm_ubvec2*: vkm_ubvec2_scalar_min,\
+  vkm_svec2*: vkm_svec2_scalar_min,\
+  vkm_usvec2*: vkm_usvec2_scalar_min,\
+  vkm_ivec2*: vkm_ivec2_scalar_min,\
+  vkm_uvec2*: vkm_uvec2_scalar_min,\
+  vkm_lvec2*: vkm_lvec2_scalar_min,\
+  vkm_ulvec2*: vkm_ulvec2_scalar_min,\
+  vkm_vec2*: vkm_vec2_scalar_min,\
+  vkm_dvec2*: vkm_dvec2_scalar_min,\
+  vkm_bvec3*: vkm_bvec3_scalar_min,\
+  vkm_ubvec3*: vkm_ubvec3_scalar_min,\
+  vkm_svec3*: vkm_svec3_scalar_min,\
+  vkm_usvec3*: vkm_usvec3_scalar_min,\
+  vkm_ivec3*: vkm_ivec3_scalar_min,\
+  vkm_uvec3*: vkm_uvec3_scalar_min,\
+  vkm_lvec3*: vkm_lvec3_scalar_min,\
+  vkm_ulvec3*: vkm_ulvec3_scalar_min,\
+  vkm_vec3*: vkm_vec3_scalar_min,\
+  vkm_dvec3*: vkm_dvec3_scalar_min,\
+  vkm_bvec4*: vkm_bvec4_scalar_min,\
+  vkm_ubvec4*: vkm_ubvec4_scalar_min,\
+  vkm_svec4*: vkm_svec4_scalar_min,\
+  vkm_usvec4*: vkm_usvec4_scalar_min,\
+  vkm_ivec4*: vkm_ivec4_scalar_min,\
+  vkm_uvec4*: vkm_uvec4_scalar_min,\
+  vkm_lvec4*: vkm_lvec4_scalar_min,\
+  vkm_ulvec4*: vkm_ulvec4_scalar_min,\
+  vkm_vec4*: vkm_vec4_scalar_min,\
+  vkm_dvec4*: vkm_dvec4_scalar_min,\
+  vkm_quat*: vkm_quat_scalar_min,\
+  const vkm_bvec2*: vkm_bvec2_scalar_min,\
+  const vkm_ubvec2*: vkm_ubvec2_scalar_min,\
+  const vkm_svec2*: vkm_svec2_scalar_min,\
+  const vkm_usvec2*: vkm_usvec2_scalar_min,\
+  const vkm_ivec2*: vkm_ivec2_scalar_min,\
+  const vkm_uvec2*: vkm_uvec2_scalar_min,\
+  const vkm_lvec2*: vkm_lvec2_scalar_min,\
+  const vkm_ulvec2*: vkm_ulvec2_scalar_min,\
+  const vkm_vec2*: vkm_vec2_scalar_min,\
+  const vkm_dvec2*: vkm_dvec2_scalar_min,\
+  const vkm_bvec3*: vkm_bvec3_scalar_min,\
+  const vkm_ubvec3*: vkm_ubvec3_scalar_min,\
+  const vkm_svec3*: vkm_svec3_scalar_min,\
+  const vkm_usvec3*: vkm_usvec3_scalar_min,\
+  const vkm_ivec3*: vkm_ivec3_scalar_min,\
+  const vkm_uvec3*: vkm_uvec3_scalar_min,\
+  const vkm_lvec3*: vkm_lvec3_scalar_min,\
+  const vkm_ulvec3*: vkm_ulvec3_scalar_min,\
+  const vkm_vec3*: vkm_vec3_scalar_min,\
+  const vkm_dvec3*: vkm_dvec3_scalar_min,\
+  const vkm_bvec4*: vkm_bvec4_scalar_min,\
+  const vkm_ubvec4*: vkm_ubvec4_scalar_min,\
+  const vkm_svec4*: vkm_svec4_scalar_min,\
+  const vkm_usvec4*: vkm_usvec4_scalar_min,\
+  const vkm_ivec4*: vkm_ivec4_scalar_min,\
+  const vkm_uvec4*: vkm_uvec4_scalar_min,\
+  const vkm_lvec4*: vkm_lvec4_scalar_min,\
+  const vkm_ulvec4*: vkm_ulvec4_scalar_min,\
+  const vkm_vec4*: vkm_vec4_scalar_min,\
+  const vkm_dvec4*: vkm_dvec4_scalar_min,\
+  const vkm_quat*: vkm_quat_scalar_min\
+)(a)
+
+#define vkm_max(a, ...) _Generic(a,\
   int8_t: vkm_maxb,\
   uint8_t: vkm_maxub,\
   int16_t: vkm_maxs,\
@@ -1174,6 +1515,37 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   uint64_t: vkm_maxul,\
   float: vkm_maxf,\
   double: vkm_max,\
+  vkm_bvec2*: vkm_bvec2_max,\
+  vkm_ubvec2*: vkm_ubvec2_max,\
+  vkm_svec2*: vkm_svec2_max,\
+  vkm_usvec2*: vkm_usvec2_max,\
+  vkm_ivec2*: vkm_ivec2_max,\
+  vkm_uvec2*: vkm_uvec2_max,\
+  vkm_lvec2*: vkm_lvec2_max,\
+  vkm_ulvec2*: vkm_ulvec2_max,\
+  vkm_vec2*: vkm_vec2_max,\
+  vkm_dvec2*: vkm_dvec2_max,\
+  vkm_bvec3*: vkm_bvec3_max,\
+  vkm_ubvec3*: vkm_ubvec3_max,\
+  vkm_svec3*: vkm_svec3_max,\
+  vkm_usvec3*: vkm_usvec3_max,\
+  vkm_ivec3*: vkm_ivec3_max,\
+  vkm_uvec3*: vkm_uvec3_max,\
+  vkm_lvec3*: vkm_lvec3_max,\
+  vkm_ulvec3*: vkm_ulvec3_max,\
+  vkm_vec3*: vkm_vec3_max,\
+  vkm_dvec3*: vkm_dvec3_max,\
+  vkm_bvec4*: vkm_bvec4_max,\
+  vkm_ubvec4*: vkm_ubvec4_max,\
+  vkm_svec4*: vkm_svec4_max,\
+  vkm_usvec4*: vkm_usvec4_max,\
+  vkm_ivec4*: vkm_ivec4_max,\
+  vkm_uvec4*: vkm_uvec4_max,\
+  vkm_lvec4*: vkm_lvec4_max,\
+  vkm_ulvec4*: vkm_ulvec4_max,\
+  vkm_vec4*: vkm_vec4_max,\
+  vkm_dvec4*: vkm_dvec4_max,\
+  vkm_quat*: vkm_quat_max,\
   const int8_t: vkm_maxb,\
   const uint8_t: vkm_maxub,\
   const int16_t: vkm_maxs,\
@@ -1183,10 +1555,106 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const int64_t: vkm_maxl,\
   const uint64_t: vkm_maxul,\
   const float: vkm_maxf,\
-  const double: vkm_max\
-)((a), (b))
+  const double: vkm_max,\
+  const vkm_bvec2*: vkm_bvec2_max,\
+  const vkm_ubvec2*: vkm_ubvec2_max,\
+  const vkm_svec2*: vkm_svec2_max,\
+  const vkm_usvec2*: vkm_usvec2_max,\
+  const vkm_ivec2*: vkm_ivec2_max,\
+  const vkm_uvec2*: vkm_uvec2_max,\
+  const vkm_lvec2*: vkm_lvec2_max,\
+  const vkm_ulvec2*: vkm_ulvec2_max,\
+  const vkm_vec2*: vkm_vec2_max,\
+  const vkm_dvec2*: vkm_dvec2_max,\
+  const vkm_bvec3*: vkm_bvec3_max,\
+  const vkm_ubvec3*: vkm_ubvec3_max,\
+  const vkm_svec3*: vkm_svec3_max,\
+  const vkm_usvec3*: vkm_usvec3_max,\
+  const vkm_ivec3*: vkm_ivec3_max,\
+  const vkm_uvec3*: vkm_uvec3_max,\
+  const vkm_lvec3*: vkm_lvec3_max,\
+  const vkm_ulvec3*: vkm_ulvec3_max,\
+  const vkm_vec3*: vkm_vec3_max,\
+  const vkm_dvec3*: vkm_dvec3_max,\
+  const vkm_bvec4*: vkm_bvec4_max,\
+  const vkm_ubvec4*: vkm_ubvec4_max,\
+  const vkm_svec4*: vkm_svec4_max,\
+  const vkm_usvec4*: vkm_usvec4_max,\
+  const vkm_ivec4*: vkm_ivec4_max,\
+  const vkm_uvec4*: vkm_uvec4_max,\
+  const vkm_lvec4*: vkm_lvec4_max,\
+  const vkm_ulvec4*: vkm_ulvec4_max,\
+  const vkm_vec4*: vkm_vec4_max,\
+  const vkm_dvec4*: vkm_dvec4_max,\
+  const vkm_quat*: vkm_quat_max\
+)(a, __VA_ARGS__)
 
-#define vkm_clamp(value, min, max) _Generic((value),\
+#define vkm_scalar_max(a) _Generic(a,\
+  vkm_bvec2*: vkm_bvec2_scalar_max,\
+  vkm_ubvec2*: vkm_ubvec2_scalar_max,\
+  vkm_svec2*: vkm_svec2_scalar_max,\
+  vkm_usvec2*: vkm_usvec2_scalar_max,\
+  vkm_ivec2*: vkm_ivec2_scalar_max,\
+  vkm_uvec2*: vkm_uvec2_scalar_max,\
+  vkm_lvec2*: vkm_lvec2_scalar_max,\
+  vkm_ulvec2*: vkm_ulvec2_scalar_max,\
+  vkm_vec2*: vkm_vec2_scalar_max,\
+  vkm_dvec2*: vkm_dvec2_scalar_max,\
+  vkm_bvec3*: vkm_bvec3_scalar_max,\
+  vkm_ubvec3*: vkm_ubvec3_scalar_max,\
+  vkm_svec3*: vkm_svec3_scalar_max,\
+  vkm_usvec3*: vkm_usvec3_scalar_max,\
+  vkm_ivec3*: vkm_ivec3_scalar_max,\
+  vkm_uvec3*: vkm_uvec3_scalar_max,\
+  vkm_lvec3*: vkm_lvec3_scalar_max,\
+  vkm_ulvec3*: vkm_ulvec3_scalar_max,\
+  vkm_vec3*: vkm_vec3_scalar_max,\
+  vkm_dvec3*: vkm_dvec3_scalar_max,\
+  vkm_bvec4*: vkm_bvec4_scalar_max,\
+  vkm_ubvec4*: vkm_ubvec4_scalar_max,\
+  vkm_svec4*: vkm_svec4_scalar_max,\
+  vkm_usvec4*: vkm_usvec4_scalar_max,\
+  vkm_ivec4*: vkm_ivec4_scalar_max,\
+  vkm_uvec4*: vkm_uvec4_scalar_max,\
+  vkm_lvec4*: vkm_lvec4_scalar_max,\
+  vkm_ulvec4*: vkm_ulvec4_scalar_max,\
+  vkm_vec4*: vkm_vec4_scalar_max,\
+  vkm_dvec4*: vkm_dvec4_scalar_max,\
+  vkm_quat*: vkm_quat_scalar_max,\
+  const vkm_bvec2*: vkm_bvec2_scalar_max,\
+  const vkm_ubvec2*: vkm_ubvec2_scalar_max,\
+  const vkm_svec2*: vkm_svec2_scalar_max,\
+  const vkm_usvec2*: vkm_usvec2_scalar_max,\
+  const vkm_ivec2*: vkm_ivec2_scalar_max,\
+  const vkm_uvec2*: vkm_uvec2_scalar_max,\
+  const vkm_lvec2*: vkm_lvec2_scalar_max,\
+  const vkm_ulvec2*: vkm_ulvec2_scalar_max,\
+  const vkm_vec2*: vkm_vec2_scalar_max,\
+  const vkm_dvec2*: vkm_dvec2_scalar_max,\
+  const vkm_bvec3*: vkm_bvec3_scalar_max,\
+  const vkm_ubvec3*: vkm_ubvec3_scalar_max,\
+  const vkm_svec3*: vkm_svec3_scalar_max,\
+  const vkm_usvec3*: vkm_usvec3_scalar_max,\
+  const vkm_ivec3*: vkm_ivec3_scalar_max,\
+  const vkm_uvec3*: vkm_uvec3_scalar_max,\
+  const vkm_lvec3*: vkm_lvec3_scalar_max,\
+  const vkm_ulvec3*: vkm_ulvec3_scalar_max,\
+  const vkm_vec3*: vkm_vec3_scalar_max,\
+  const vkm_dvec3*: vkm_dvec3_scalar_max,\
+  const vkm_bvec4*: vkm_bvec4_scalar_max,\
+  const vkm_ubvec4*: vkm_ubvec4_scalar_max,\
+  const vkm_svec4*: vkm_svec4_scalar_max,\
+  const vkm_usvec4*: vkm_usvec4_scalar_max,\
+  const vkm_ivec4*: vkm_ivec4_scalar_max,\
+  const vkm_uvec4*: vkm_uvec4_scalar_max,\
+  const vkm_lvec4*: vkm_lvec4_scalar_max,\
+  const vkm_ulvec4*: vkm_ulvec4_scalar_max,\
+  const vkm_vec4*: vkm_vec4_scalar_max,\
+  const vkm_dvec4*: vkm_dvec4_scalar_max,\
+  const vkm_quat*: vkm_quat_scalar_max\
+)(a)
+
+#define vkm_clamp(value, min, max) _Generic(value,\
   int8_t: vkm_clampb,\
   uint8_t: vkm_clampub,\
   int16_t: vkm_clamps,\
@@ -1207,9 +1675,9 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const uint64_t: vkm_clampul,\
   const float: vkm_clampf,\
   const double: vkm_clamp\
-)((value), (min), (max))
+)(value, min, max)
 
-#define vkm_abs(value) _Generic((value),\
+#define vkm_abs(value) _Generic(value,\
   int8_t: vkm_absb,\
   int16_t: vkm_abss,\
   int32_t: vkm_absi,\
@@ -1227,12 +1695,12 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
 #define CVKM_CONSTEXPR_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define CVKM_CONSTEXPR_MAX(a, b) ((a) > (b) ? (a) : (b))
 
-#define vkm_inverse_sqrt(x) _Generic((x),\
+#define vkm_inverse_sqrt(x) _Generic(x,\
   float: vkm_inverse_sqrtf,\
   double: vkm_inverse_sqrtd\
 )(x)
 
-#define vkm_pow(x, y) _Generic((x),\
+#define vkm_pow(x, ...) _Generic(x,\
   int8_t: vkm_powb,\
   uint8_t: vkm_powub,\
   int16_t: vkm_pows,\
@@ -1253,7 +1721,14 @@ CVKM_INTEGER_ABS_OPERATION(int64_t, 63, l)
   const uint64_t: vkm_powul,\
   const float: powf,\
   const double: pow\
-)((x), (y))
+)(x, __VA_ARGS__)
+
+#define vkm_mod(x, ...) _Generic(x,\
+    float: fmodf(x, __VA_ARGS__),\
+    double: fmod(x, __VA_ARGS__),\
+    const float: fmodf(x, __VA_ARGS__),\
+    const double: fmod(x, __VA_ARGS__)\
+)
 
 #define CVKM_VEC2_MISC_OPERATIONS_FOR_UNSIGNED_INTS(vec_type, scalar_type) static scalar_type vkm_##vec_type##_dot(\
   const vkm_##vec_type* a,\
@@ -1484,70 +1959,70 @@ static void vkm_mat4_transpose(const vkm_mat4* mat, vkm_mat4* result) {
   };
 }
 
-#define vkm_dot(a, b) _Generic((a),\
+#define vkm_dot(a, ...) _Generic(a,\
   vkm_bvec2*: vkm_bvec2_dot,\
-  const vkm_bvec2*: vkm_bvec2_dot,\
   vkm_ubvec2*: vkm_ubvec2_dot,\
-  const vkm_ubvec2*: vkm_ubvec2_dot,\
   vkm_svec2*: vkm_svec2_dot,\
-  const vkm_svec2*: vkm_svec2_dot,\
   vkm_usvec2*: vkm_usvec2_dot,\
-  const vkm_usvec2*: vkm_usvec2_dot,\
   vkm_ivec2*: vkm_ivec2_dot,\
-  const vkm_ivec2*: vkm_ivec2_dot,\
   vkm_uvec2*: vkm_uvec2_dot,\
-  const vkm_uvec2*: vkm_uvec2_dot,\
   vkm_lvec2*: vkm_lvec2_dot,\
-  const vkm_lvec2*: vkm_lvec2_dot,\
   vkm_ulvec2*: vkm_ulvec2_dot,\
-  const vkm_ulvec2*: vkm_ulvec2_dot,\
   vkm_vec2*: vkm_vec2_dot,\
-  const vkm_vec2*: vkm_vec2_dot,\
   vkm_dvec2*: vkm_dvec2_dot,\
-  const vkm_dvec2*: vkm_dvec2_dot,\
   vkm_bvec3*: vkm_bvec3_dot,\
-  const vkm_bvec3*: vkm_bvec3_dot,\
   vkm_ubvec3*: vkm_ubvec3_dot,\
-  const vkm_ubvec3*: vkm_ubvec3_dot,\
   vkm_svec3*: vkm_svec3_dot,\
-  const vkm_svec3*: vkm_svec3_dot,\
   vkm_usvec3*: vkm_usvec3_dot,\
-  const vkm_usvec3*: vkm_usvec3_dot,\
   vkm_ivec3*: vkm_ivec3_dot,\
-  const vkm_ivec3*: vkm_ivec3_dot,\
   vkm_uvec3*: vkm_uvec3_dot,\
-  const vkm_uvec3*: vkm_uvec3_dot,\
   vkm_lvec3*: vkm_lvec3_dot,\
-  const vkm_lvec3*: vkm_lvec3_dot,\
   vkm_ulvec3*: vkm_ulvec3_dot,\
-  const vkm_ulvec3*: vkm_ulvec3_dot,\
   vkm_vec3*: vkm_vec3_dot,\
-  const vkm_vec3*: vkm_vec3_dot,\
   vkm_dvec3*: vkm_dvec3_dot,\
-  const vkm_dvec3*: vkm_dvec3_dot,\
   vkm_bvec4*: vkm_bvec4_dot,\
-  const vkm_bvec4*: vkm_bvec4_dot,\
   vkm_ubvec4*: vkm_ubvec4_dot,\
-  const vkm_ubvec4*: vkm_ubvec4_dot,\
   vkm_svec4*: vkm_svec4_dot,\
-  const vkm_svec4*: vkm_svec4_dot,\
   vkm_usvec4*: vkm_usvec4_dot,\
-  const vkm_usvec4*: vkm_usvec4_dot,\
   vkm_ivec4*: vkm_ivec4_dot,\
-  const vkm_ivec4*: vkm_ivec4_dot,\
   vkm_uvec4*: vkm_uvec4_dot,\
-  const vkm_uvec4*: vkm_uvec4_dot,\
   vkm_lvec4*: vkm_lvec4_dot,\
-  const vkm_lvec4*: vkm_lvec4_dot,\
   vkm_ulvec4*: vkm_ulvec4_dot,\
-  const vkm_ulvec4*: vkm_ulvec4_dot,\
   vkm_vec4*: vkm_vec4_dot,\
-  const vkm_vec4*: vkm_vec4_dot,\
   vkm_dvec4*: vkm_dvec4_dot,\
+  const vkm_bvec2*: vkm_bvec2_dot,\
+  const vkm_ubvec2*: vkm_ubvec2_dot,\
+  const vkm_svec2*: vkm_svec2_dot,\
+  const vkm_usvec2*: vkm_usvec2_dot,\
+  const vkm_ivec2*: vkm_ivec2_dot,\
+  const vkm_uvec2*: vkm_uvec2_dot,\
+  const vkm_lvec2*: vkm_lvec2_dot,\
+  const vkm_ulvec2*: vkm_ulvec2_dot,\
+  const vkm_vec2*: vkm_vec2_dot,\
+  const vkm_dvec2*: vkm_dvec2_dot,\
+  const vkm_bvec3*: vkm_bvec3_dot,\
+  const vkm_ubvec3*: vkm_ubvec3_dot,\
+  const vkm_svec3*: vkm_svec3_dot,\
+  const vkm_usvec3*: vkm_usvec3_dot,\
+  const vkm_ivec3*: vkm_ivec3_dot,\
+  const vkm_uvec3*: vkm_uvec3_dot,\
+  const vkm_lvec3*: vkm_lvec3_dot,\
+  const vkm_ulvec3*: vkm_ulvec3_dot,\
+  const vkm_vec3*: vkm_vec3_dot,\
+  const vkm_dvec3*: vkm_dvec3_dot,\
+  const vkm_bvec4*: vkm_bvec4_dot,\
+  const vkm_ubvec4*: vkm_ubvec4_dot,\
+  const vkm_svec4*: vkm_svec4_dot,\
+  const vkm_usvec4*: vkm_usvec4_dot,\
+  const vkm_ivec4*: vkm_ivec4_dot,\
+  const vkm_uvec4*: vkm_uvec4_dot,\
+  const vkm_lvec4*: vkm_lvec4_dot,\
+  const vkm_ulvec4*: vkm_ulvec4_dot,\
+  const vkm_vec4*: vkm_vec4_dot,\
   const vkm_dvec4*: vkm_dvec4_dot\
-)((a), (b))
+)(a, __VA_ARGS__)
 
-#define vkm_cross(a, b, result) _Generic((result),\
+#define vkm_cross(a, b, result) _Generic(result,\
   vkm_bvec3*: vkm_bvec3_cross,\
   vkm_ubvec3*: vkm_ubvec3_cross,\
   vkm_svec3*: vkm_svec3_cross,\
@@ -1558,148 +2033,150 @@ static void vkm_mat4_transpose(const vkm_mat4* mat, vkm_mat4* result) {
   vkm_ulvec3*: vkm_ulvec3_cross,\
   vkm_vec3*: vkm_vec3_cross,\
   vkm_dvec3*: vkm_dvec3_cross\
-)((a), (b), (result))
+)(a, b, result)
 
-#define vkm_sqr_magnitude(vec) _Generic((vec),\
+#define vkm_sqr_magnitude(...) _Generic(__VA_ARGS__,\
   vkm_bvec2*: vkm_bvec2_sqr_magnitude,\
-  const vkm_bvec2*: vkm_bvec2_sqr_magnitude,\
   vkm_ubvec2*: vkm_ubvec2_sqr_magnitude,\
-  const vkm_ubvec2*: vkm_ubvec2_sqr_magnitude,\
   vkm_svec2*: vkm_svec2_sqr_magnitude,\
-  const vkm_svec2*: vkm_svec2_sqr_magnitude,\
   vkm_usvec2*: vkm_usvec2_sqr_magnitude,\
-  const vkm_usvec2*: vkm_usvec2_sqr_magnitude,\
   vkm_ivec2*: vkm_ivec2_sqr_magnitude,\
-  const vkm_ivec2*: vkm_ivec2_sqr_magnitude,\
   vkm_uvec2*: vkm_uvec2_sqr_magnitude,\
-  const vkm_uvec2*: vkm_uvec2_sqr_magnitude,\
   vkm_lvec2*: vkm_lvec2_sqr_magnitude,\
-  const vkm_lvec2*: vkm_lvec2_sqr_magnitude,\
   vkm_ulvec2*: vkm_ulvec2_sqr_magnitude,\
-  const vkm_ulvec2*: vkm_ulvec2_sqr_magnitude,\
   vkm_vec2*: vkm_vec2_sqr_magnitude,\
-  const vkm_vec2*: vkm_vec2_sqr_magnitude,\
   vkm_dvec2*: vkm_dvec2_sqr_magnitude,\
-  const vkm_dvec2*: vkm_dvec2_sqr_magnitude,\
   vkm_bvec3*: vkm_bvec3_sqr_magnitude,\
-  const vkm_bvec3*: vkm_bvec3_sqr_magnitude,\
   vkm_ubvec3*: vkm_ubvec3_sqr_magnitude,\
-  const vkm_ubvec3*: vkm_ubvec3_sqr_magnitude,\
   vkm_svec3*: vkm_svec3_sqr_magnitude,\
-  const vkm_svec3*: vkm_svec3_sqr_magnitude,\
   vkm_usvec3*: vkm_usvec3_sqr_magnitude,\
-  const vkm_usvec3*: vkm_usvec3_sqr_magnitude,\
   vkm_ivec3*: vkm_ivec3_sqr_magnitude,\
-  const vkm_ivec3*: vkm_ivec3_sqr_magnitude,\
   vkm_uvec3*: vkm_uvec3_sqr_magnitude,\
-  const vkm_uvec3*: vkm_uvec3_sqr_magnitude,\
   vkm_lvec3*: vkm_lvec3_sqr_magnitude,\
-  const vkm_lvec3*: vkm_lvec3_sqr_magnitude,\
   vkm_ulvec3*: vkm_ulvec3_sqr_magnitude,\
-  const vkm_ulvec3*: vkm_ulvec3_sqr_magnitude,\
   vkm_vec3*: vkm_vec3_sqr_magnitude,\
-  const vkm_vec3*: vkm_vec3_sqr_magnitude,\
   vkm_dvec3*: vkm_dvec3_sqr_magnitude,\
-  const vkm_dvec3*: vkm_dvec3_sqr_magnitude,\
   vkm_bvec4*: vkm_bvec4_sqr_magnitude,\
-  const vkm_bvec4*: vkm_bvec4_sqr_magnitude,\
   vkm_ubvec4*: vkm_ubvec4_sqr_magnitude,\
-  const vkm_ubvec4*: vkm_ubvec4_sqr_magnitude,\
   vkm_svec4*: vkm_svec4_sqr_magnitude,\
-  const vkm_svec4*: vkm_svec4_sqr_magnitude,\
   vkm_usvec4*: vkm_usvec4_sqr_magnitude,\
-  const vkm_usvec4*: vkm_usvec4_sqr_magnitude,\
   vkm_ivec4*: vkm_ivec4_sqr_magnitude,\
-  const vkm_ivec4*: vkm_ivec4_sqr_magnitude,\
   vkm_uvec4*: vkm_uvec4_sqr_magnitude,\
-  const vkm_uvec4*: vkm_uvec4_sqr_magnitude,\
   vkm_lvec4*: vkm_lvec4_sqr_magnitude,\
-  const vkm_lvec4*: vkm_lvec4_sqr_magnitude,\
   vkm_ulvec4*: vkm_ulvec4_sqr_magnitude,\
-  const vkm_ulvec4*: vkm_ulvec4_sqr_magnitude,\
   vkm_vec4*: vkm_vec4_sqr_magnitude,\
-  const vkm_vec4*: vkm_vec4_sqr_magnitude,\
   vkm_dvec4*: vkm_dvec4_sqr_magnitude,\
-  const vkm_dvec4*: vkm_dvec4_sqr_magnitude,\
   vkm_quat*: vkm_quat_sqr_magnitude,\
+  const vkm_bvec2*: vkm_bvec2_sqr_magnitude,\
+  const vkm_ubvec2*: vkm_ubvec2_sqr_magnitude,\
+  const vkm_svec2*: vkm_svec2_sqr_magnitude,\
+  const vkm_usvec2*: vkm_usvec2_sqr_magnitude,\
+  const vkm_ivec2*: vkm_ivec2_sqr_magnitude,\
+  const vkm_uvec2*: vkm_uvec2_sqr_magnitude,\
+  const vkm_lvec2*: vkm_lvec2_sqr_magnitude,\
+  const vkm_ulvec2*: vkm_ulvec2_sqr_magnitude,\
+  const vkm_vec2*: vkm_vec2_sqr_magnitude,\
+  const vkm_dvec2*: vkm_dvec2_sqr_magnitude,\
+  const vkm_bvec3*: vkm_bvec3_sqr_magnitude,\
+  const vkm_ubvec3*: vkm_ubvec3_sqr_magnitude,\
+  const vkm_svec3*: vkm_svec3_sqr_magnitude,\
+  const vkm_usvec3*: vkm_usvec3_sqr_magnitude,\
+  const vkm_ivec3*: vkm_ivec3_sqr_magnitude,\
+  const vkm_uvec3*: vkm_uvec3_sqr_magnitude,\
+  const vkm_lvec3*: vkm_lvec3_sqr_magnitude,\
+  const vkm_ulvec3*: vkm_ulvec3_sqr_magnitude,\
+  const vkm_vec3*: vkm_vec3_sqr_magnitude,\
+  const vkm_dvec3*: vkm_dvec3_sqr_magnitude,\
+  const vkm_bvec4*: vkm_bvec4_sqr_magnitude,\
+  const vkm_ubvec4*: vkm_ubvec4_sqr_magnitude,\
+  const vkm_svec4*: vkm_svec4_sqr_magnitude,\
+  const vkm_usvec4*: vkm_usvec4_sqr_magnitude,\
+  const vkm_ivec4*: vkm_ivec4_sqr_magnitude,\
+  const vkm_uvec4*: vkm_uvec4_sqr_magnitude,\
+  const vkm_lvec4*: vkm_lvec4_sqr_magnitude,\
+  const vkm_ulvec4*: vkm_ulvec4_sqr_magnitude,\
+  const vkm_vec4*: vkm_vec4_sqr_magnitude,\
+  const vkm_dvec4*: vkm_dvec4_sqr_magnitude,\
   const vkm_quat*: vkm_quat_sqr_magnitude\
-)(vec)
+)(__VA_ARGS__)
 
-#define vkm_magnitude(vec) _Generic((vec),\
+#define vkm_magnitude(...) _Generic(__VA_ARGS__,\
   vkm_bvec2*: vkm_bvec2_magnitude,\
-  const vkm_bvec2*: vkm_bvec2_magnitude,\
   vkm_ubvec2*: vkm_ubvec2_magnitude,\
-  const vkm_ubvec2*: vkm_ubvec2_magnitude,\
   vkm_svec2*: vkm_svec2_magnitude,\
-  const vkm_svec2*: vkm_svec2_magnitude,\
   vkm_usvec2*: vkm_usvec2_magnitude,\
-  const vkm_usvec2*: vkm_usvec2_magnitude,\
   vkm_ivec2*: vkm_ivec2_magnitude,\
-  const vkm_ivec2*: vkm_ivec2_magnitude,\
   vkm_uvec2*: vkm_uvec2_magnitude,\
-  const vkm_uvec2*: vkm_uvec2_magnitude,\
   vkm_lvec2*: vkm_lvec2_magnitude,\
-  const vkm_lvec2*: vkm_lvec2_magnitude,\
   vkm_ulvec2*: vkm_ulvec2_magnitude,\
-  const vkm_ulvec2*: vkm_ulvec2_magnitude,\
   vkm_vec2*: vkm_vec2_magnitude,\
-  const vkm_vec2*: vkm_vec2_magnitude,\
   vkm_dvec2*: vkm_dvec2_magnitude,\
-  const vkm_dvec2*: vkm_dvec2_magnitude,\
   vkm_bvec3*: vkm_bvec3_magnitude,\
-  const vkm_bvec3*: vkm_bvec3_magnitude,\
   vkm_ubvec3*: vkm_ubvec3_magnitude,\
-  const vkm_ubvec3*: vkm_ubvec3_magnitude,\
   vkm_svec3*: vkm_svec3_magnitude,\
-  const vkm_svec3*: vkm_svec3_magnitude,\
   vkm_usvec3*: vkm_usvec3_magnitude,\
-  const vkm_usvec3*: vkm_usvec3_magnitude,\
   vkm_ivec3*: vkm_ivec3_magnitude,\
-  const vkm_ivec3*: vkm_ivec3_magnitude,\
   vkm_uvec3*: vkm_uvec3_magnitude,\
-  const vkm_uvec3*: vkm_uvec3_magnitude,\
   vkm_lvec3*: vkm_lvec3_magnitude,\
-  const vkm_lvec3*: vkm_lvec3_magnitude,\
   vkm_ulvec3*: vkm_ulvec3_magnitude,\
-  const vkm_ulvec3*: vkm_ulvec3_magnitude,\
   vkm_vec3*: vkm_vec3_magnitude,\
-  const vkm_vec3*: vkm_vec3_magnitude,\
   vkm_dvec3*: vkm_dvec3_magnitude,\
-  const vkm_dvec3*: vkm_dvec3_magnitude,\
   vkm_bvec4*: vkm_bvec4_magnitude,\
-  const vkm_bvec4*: vkm_bvec4_magnitude,\
   vkm_ubvec4*: vkm_ubvec4_magnitude,\
-  const vkm_ubvec4*: vkm_ubvec4_magnitude,\
   vkm_svec4*: vkm_svec4_magnitude,\
-  const vkm_svec4*: vkm_svec4_magnitude,\
   vkm_usvec4*: vkm_usvec4_magnitude,\
-  const vkm_usvec4*: vkm_usvec4_magnitude,\
   vkm_ivec4*: vkm_ivec4_magnitude,\
-  const vkm_ivec4*: vkm_ivec4_magnitude,\
   vkm_uvec4*: vkm_uvec4_magnitude,\
-  const vkm_uvec4*: vkm_uvec4_magnitude,\
   vkm_lvec4*: vkm_lvec4_magnitude,\
-  const vkm_lvec4*: vkm_lvec4_magnitude,\
   vkm_ulvec4*: vkm_ulvec4_magnitude,\
-  const vkm_ulvec4*: vkm_ulvec4_magnitude,\
   vkm_vec4*: vkm_vec4_magnitude,\
-  const vkm_vec4*: vkm_vec4_magnitude,\
   vkm_dvec4*: vkm_dvec4_magnitude,\
-  const vkm_dvec4*: vkm_dvec4_magnitude,\
   vkm_quat*: vkm_quat_magnitude,\
+  const vkm_bvec2*: vkm_bvec2_magnitude,\
+  const vkm_ubvec2*: vkm_ubvec2_magnitude,\
+  const vkm_svec2*: vkm_svec2_magnitude,\
+  const vkm_usvec2*: vkm_usvec2_magnitude,\
+  const vkm_ivec2*: vkm_ivec2_magnitude,\
+  const vkm_uvec2*: vkm_uvec2_magnitude,\
+  const vkm_lvec2*: vkm_lvec2_magnitude,\
+  const vkm_ulvec2*: vkm_ulvec2_magnitude,\
+  const vkm_vec2*: vkm_vec2_magnitude,\
+  const vkm_dvec2*: vkm_dvec2_magnitude,\
+  const vkm_bvec3*: vkm_bvec3_magnitude,\
+  const vkm_ubvec3*: vkm_ubvec3_magnitude,\
+  const vkm_svec3*: vkm_svec3_magnitude,\
+  const vkm_usvec3*: vkm_usvec3_magnitude,\
+  const vkm_ivec3*: vkm_ivec3_magnitude,\
+  const vkm_uvec3*: vkm_uvec3_magnitude,\
+  const vkm_lvec3*: vkm_lvec3_magnitude,\
+  const vkm_ulvec3*: vkm_ulvec3_magnitude,\
+  const vkm_vec3*: vkm_vec3_magnitude,\
+  const vkm_dvec3*: vkm_dvec3_magnitude,\
+  const vkm_bvec4*: vkm_bvec4_magnitude,\
+  const vkm_ubvec4*: vkm_ubvec4_magnitude,\
+  const vkm_svec4*: vkm_svec4_magnitude,\
+  const vkm_usvec4*: vkm_usvec4_magnitude,\
+  const vkm_ivec4*: vkm_ivec4_magnitude,\
+  const vkm_uvec4*: vkm_uvec4_magnitude,\
+  const vkm_lvec4*: vkm_lvec4_magnitude,\
+  const vkm_ulvec4*: vkm_ulvec4_magnitude,\
+  const vkm_vec4*: vkm_vec4_magnitude,\
+  const vkm_dvec4*: vkm_dvec4_magnitude,\
   const vkm_quat*: vkm_quat_magnitude\
-)(vec)
+)(__VA_ARGS__)
 
-#define vkm_normalize(vec, result) _Generic((result),\
+#define vkm_length(...) vkm_magnitude(__VA_ARGS__)
+
+#define vkm_normalize(vec, result) _Generic(result,\
   vkm_vec2*: vkm_vec2_normalize,\
   vkm_dvec2*: vkm_dvec2_normalize,\
   vkm_vec3*: vkm_vec3_normalize,\
   vkm_dvec3*: vkm_dvec3_normalize,\
   vkm_vec4*: vkm_vec4_normalize,\
   vkm_dvec4*: vkm_dvec4_normalize\
-)((vec), (result))
+)(vec, result)
 
-#define vkm_clear(vec) _Generic((vec),\
+#define vkm_clear(vec) _Generic(vec,\
   vkm_bvec2*: vkm_bvec2_clear,\
   vkm_ubvec2*: vkm_ubvec2_clear,\
   vkm_svec2*: vkm_svec2_clear,\
@@ -1732,7 +2209,7 @@ static void vkm_mat4_transpose(const vkm_mat4* mat, vkm_mat4* result) {
   vkm_dvec4*: vkm_dvec4_clear\
 )(vec)
 
-#define vkm_invert(a, result) _Generic((result),\
+#define vkm_invert(a, result) _Generic(result,\
   vkm_bvec2*: vkm_bvec2_invert,\
   vkm_svec2*: vkm_svec2_invert,\
   vkm_ivec2*: vkm_ivec2_invert,\
@@ -1752,12 +2229,12 @@ static void vkm_mat4_transpose(const vkm_mat4* mat, vkm_mat4* result) {
   vkm_vec4*: vkm_vec4_invert,\
   vkm_dvec4*: vkm_dvec4_invert,\
   vkm_mat4*: vkm_mat4_invert\
-)((a), (result))
+)(a, result)
 
-#define vkm_transpose(mat, result) _Generic((result),\
+#define vkm_transpose(mat, result) _Generic(result,\
   vkm_mat3*: vkm_mat3_transpose,\
   vkm_mat4*: vkm_mat4_transpose\
-)((mat), (result))
+)(mat, result)
 
 #define CVKM_VEC2_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
 const vkm_##type* a,\
@@ -1808,8 +2285,8 @@ CVKM_VEC3_LOGICAL_OPERATIONS(vec3)
 CVKM_VEC3_LOGICAL_OPERATIONS(dvec3)
 
 #define CVKM_VEC4_LOGICAL_OPERATION(type, operation, operator) static bool vkm_##type##_##operation(\
-const vkm_##type* a,\
-const vkm_##type* b\
+  const vkm_##type* a,\
+  const vkm_##type* b\
 ) {\
   return a->x operator b->x && a->y operator b->y && a->z operator b->z && a->w operator b->w;\
 }
@@ -1831,7 +2308,7 @@ CVKM_VEC4_LOGICAL_OPERATIONS(ulvec4)
 CVKM_VEC4_LOGICAL_OPERATIONS(vec4)
 CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
 
-#define vkm_eq(a, b) _Generic((a),\
+#define vkm_eq(a, ...) _Generic(a,\
   vkm_bvec2*: vkm_bvec2_eq,\
   vkm_ubvec2*: vkm_ubvec2_eq,\
   vkm_svec2*: vkm_svec2_eq,\
@@ -1892,9 +2369,9 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   const vkm_ulvec4*: vkm_ulvec4_eq,\
   const vkm_vec4*: vkm_vec4_eq,\
   const vkm_dvec4*: vkm_dvec4_eq\
-)((a), (b))
+)(a, __VA_ARGS__)
 
-#define vkm_lt(a, b) _Generic((a),\
+#define vkm_lt(a, ...) _Generic(a,\
   vkm_bvec2*: vkm_bvec2_lt,\
   vkm_ubvec2*: vkm_ubvec2_lt,\
   vkm_svec2*: vkm_svec2_lt,\
@@ -1955,9 +2432,9 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   const vkm_ulvec4*: vkm_ulvec4_lt,\
   const vkm_vec4*: vkm_vec4_lt,\
   const vkm_dvec4*: vkm_dvec4_lt\
-)((a), (b))
+)(a, __VA_ARGS__)
 
-#define vkm_gt(a, b) _Generic((a),\
+#define vkm_gt(a, ...) _Generic(a,\
   vkm_bvec2*: vkm_bvec2_gt,\
   vkm_ubvec2*: vkm_ubvec2_gt,\
   vkm_svec2*: vkm_svec2_gt,\
@@ -2018,9 +2495,9 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   const vkm_ulvec4*: vkm_ulvec4_gt,\
   const vkm_vec4*: vkm_vec4_gt,\
   const vkm_dvec4*: vkm_dvec4_gt\
-)((a), (b))
+)(a, __VA_ARGS__)
 
-#define vkm_le(a, b) _Generic((a),\
+#define vkm_le(a, ...) _Generic(a,\
   vkm_bvec2*: vkm_bvec2_le,\
   vkm_ubvec2*: vkm_ubvec2_le,\
   vkm_svec2*: vkm_svec2_le,\
@@ -2081,9 +2558,9 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   const vkm_ulvec4*: vkm_ulvec4_le,\
   const vkm_vec4*: vkm_vec4_le,\
   const vkm_dvec4*: vkm_dvec4_le\
-)((a), (b))
+)(a, __VA_ARGS__)
 
-#define vkm_ge(a, b) _Generic((a),\
+#define vkm_ge(a, ...) _Generic(a,\
   vkm_bvec2*: vkm_bvec2_ge,\
   vkm_ubvec2*: vkm_ubvec2_ge,\
   vkm_svec2*: vkm_svec2_ge,\
@@ -2144,7 +2621,7 @@ CVKM_VEC4_LOGICAL_OPERATIONS(dvec4)
   const vkm_ulvec4*: vkm_ulvec4_ge,\
   const vkm_vec4*: vkm_vec4_ge,\
   const vkm_dvec4*: vkm_dvec4_ge\
-)((a), (b))
+)(a, __VA_ARGS__)
 
 static void vkm_orthogonal_lh_zo(
   const float left,
@@ -2447,10 +2924,10 @@ static void vkm_mat4_make_rotation(const float angle, const vkm_vec3* axis, vkm_
   // @formatter:on
 }
 
-#define vkm_make_rotation(angle, axis, result) _Generic((result),\
+#define vkm_make_rotation(angle, axis, result) _Generic(result,\
   vkm_versor*: vkm_quat_make_rotation,\
   vkm_mat4*: vkm_mat4_make_rotation\
-)((angle), (axis), (result))
+)(angle, axis, result)
 
 static void vkm_translate_vec2(vkm_mat4* matrix, const vkm_vec2* translation) {
   vkm_muladd(matrix->columns, translation->x, matrix->columns + 3);
@@ -2463,12 +2940,12 @@ static void vkm_translate_vec3(vkm_mat4* matrix, const vkm_vec3* translation) {
   vkm_muladd(matrix->columns + 2, translation->z, matrix->columns + 3);
 }
 
-#define vkm_translate(matrix, ...) _Generic((__VA_ARGS__),\
+#define vkm_translate(matrix, ...) _Generic(__VA_ARGS__,\
   vkm_vec2*: vkm_translate_vec2,\
-  const vkm_vec2*: vkm_translate_vec2,\
   vkm_vec3*: vkm_translate_vec3,\
+  const vkm_vec2*: vkm_translate_vec2,\
   const vkm_vec3*: vkm_translate_vec3\
-)((matrix), (__VA_ARGS__))
+)(matrix, __VA_ARGS__)
 
 static void vkm_rotate(vkm_mat4* matrix, const float angle, const vkm_vec3* axis) {
   vkm_mat4 rotation;
@@ -2688,9 +3165,9 @@ static void vkm_look_at_lh(const vkm_vec3* eye, const vkm_vec3* target, const vk
   result->m10 = right.y; result->m11 = true_up.y; result->m12 = forward.y;
   result->m20 = right.z; result->m21 = true_up.z; result->m22 = forward.z;
 
-  result->m30 =-vkm_vec3_dot(&right, eye);
-  result->m31 =-vkm_vec3_dot(&true_up, eye);
-  result->m32 =-vkm_vec3_dot(&forward, eye);
+  result->m30 = -vkm_vec3_dot(&right, eye);
+  result->m31 = -vkm_vec3_dot(&true_up, eye);
+  result->m32 = -vkm_vec3_dot(&forward, eye);
 
   result->m03 = result->m13 = result->m23 = 0.0f;
   result->m33 = 1.0f;
@@ -2712,9 +3189,9 @@ static void vkm_look_at_rh(const vkm_vec3* eye, const vkm_vec3* target, const vk
   result->m10 = right.y; result->m11 = true_up.y; result->m12 =-forward.y;
   result->m20 = right.z; result->m21 = true_up.z; result->m22 =-forward.z;
 
-  result->m30 =-vkm_vec3_dot(&right, eye);
-  result->m31 =-vkm_vec3_dot(&true_up, eye);
-  result->m32 = vkm_vec3_dot(&forward, eye);
+  result->m30 = -vkm_vec3_dot(&right, eye);
+  result->m31 = -vkm_vec3_dot(&true_up, eye);
+  result->m32 =  vkm_vec3_dot(&forward, eye);
 
   result->m03 = result->m13 = result->m23 = 0.0f;
   result->m33 = 1.0f;
@@ -2740,11 +3217,11 @@ static void vkm_quat_conjugate(const vkm_quat* quaternion, vkm_quat* result) {
   } };
 }
 
-#define vkm_deg2rad(angle) _Generic((angle),\
+#define vkm_deg2rad(angle) _Generic(angle,\
   float: (angle) * CVKM_DEG2RAD_F,\
   double: (angle) * CVKM_DEG2RAD\
 )
-#define vkm_rad2deg(angle) _Generic((angle),\
+#define vkm_rad2deg(angle) _Generic(angle,\
   float: (angle) * CVKM_RAD2DEG_F,\
   double: (angle) * CVKM_RAD2DEG\
 )
